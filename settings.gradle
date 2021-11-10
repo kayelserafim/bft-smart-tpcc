@@ -1,0 +1,4 @@
+rootProject.name = 'bft-smart-tpcc'
+
+include 'bft-smart'
+project(':bft-smart').projectDir = file('../bft-smart')
