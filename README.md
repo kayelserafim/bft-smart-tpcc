@@ -1,11 +1,15 @@
 # bft-smart-tpcc
-A TPC-C like test tool for BFT-SMaRt
+A TPC-C like test tool for BFT-SMaRt.
 
 ### What is this repository for? ###
 
 * Quick summary
 * Version
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+
+### Compiling ###
+
+Type `./gradlew installDist` in the main directory. The required jar files and default configuration files will be available in the `build/install/library` directory.
 
 ### How do I get set up? ###
 
@@ -23,21 +27,21 @@ The servers must be specified in the configuration file (see `config/hosts.confi
 Initial database load:
 
 ```
-./runscripts/smartrun.sh bftsmart.microbenchmark.tpcc.TPCCGeneratorApplication
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCGeneratorApplication
 ```
 
 You can run the TPCC Server by executing the following commands, from within the main directory across four different consoles (3 replicas, to tolerate 1 fault):
 
 ```
-./runscripts/smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 0
-./runscripts/smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 1
-./runscripts/smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 2
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 0
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 1
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 2
 ```
 
 The TPCC worload must be specified in the properties file (see `config/workload.properties`). You can run the TPCC Client by executing the following command, from within the main directory:
 
 ```
-./runscripts/smartrun.sh bftsmart.microbenchmark.tpcc.TPCCClientApplication
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCClientApplication
 ```
 
 ### Contribution guidelines ###
@@ -50,7 +54,3 @@ The TPCC worload must be specified in the properties file (see `config/workload.
 
 * Repo owner or admin
 * Other community or team contact
-
-### Compiling#
-
-Type `./gradlew installDist` in the main directory. The required jar files and default configuration files will be available in the `build/install/library` directory.

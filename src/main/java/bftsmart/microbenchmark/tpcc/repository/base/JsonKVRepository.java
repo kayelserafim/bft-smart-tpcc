@@ -54,8 +54,8 @@ public class JsonKVRepository<T extends PRObject> implements KVRepository<Tuple,
 
     @Override
     public T save(Tuple key, T value) {
-        records.computeIfAbsent(value.getKey(), k -> newKeySet()).add(value);
-        value.getSecondaryKeys().forEach(idx -> indexes.computeIfAbsent(idx, k -> newKeySet()).add(value.getKey()));
+        records.computeIfAbsent(key, k -> newKeySet()).add(value);
+        value.getSecondaryKeys().forEach(idx -> indexes.computeIfAbsent(idx, k -> newKeySet()).add(key));
         return value;
     }
 

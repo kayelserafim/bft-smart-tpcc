@@ -2,14 +2,13 @@ package bftsmart.microbenchmark.tpcc.config.module;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import com.google.common.base.Stopwatch;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -41,12 +40,13 @@ public class DataFileModule extends AbstractModule {
         File file = TPCCConfig.getTPCCDataFile(workloadConfig.getFileName());
         LOGGER.info("Reading TpccData from Json file {}", file.getName());
 
-        Instant start = Instant.now();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         TPCCData tpccData = Try.of(() -> objectMapper.readValue(file, TPCCData.class))
                 .onFailure(e -> LOGGER.error("Erro ao ler o arquivo [{}].", file.getName(), e))
                 .getOrElse(new TPCCData());
 
-        LOGGER.info("Data read in {} seconds.", Duration.between(start, Instant.now()).getSeconds());
+        stopwatch.stop();
+        LOGGER.info("Data read in {} seconds.", stopwatch.elapsed().getSeconds());
         return tpccData;
     }
 

@@ -1,9 +1,6 @@
 package bftsmart.microbenchmark.tpcc.config;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -56,10 +53,6 @@ public class WorkloadConfig {
         return runMins;
     }
 
-    public long getRunMins(TimeUnit unit) {
-        return unit.convert(runMins, TimeUnit.MINUTES);
-    }
-
     public Integer getLimitTxnsPerMin() {
         return limitTxnsPerMin;
     }
@@ -105,7 +98,35 @@ public class WorkloadConfig {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        StringBuilder builder = new StringBuilder();
+        builder.append("WorkloadConfig [warehouses=")
+                .append(warehouses)
+                .append(", terminals=")
+                .append(terminals)
+                .append(", txnsPerTerminal=")
+                .append(txnsPerTerminal)
+                .append(", runMins=")
+                .append(runMins)
+                .append(", limitTxnsPerMin=")
+                .append(limitTxnsPerMin)
+                .append(", warmupIterations=")
+                .append(warmupIterations)
+                .append(", newOrderWeight=")
+                .append(newOrderWeight)
+                .append(", paymentWeight=")
+                .append(paymentWeight)
+                .append(", orderStatusWeight=")
+                .append(orderStatusWeight)
+                .append(", deliveryWeight=")
+                .append(deliveryWeight)
+                .append(", stockLevelWeight=")
+                .append(stockLevelWeight)
+                .append(", writeTransactions=")
+                .append(writeTransactions)
+                .append(", readTransactions=")
+                .append(readTransactions)
+                .append("]");
+        return builder.toString();
     }
 
 }
