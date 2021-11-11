@@ -10,7 +10,7 @@ public class BenchResultSpreadsheetBuilder {
     private final SpreadsheetBuilder spreadsheetBuilder;
 
     private static final String[] HEADER =
-            { "Transaction", "Number of requests", "Number of errors", "Elapsed time (ms)", "Throughput" };
+            { "Transaction", "Number of requests", "Number of errors", "Latency (ms)", "Throughput (op/ms)" };
 
     private BenchResultSpreadsheetBuilder(String sheetName) {
         this.spreadsheetBuilder = SpreadsheetBuilder.builder(sheetName);

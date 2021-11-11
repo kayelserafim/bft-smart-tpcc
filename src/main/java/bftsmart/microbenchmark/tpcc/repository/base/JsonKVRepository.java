@@ -31,7 +31,7 @@ public class JsonKVRepository<T extends PRObject> implements KVRepository<Tuple,
     @Inject
     @SuppressWarnings("unchecked")
     JsonKVRepository(final TPCCData tpccData) {
-        LOGGER.info("Initializing JsonKVDao");
+        LOGGER.info("Initializing KVRepository");
 
         tpccData.getCustomers().parallelStream().forEach(value -> save((T) value));
         tpccData.getDistricts().parallelStream().forEach(value -> save((T) value));
@@ -43,8 +43,8 @@ public class JsonKVRepository<T extends PRObject> implements KVRepository<Tuple,
         tpccData.getStocks().parallelStream().forEach(value -> save((T) value));
         tpccData.getWarehouses().parallelStream().forEach(value -> save((T) value));
 
-        LOGGER.info("JsonKVDao initialized. Values: {} ", records.values().stream().flatMap(Set::stream).count());
-        LOGGER.info("JsonKVDao initialized. Indexes: {} ", indexes.values().stream().flatMap(Set::stream).count());
+        LOGGER.info("KVRepository initialized. Values: {} ", records.values().stream().flatMap(Set::stream).count());
+        LOGGER.info("KVRepository initialized. Indexes: {} ", indexes.values().stream().flatMap(Set::stream).count());
     }
 
     @Override

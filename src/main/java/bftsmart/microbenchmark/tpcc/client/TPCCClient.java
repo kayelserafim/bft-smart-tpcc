@@ -1,7 +1,5 @@
 package bftsmart.microbenchmark.tpcc.client;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,6 +13,7 @@ import org.apache.commons.lang3.concurrent.TimedSemaphore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
 
@@ -53,7 +52,7 @@ public class TPCCClient {
 
     public void start() {
         List<Future<List<RawResult>>> tasks = new ArrayList<>();
-        Instant start = Instant.now();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         for (int i = 0; i < workload.getTerminals(); i++) {
             TPCCTerminalData terminalData = TPCCTerminalData.builder()
                     .terminalId(i)
@@ -74,7 +73,7 @@ public class TPCCClient {
                 .collect(Collectors.toList());
 
         LOGGER.info("{} has finished", Thread.currentThread().getName());
-        LOGGER.info("{}ms elapsed time", Duration.between(start, Instant.now()).toMillis());
+        LOGGER.info("{}ms elapsed time", stopwatch.stop().elapsed().toMillis());
 
         metricCollector.writeResults(results);
         metricCollector.writeResultsByTransaction(results);

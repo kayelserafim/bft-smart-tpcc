@@ -54,7 +54,7 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
                     warmupIterations--;
                 }
             }
-            LOGGER.debug("Warmup iterations {} executed", warmupIterations);
+            LOGGER.debug("Warmup iterations executed");
         }
     }
 
@@ -68,7 +68,7 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
                     numTransactions--;
                 }
             }
-            LOGGER.debug("transactions {} executed", numTransactions);
+            LOGGER.debug("transactions executed");
         } else {
             Instant instantToWait = terminalData.instantToWait();
             LOGGER.debug("Executing for a limited time...");

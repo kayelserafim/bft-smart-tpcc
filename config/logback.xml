@@ -8,14 +8,31 @@
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
 		</encoder>
 	</appender>
-	
-	<appender name="ASYNC"
+
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<file>logs/application.log</file>
+		<append>true</append>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="STDOUT-ASYNC"
 		class="ch.qos.logback.classic.AsyncAppender">
 		<appender-ref ref="STDOUT" />
 	</appender>
 
-	<root level="INFO">
-		<appender-ref ref="ASYNC" />
+	<appender name="FILE-ASYNC"
+		class="ch.qos.logback.classic.AsyncAppender">
+		<appender-ref ref="FILE" />
+	</appender>
+
+	<logger name="bftsmart" level="DEBUG">
+		<appender-ref ref="FILE-ASYNC" />
+	</logger>
+
+	<root level="DEBUG">
+		<appender-ref ref="STDOUT-ASYNC" />
 	</root>
 
 </configuration>

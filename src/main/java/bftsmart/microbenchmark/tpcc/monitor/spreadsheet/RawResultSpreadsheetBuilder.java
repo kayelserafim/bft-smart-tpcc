@@ -10,7 +10,7 @@ public class RawResultSpreadsheetBuilder {
     private final SpreadsheetBuilder spreadsheetBuilder;
 
     private static final String[] HEADER =
-            { "Command Type", "Terminal Id", "Terminal Name", "Elapsed time (ms)", "Result", "Message" };
+            { "Command Type", "Terminal Id", "Terminal Name", "Latency (ms)", "Result", "Message" };
 
     private RawResultSpreadsheetBuilder(String sheetName) {
         this.spreadsheetBuilder = SpreadsheetBuilder.builder(sheetName);
