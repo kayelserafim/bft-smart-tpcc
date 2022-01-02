@@ -53,6 +53,19 @@ public class PaymentTransaction implements Transaction {
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
 
+        Customer customer;
+        if (BooleanUtils.isTrue(input.getCustomerByName())) {
+            // clause 2.6.2.2 (dot 3, Case 2)
+            customer = customerRepository.findBy(input.getCustomerName(), districtId, warehouseId);
+            if (customer == null) {
+                String msg = "Customer [%s] not found. D_ID [%s], W_ID [%s]";
+                return TPCCCommand.newErrorMessage(aRequest, msg, input.getCustomerName(), districtId, warehouseId);
+            }
+        } else {
+            // clause 2.6.2.2 (dot 3, Case 1)
+            customer = customerRepository.findBy(input.getCustomerId(), districtId, warehouseId);
+        }
+
         Warehouse warehouse = warehouseRepository.find(warehouseId)
                 .map(Warehouse::from)
                 .map(builder -> builder.addYearToDateBalance(input.getPaymentAmount()))
@@ -67,18 +80,6 @@ public class PaymentTransaction implements Transaction {
                 .map(districtRepository::save)
                 .orElseThrow(() -> new NotFoundException("District %s not found", districtId));
 
-        Customer customer;
-        if (BooleanUtils.isTrue(input.getCustomerByName())) {
-            // clause 2.6.2.2 (dot 3, Case 2)
-            customer = customerRepository.findBy(input.getCustomerName(), districtId, warehouseId);
-            if (customer == null) {
-                String msg = "Customer [%s] not found. D_ID [%s], W_ID [%s]";
-                return TPCCCommand.newErrorMessage(aRequest, msg, input.getCustomerName(), districtId, warehouseId);
-            }
-        } else {
-            // clause 2.6.2.2 (dot 3, Case 1)
-            customer = customerRepository.findBy(input.getCustomerId(), districtId, warehouseId);
-        }
         if ("BC".equals(customer.getCredit())) {
             String data = new StringBuilder().append(input.getCustomerId())
                     .append(" ")

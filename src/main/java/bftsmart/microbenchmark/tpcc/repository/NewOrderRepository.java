@@ -10,6 +10,7 @@ import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.repository.base.KVRepository;
 import bftsmart.microbenchmark.tpcc.table.NewOrder;
+import bftsmart.microbenchmark.tpcc.table.Order;
 
 @Singleton
 public class NewOrderRepository {
@@ -18,9 +19,15 @@ public class NewOrderRepository {
     private KVRepository<Tuple, NewOrder> newOrderDao;
 
     public NewOrder save(Integer nextOrderId, Integer districtId, Integer warehouseId) {
-        NewOrder newOrder =
-                NewOrder.builder().orderId(nextOrderId).districtId(districtId).warehouseId(warehouseId).build();
+        return save(NewOrder.builder().orderId(nextOrderId).districtId(districtId).warehouseId(warehouseId).build());
+    }
+
+    public NewOrder save(NewOrder newOrder) {
         return newOrderDao.save(newOrder);
+    }
+
+    public boolean deleteBy(Order order) {
+        return deleteBy(order.getWarehouseId(), order.getDistrictId(), order.getOrderId());
     }
 
     public boolean deleteBy(Integer warehouseId, Integer districtId, Integer orderId) {

@@ -91,8 +91,7 @@ public class WorkloadConfig {
 
     public String getFileName() {
         StringBuilder sb = new StringBuilder(64);
-        sb.append("t_").append(terminals);
-        sb.append("_w_").append(warehouses);
+        sb.append("w_").append(warehouses);
         sb.append("_d_").append(TPCCConfig.DIST_PER_WHSE * warehouses);
         sb.append("_c_").append(TPCCConfig.CUST_PER_DIST * TPCCConfig.DIST_PER_WHSE * warehouses);
         sb.append("_i_").append(TPCCConfig.NB_MAX_ITEM * warehouses);

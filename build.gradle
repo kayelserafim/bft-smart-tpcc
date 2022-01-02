@@ -39,10 +39,6 @@ distributions {
     }
 }
 
-wrapper {
-    gradleVersion = '6.8.3'
-}
-
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
@@ -80,8 +76,7 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
     
     // Logback
-   	implementation group: 'ch.qos.logback', name: 'logback-core', version: '1.2.5'
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.5'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
     
     // Netty
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.67.Final'
