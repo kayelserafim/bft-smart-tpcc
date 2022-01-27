@@ -90,10 +90,12 @@ public class WorkloadConfig {
     }
 
     public String getFileName() {
-        int distPerWhse = TPCCConfig.DIST_PER_WHSE * warehouses;
-        int custPerDist = TPCCConfig.CUST_PER_DIST * distPerWhse;
-        int stockItemsPerWhse = TPCCConfig.NB_MAX_ITEM * warehouses;
-        return "w_" + warehouses + "_d_" + distPerWhse + "_c_" + custPerDist + "_i_" + stockItemsPerWhse;
+        StringBuilder sb = new StringBuilder(64);
+        sb.append("w_").append(warehouses);
+        sb.append("_d_").append(TPCCConfig.DIST_PER_WHSE * warehouses);
+        sb.append("_c_").append(TPCCConfig.CUST_PER_DIST * TPCCConfig.DIST_PER_WHSE * warehouses);
+        sb.append("_i_").append(TPCCConfig.NB_MAX_ITEM * warehouses);
+        return sb.toString();
     }
 
     @Override

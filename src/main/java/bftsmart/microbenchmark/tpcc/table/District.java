@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Triplet;
@@ -28,6 +29,8 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
 public class District implements PRObject {
 
     private static final long serialVersionUID = 6392498602231684536L;
+
+    private static final AtomicInteger NEXT_ORDER_ID = new AtomicInteger();
 
     private static final ModelType MODEL_TYPE = ModelType.DISTRICT;
 
@@ -298,7 +301,8 @@ public class District implements PRObject {
         }
 
         public Builder nextOrderIdIncrement() {
-            this.nextOrderId = Optional.ofNullable(nextOrderId).orElse(0) + 1;
+            NEXT_ORDER_ID.compareAndSet(0, nextOrderId);
+            this.nextOrderId = NEXT_ORDER_ID.getAndIncrement();
             return this;
         }
 

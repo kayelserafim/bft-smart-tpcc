@@ -3,6 +3,8 @@ package bftsmart.microbenchmark.tpcc.server.transaction.neworder;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -93,19 +95,30 @@ public class NewOrderTransaction implements Transaction {
         orderBuilder.customerId(customer.getCustomerId())
                 .customerLast(customer.getLast())
                 .customerCredit(customer.getCredit())
-                .discount(customer.getDiscount());
+                .discount(customer.getDiscount())
+                .orderId(nextOrderId);
 
         // A new row is inserted into both the NEW-ORDER table and the ORDER
         // table to reflect the creation of the new order. O_CARRIER_ID is set
         // to a null value. If the order includes only home order-lines, then
         // O_ALL_LOCAL is set to 1, otherwise O_ALL_LOCAL is set to 0.
-        NewOrder newOrder = newOrderRepository.save(nextOrderId, districtId, warehouseId);
-        orderBuilder.orderId(newOrder.getOrderId());
+        NewOrder newOrder =
+                NewOrder.builder().orderId(nextOrderId).districtId(districtId).warehouseId(warehouseId).build();
 
-        districtRepository.save(District.from(district).nextOrderIdIncrement().build());
+        // The number of items, O_OL_CNT, is computed to match ol_cnt
+        Order order = Order.builder()
+                .orderId(nextOrderId)
+                .districtId(input.getDistrictId())
+                .warehouseId(input.getWarehouseId())
+                .customerId(input.getCustomerId())
+                .entryDate(Times.currentTimeMillis())
+                .orderLineCounter(input.getOrderLineCnt())
+                .allLocal(input.getOrderAllLocal())
+                .build();
 
-        Order order = orderRepository.save(nextOrderId, input);
         // For each O_OL_CNT item on the order: see clause 2.4.2.2 (dot 8)
+        List<Stock> stocks = new ArrayList<>();
+        List<OrderLine> orderLines = new ArrayList<>();
         for (int index = 1; index <= order.getOrderLineCounter(); index++) {
             OrderLineOutput.Builder orderLineOutput = OrderLineOutput.builder();
             int number = index;
@@ -148,7 +161,8 @@ public class NewOrderTransaction implements Transaction {
                     .addYearToDate(quantity)
                     .orderCountIncrement()
                     .build();
-            stockRepository.save(stock);
+
+            stocks.add(stock);
 
             // clause 2.4.2.2 (dot 8.3)
             BigDecimal amount = item.getPrice().multiply(BigDecimal.valueOf(quantity));
@@ -182,8 +196,15 @@ public class NewOrderTransaction implements Transaction {
                     .districtInfo(districtInfo)
                     .build();
 
-            orderLineRepository.save(orderLine);
+            orderLines.add(orderLine);
         }
+
+        newOrderRepository.save(newOrder);
+        districtRepository.save(District.from(district).nextOrderIdIncrement().build());
+        orderRepository.save(order);
+        stocks.forEach(stockRepository::save);
+        orderLines.forEach(orderLineRepository::save);
+
         return TPCCCommand.newSuccessMessage(aRequest, outputScreen(orderBuilder.build()));
     }
 

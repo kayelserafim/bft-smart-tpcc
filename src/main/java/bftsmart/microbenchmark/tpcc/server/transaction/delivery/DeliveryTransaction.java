@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,46 +57,53 @@ public class DeliveryTransaction implements Transaction {
                 .orderCarrierId(input.getOrderCarrierId());
 
         // clause 2.7.4.1
-        List<OrderOutput> orderIds = new ArrayList<>();
+        List<Customer.Builder> customers = new ArrayList<>();
+        List<Order> orders = new ArrayList<>();
+        List<OrderLine> orderLines = new ArrayList<>();
         for (int districtId = 1; districtId <= TPCCConfig.DIST_PER_WHSE; districtId++) {
             Integer warehouseId = input.getWarehouseId();
             Integer orderId =
                     newOrderRepository.findFirstBy(districtId, warehouseId).map(NewOrder::getOrderId).orElse(-1);
-            orderIds.add(new OrderOutput(districtId, orderId));
 
             if (orderId != -1) {
-                newOrderRepository.deleteBy(orderId, districtId, warehouseId);
                 Order order = orderRepository.findByOrderId(orderId, districtId, warehouseId);
                 if (order == null) {
                     String message = String.format("Order [%s] not found", orderId);
                     return TPCCCommand.newErrorMessage(aRequest, message);
                 }
-                orderRepository.save(Order.from(order).carrierId(input.getOrderCarrierId()).build());
+                Customer customer = customerRepository.findBy(order.getCustomerId(), districtId, warehouseId);
 
-                List<OrderLine> orderLines = orderLineRepository.findBy(orderId, districtId, warehouseId)
+                if (customer == null) {
+                    String msg = "Customer [%s] not found. D_ID [%s], W_ID [%s]";
+                    return TPCCCommand.newErrorMessage(aRequest, msg, order.getCustomerId(), districtId, warehouseId);
+                }
+
+                List<OrderLine> orderLineList = orderLineRepository.findBy(orderId, districtId, warehouseId)
                         .parallelStream()
                         .map(OrderLine::from)
                         .map(builder -> builder.deliveryDateTime(Times.currentTimeMillis()))
                         .map(OrderLine.Builder::build)
-                        .map(orderLineRepository::save)
                         .collect(Collectors.toList());
 
-                BigDecimal orderLineTotal =
-                        orderLines.parallelStream().map(OrderLine::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+                BigDecimal orderLineTotal = orderLineList.parallelStream()
+                        .map(OrderLine::getAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-                Optional<Customer> customer = customerRepository.find(order.getCustomerId(), districtId, warehouseId)
-                        .map(Customer::from)
-                        .map(builder -> builder.addBalance(orderLineTotal).deliveryCntIncrement())
-                        .map(Customer.Builder::build)
-                        .map(customerRepository::save);
-
-                if (!customer.isPresent()) {
-                    String msg = "Customer [%s] not found. D_ID [%s], W_ID [%s]";
-                    return TPCCCommand.newErrorMessage(aRequest, msg, order.getCustomerId(), districtId, warehouseId);
-                }
+                customers.add(Customer.from(customer).addBalance(orderLineTotal));
+                orders.add(Order.from(order).carrierId(input.getOrderCarrierId()).build());
+                orderLines.addAll(orderLineList);
             }
         }
-        deliveryBuilder.orderIds(orderIds);
+
+        orders.forEach(order -> {
+            orderRepository.save(order);
+            newOrderRepository.deleteBy(order);
+            deliveryBuilder.orderId(new OrderOutput(order.getDistrictId(), order.getOrderId()));
+        });
+        customers.parallelStream()
+                .map(builder -> builder.deliveryCntIncrement().build())
+                .forEach(customerRepository::save);
+        orderLines.forEach(orderLineRepository::save);
 
         return TPCCCommand.newSuccessMessage(aRequest, outputScreen(deliveryBuilder.build()));
     }

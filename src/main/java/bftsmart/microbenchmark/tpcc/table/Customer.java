@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Quartet;
@@ -29,6 +30,8 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
 public class Customer implements PRObject {
 
     private static final long serialVersionUID = -3840013081887501896L;
+    
+    private static final AtomicInteger DELIVERY_CNT = new AtomicInteger();
 
     public static final ModelType MODEL_TYPE = ModelType.CUSTOMER;
 
@@ -478,7 +481,7 @@ public class Customer implements PRObject {
         }
 
         public Builder deliveryCntIncrement() {
-            this.deliveryCnt = Optional.ofNullable(deliveryCnt).orElse(0) + 1;
+            this.deliveryCnt = DELIVERY_CNT.incrementAndGet();
             return this;
         }
 

@@ -236,16 +236,16 @@ public class TPCCDataGenerator {
                         tpccData.getNewOrders().add(newOrder);
                     }
 
-                    createOrderLine(w, d, o, order);
+                    createOrderLine(w, d, order);
                 }
             }
         }
     }
 
-    private void createOrderLine(int w, int d, int o, Order order) {
+    private void createOrderLine(int w, int d, Order order) {
         for (int ol = 1; ol <= order.getOrderLineCounter(); ol++) {
             OrderLine orderLine = OrderLine.builder()
-                    .orderId(o)
+                    .orderId(order.getOrderId())
                     .districtId(d)
                     .warehouseId(w)
                     .number(ol)

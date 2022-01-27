@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.delivery.output;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DeliveryOutput {
@@ -55,6 +56,14 @@ public class DeliveryOutput {
 
         public Builder orderCarrierId(Integer orderCarrierId) {
             this.orderCarrierId = orderCarrierId;
+            return this;
+        }
+
+        public Builder orderId(OrderOutput orderId) {
+            if (orderIds == null) {
+                orderIds = new ArrayList<>();
+            }
+            orderIds.add(orderId);
             return this;
         }
 

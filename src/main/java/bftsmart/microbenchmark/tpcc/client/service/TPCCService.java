@@ -45,13 +45,13 @@ public class TPCCService {
         }
     }
 
-    private TPCCCommand getResponse(TPCCCommand message, byte[] response) {
+    private TPCCCommand getResponse(TPCCCommand tpccCommand, byte[] response) {
         TPCCCommand command;
         if (response != null) {
             command = TPCCCommand.getObject(response);
         } else {
             String errorMessage = "Server replied null value for [%s]";
-            command = TPCCCommand.newErrorMessage(message, errorMessage, message.toString());
+            command = TPCCCommand.newErrorMessage(tpccCommand, errorMessage, tpccCommand.toString());
         }
         return command;
     }
