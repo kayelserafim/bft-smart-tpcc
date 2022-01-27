@@ -22,13 +22,13 @@ public class OrderLineRepository {
         return orderLineDao.save(orderLine);
     }
 
-    public List<OrderLine> findBy(Integer orderId, Integer districtId, Integer warehouseId) {
+    public List<OrderLine> find(Integer orderId, Integer districtId, Integer warehouseId) {
         return orderLineDao.findAll(OrderLine.orderKey(warehouseId, districtId, orderId))
                 .stream()
                 .collect(Collectors.toList());
     }
 
-    public List<OrderLine> findBy(District district, Integer warehouseId) {
+    public List<OrderLine> find(District district, Integer warehouseId) {
         return orderLineDao.findAll(OrderLine.districtKey(warehouseId, warehouseId))
                 .parallelStream()
                 .filter(ol -> ol.getOrderId() < district.getNextOrderId())

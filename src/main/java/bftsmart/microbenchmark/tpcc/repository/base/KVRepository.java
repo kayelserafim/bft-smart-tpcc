@@ -6,17 +6,17 @@ import java.util.Set;
 import com.google.inject.ImplementedBy;
 
 @ImplementedBy(JsonKVRepository.class)
-public interface KVRepository<K, T> {
+public interface KVRepository<K, V> {
 
-    T save(T value);
+    V save(V value);
 
-    T save(K key, T value);
+    V save(K key, V value);
 
-    Optional<T> find(K key);
+    Optional<V> find(K key);
 
-    Set<T> findAll(K key);
+    Set<V> findAll(K key);
 
-    Set<T> findAllIn(Set<K> keys);
+    Set<V> findAllIn(Set<K> keys);
 
     boolean delete(K key);
 

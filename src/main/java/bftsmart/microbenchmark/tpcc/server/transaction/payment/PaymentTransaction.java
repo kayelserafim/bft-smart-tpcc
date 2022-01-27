@@ -9,7 +9,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.exception.NotFoundException;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
 import bftsmart.microbenchmark.tpcc.repository.CustomerRepository;
@@ -53,39 +52,37 @@ public class PaymentTransaction implements Transaction {
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
 
+        Integer customerWarehouseId = input.getCustomerWarehouseId();
+        Integer customerDistrictId = input.getCustomerDistrictId();
         Customer customer;
         if (BooleanUtils.isTrue(input.getCustomerByName())) {
             // clause 2.6.2.2 (dot 3, Case 2)
-            customer = customerRepository.findBy(input.getCustomerName(), districtId, warehouseId);
+            customer = customerRepository.find(input.getCustomerName(), districtId, warehouseId);
             if (customer == null) {
-                String msg = "Customer [%s] not found. D_ID [%s], W_ID [%s]";
-                return TPCCCommand.newErrorMessage(aRequest, msg, input.getCustomerName(), districtId, warehouseId);
+                String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
+                String msg = String.format(text, input.getCustomerName(), districtId, warehouseId);
+                return TPCCCommand.newErrorMessage(aRequest, msg);
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
-            customer = customerRepository.findBy(input.getCustomerId(), districtId, warehouseId);
+            customer = customerRepository.find(input.getCustomerId(), districtId, warehouseId);
         }
 
-        Warehouse warehouse = warehouseRepository.find(warehouseId)
-                .map(Warehouse::from)
-                .map(builder -> builder.addYearToDateBalance(input.getPaymentAmount()))
-                .map(Warehouse.Builder::build)
-                .map(warehouseRepository::save)
-                .orElseThrow(() -> new NotFoundException("Warehouse %s not found", warehouseId));
+        Warehouse warehouse = Warehouse.from(warehouseRepository.find(warehouseId))
+                .addYearToDateBalance(input.getPaymentAmount())
+                .build();
 
-        District district = districtRepository.find(districtId, warehouseId)
-                .map(District::from)
-                .map(builder -> builder.addYearToDateBalance(input.getPaymentAmount()))
-                .map(District.Builder::build)
-                .map(districtRepository::save)
-                .orElseThrow(() -> new NotFoundException("District %s not found", districtId));
+        District district = District.from(districtRepository.find(districtId, warehouseId))
+                .addYearToDateBalance(input.getPaymentAmount())
+                .build();
 
+        String data = null;
         if ("BC".equals(customer.getCredit())) {
-            String data = new StringBuilder().append(input.getCustomerId())
+            data = new StringBuilder().append(input.getCustomerId())
                     .append(" ")
-                    .append(input.getCustomerDistrictId())
+                    .append(customerDistrictId)
                     .append(" ")
-                    .append(input.getCustomerWarehouseId())
+                    .append(customerWarehouseId)
                     .append(" ")
                     .append(input.getDistrictId())
                     .append(" ")
@@ -102,7 +99,6 @@ public class PaymentTransaction implements Transaction {
             if (data.length() > 500) {
                 data = data.substring(0, 500);
             }
-            customerRepository.save(Customer.from(customer).data(data).addBalance(input.getPaymentAmount()).build());
         }
         String warehouseName = warehouse.getName();
         if (warehouseName.length() > 10) {
@@ -115,16 +111,19 @@ public class PaymentTransaction implements Transaction {
         String historyData = warehouseName + "    " + districtName;
 
         History history = History.builder()
-                .customerDistrictId(input.getCustomerDistrictId())
-                .customerWarehouseId(input.getCustomerWarehouseId())
+                .customerDistrictId(customerDistrictId)
+                .customerWarehouseId(customerWarehouseId)
                 .customerId(input.getCustomerId())
                 .districtId(input.getDistrictId())
                 .warehouseId(input.getWarehouseId())
-                .date(Times.currentTimeMillis())
+                .date(Times.now())
                 .amount(input.getPaymentAmount())
                 .data(historyData)
                 .build();
 
+        warehouseRepository.save(warehouse);
+        districtRepository.save(district);
+        customerRepository.save(Customer.from(customer).data(data).addBalance(input.getPaymentAmount()).build());
         historyRepository.save(history);
 
         paymentBuilder.warehouse(warehouse).district(district).customer(customer).amountPaid(input.getPaymentAmount());

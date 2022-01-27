@@ -53,14 +53,15 @@ public class OrderStatusTransaction implements Transaction {
         Customer customer;
         if (BooleanUtils.isTrue(input.getCustomerByName())) {
             // clause 2.6.2.2 (dot 3, Case 2)
-            customer = customerRepository.findBy(input.getCustomerName(), districtId, warehouseId);
+            customer = customerRepository.find(input.getCustomerName(), districtId, warehouseId);
             if (customer == null) {
-                String msg = "Customer [%s] not found. D_ID [%s], W_ID [%s]";
-                return TPCCCommand.newErrorMessage(aRequest, msg, input.getCustomerName(), districtId, warehouseId);
+                String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
+                String msg = String.format(text, input.getCustomerName(), districtId, warehouseId);
+                return TPCCCommand.newErrorMessage(aRequest, msg);
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
-            customer = customerRepository.findBy(input.getCustomerId(), districtId, warehouseId);
+            customer = customerRepository.find(input.getCustomerId(), districtId, warehouseId);
         }
 
         orderBuilder.warehouseId(warehouseId)
@@ -75,7 +76,7 @@ public class OrderStatusTransaction implements Transaction {
         if (order != null) {
             orderBuilder.orderId(order.getOrderId()).entryDate(order.getEntryDate()).carrierId(order.getCarrierId());
             // clause 2.6.2.2 (dot 5)
-            List<OrderLine> orderLines = orderLineRepository.findBy(order.getOrderId(), districtId, warehouseId);
+            List<OrderLine> orderLines = orderLineRepository.find(order.getOrderId(), districtId, warehouseId);
 
             for (OrderLine orderLine : orderLines) {
                 OrderLineOutput orderLineOutput = OrderLineOutput.builder()

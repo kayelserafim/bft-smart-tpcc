@@ -50,8 +50,8 @@ public class TPCCService {
         if (response != null) {
             command = TPCCCommand.getObject(response);
         } else {
-            String errorMessage = "Server replied null value for [%s]";
-            command = TPCCCommand.newErrorMessage(tpccCommand, errorMessage, tpccCommand.toString());
+            String errorMessage = String.format("Server replied null value for [%s]", tpccCommand);
+            command = TPCCCommand.newErrorMessage(tpccCommand, errorMessage);
         }
         return command;
     }

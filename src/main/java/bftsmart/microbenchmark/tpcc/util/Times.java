@@ -15,13 +15,12 @@ public class Times {
 
     /**
      * Returns a copy of this LocalDateTime in milliseconds with the time by
-     * <code>ChronoUnit.MINUTES</code>.
-     * truncated.
+     * <code>ChronoUnit.MINUTES</code> truncated.
      * 
      * @return the number of milliseconds since the epoch of
      *         1970-01-01T00:00:00Z
      */
-    public static long currentTimeMillis() {
+    public static long now() {
         return LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).toInstant(ZoneOffset.UTC).toEpochMilli();
     }
 

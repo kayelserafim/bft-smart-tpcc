@@ -1,6 +1,6 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.neworder.input;
 
-import java.util.Arrays;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,11 +17,11 @@ public class NewOrderInput {
     @JsonProperty("o_all_local")
     private Integer orderAllLocal;
     @JsonProperty("itemIds")
-    private Integer[] itemIds;
+    private List<Integer> itemIds;
     @JsonProperty("supplierWarehouseIDs")
-    private Integer[] supplierWarehouseIds;
+    private List<Integer> supplierWarehouseIds;
     @JsonProperty("orderQuantities")
-    private Integer[] orderQuantities;
+    private List<Integer> orderQuantities;
 
     public Integer getWarehouseId() {
         return warehouseId;
@@ -63,27 +63,27 @@ public class NewOrderInput {
         this.orderAllLocal = orderAllLocal;
     }
 
-    public Integer[] getItemIds() {
+    public List<Integer> getItemIds() {
         return itemIds;
     }
 
-    public void setItemIds(Integer[] itemIds) {
+    public void setItemIds(List<Integer> itemIds) {
         this.itemIds = itemIds;
     }
 
-    public Integer[] getSupplierWarehouseIds() {
+    public List<Integer> getSupplierWarehouseIds() {
         return supplierWarehouseIds;
     }
 
-    public void setSupplierWarehouseIds(Integer[] supplierWarehouseIds) {
+    public void setSupplierWarehouseIds(List<Integer> supplierWarehouseIds) {
         this.supplierWarehouseIds = supplierWarehouseIds;
     }
 
-    public Integer[] getOrderQuantities() {
+    public List<Integer> getOrderQuantities() {
         return orderQuantities;
     }
 
-    public void setOrderQuantities(Integer[] orderQuantities) {
+    public void setOrderQuantities(List<Integer> orderQuantities) {
         this.orderQuantities = orderQuantities;
     }
 
@@ -101,11 +101,11 @@ public class NewOrderInput {
                 .append(", orderAllLocal=")
                 .append(orderAllLocal)
                 .append(", itemIds=")
-                .append(Arrays.toString(itemIds))
+                .append(itemIds)
                 .append(", supplierWarehouseIds=")
-                .append(Arrays.toString(supplierWarehouseIds))
+                .append(supplierWarehouseIds)
                 .append(", orderQuantities=")
-                .append(Arrays.toString(orderQuantities))
+                .append(orderQuantities)
                 .append(']');
         return builder.toString();
     }

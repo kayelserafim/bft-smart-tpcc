@@ -55,7 +55,7 @@ public class TPCCCommand implements Serializable {
 
     public static TPCCCommand from(TPCCCommand command, String description) {
         TPCCCommand tpccMessage = from(command);
-        tpccMessage.message += ". OBS.: " + description;
+        tpccMessage.message += " " + description;
         return tpccMessage;
     }
 
@@ -70,13 +70,13 @@ public class TPCCCommand implements Serializable {
         return tpccMessage;
     }
 
-    public static TPCCCommand newErrorMessage(TPCCCommand command, String errorMessage, Object... args) {
+    public static TPCCCommand newErrorMessage(TPCCCommand command, String errorMessage) {
         TPCCCommand tpccMessage = new TPCCCommand();
         if (command != null) {
             tpccMessage.commandType = command.getCommandType();
             tpccMessage.request = command.getRequest();
         }
-        tpccMessage.message = String.format(errorMessage, args);
+        tpccMessage.message = errorMessage;
         tpccMessage.result = -1;
         return tpccMessage;
     }

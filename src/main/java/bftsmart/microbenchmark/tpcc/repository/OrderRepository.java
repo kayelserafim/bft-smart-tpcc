@@ -15,11 +15,13 @@ public class OrderRepository {
     private KVRepository<Tuple, Order> orderDao;
 
     public Order findByOrderId(Integer orderId, Integer districtId, Integer warehouseId) {
-        return orderDao.find(Order.key(warehouseId, districtId, orderId)).orElse(null);
+        Tuple key = Order.key(warehouseId, districtId, orderId);
+        return orderDao.find(key).orElse(null);
     }
 
     public Order findByCustomerId(Integer customerId, Integer districtId, Integer warehouseId) {
-        return orderDao.find(Order.customerKey(warehouseId, districtId, customerId)).orElse(null);
+        Tuple customerKey = Order.customerKey(warehouseId, districtId, customerId);
+        return orderDao.find(customerKey).orElse(null);
     }
 
     public Order save(Order order) {

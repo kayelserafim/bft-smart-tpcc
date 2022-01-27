@@ -5,6 +5,7 @@ import org.javatuples.Tuple;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import bftsmart.microbenchmark.tpcc.exception.NotFoundException;
 import bftsmart.microbenchmark.tpcc.repository.base.KVRepository;
 import bftsmart.microbenchmark.tpcc.table.Item;
 
@@ -14,8 +15,9 @@ public class ItemRepository {
     @Inject
     private KVRepository<Tuple, Item> itemDao;
 
-    public Item findBy(int itemId) {
-        return itemDao.find(Item.key(itemId)).orElse(null);
+    public Item find(int itemId) {
+        Tuple key = Item.key(itemId);
+        return itemDao.find(key).orElseThrow(() -> new NotFoundException("Item %s not found", key));
     }
 
 }

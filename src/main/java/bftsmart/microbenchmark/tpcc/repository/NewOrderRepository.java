@@ -19,22 +19,25 @@ public class NewOrderRepository {
     private KVRepository<Tuple, NewOrder> newOrderDao;
 
     public NewOrder save(Integer nextOrderId, Integer districtId, Integer warehouseId) {
-        return save(NewOrder.builder().orderId(nextOrderId).districtId(districtId).warehouseId(warehouseId).build());
+        NewOrder newOrder =
+                NewOrder.builder().orderId(nextOrderId).districtId(districtId).warehouseId(warehouseId).build();
+        return save(newOrder);
     }
 
     public NewOrder save(NewOrder newOrder) {
         return newOrderDao.save(newOrder);
     }
 
-    public boolean deleteBy(Order order) {
-        return deleteBy(order.getWarehouseId(), order.getDistrictId(), order.getOrderId());
+    public boolean delete(Order order) {
+        return delete(order.getWarehouseId(), order.getDistrictId(), order.getOrderId());
     }
 
-    public boolean deleteBy(Integer warehouseId, Integer districtId, Integer orderId) {
-        return newOrderDao.delete(NewOrder.key(orderId, districtId, warehouseId));
+    public boolean delete(Integer warehouseId, Integer districtId, Integer orderId) {
+        Tuple key = NewOrder.key(orderId, districtId, warehouseId);
+        return newOrderDao.delete(key);
     }
 
-    public Optional<NewOrder> findFirstBy(Integer districtId, Integer warehouseId) {
+    public Optional<NewOrder> findFirst(Integer districtId, Integer warehouseId) {
         return newOrderDao.findAll(NewOrder.districtKey(warehouseId, districtId))
                 .stream()
                 .sorted(Comparator.comparing(NewOrder::getOrderId))

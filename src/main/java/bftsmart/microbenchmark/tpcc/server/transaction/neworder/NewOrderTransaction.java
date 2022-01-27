@@ -76,14 +76,14 @@ public class NewOrderTransaction implements Transaction {
 
         // The row in the WAREHOUSE table with matching W_ID is selected and
         // W_TAX, the warehouse tax rate, is retrieved.
-        Warehouse warehouse = warehouseRepository.findBy(warehouseId);
+        Warehouse warehouse = warehouseRepository.find(warehouseId);
         orderBuilder.warehouseId(warehouse.getWarehouseId()).warehouseTax(warehouse.getTax());
 
         // The row in the DISTRICT table with matching D_W_ID and D_ ID is
         // selected, D_TAX, the district tax rate, is retrieved, and
         // D_NEXT_O_ID, the next available order number for
         // the district, is retrieved and incremented by one.
-        District district = districtRepository.findBy(districtId, warehouseId);
+        District district = districtRepository.find(districtId, warehouseId);
         Integer nextOrderId = district.getNextOrderId();
         orderBuilder.districtId(district.getDistrictId()).districtTax(district.getTax());
 
@@ -91,7 +91,7 @@ public class NewOrderTransaction implements Transaction {
         // is selected and C_DISCOUNT, the customer's discount rate, C_LAST, the
         // customer's last name, and C_CREDIT, the customer's credit status, are
         // retrieved.
-        Customer customer = customerRepository.findBy(customerId, districtId, warehouseId);
+        Customer customer = customerRepository.find(customerId, districtId, warehouseId);
         orderBuilder.customerId(customer.getCustomerId())
                 .customerLast(customer.getLast())
                 .customerCredit(customer.getCredit())
@@ -111,7 +111,7 @@ public class NewOrderTransaction implements Transaction {
                 .districtId(input.getDistrictId())
                 .warehouseId(input.getWarehouseId())
                 .customerId(input.getCustomerId())
-                .entryDate(Times.currentTimeMillis())
+                .entryDate(Times.now())
                 .orderLineCounter(input.getOrderLineCnt())
                 .allLocal(input.getOrderAllLocal())
                 .build();
@@ -122,9 +122,9 @@ public class NewOrderTransaction implements Transaction {
         for (int index = 1; index <= order.getOrderLineCounter(); index++) {
             OrderLineOutput.Builder orderLineOutput = OrderLineOutput.builder();
             int number = index;
-            int supplyWarehouseId = input.getSupplierWarehouseIds()[number - 1];
-            int itemId = input.getItemIds()[number - 1];
-            int quantity = input.getOrderQuantities()[number - 1];
+            int supplyWarehouseId = input.getSupplierWarehouseIds().get(number - 1);
+            int itemId = input.getItemIds().get(number - 1);
+            int quantity = input.getOrderQuantities().get(number - 1);
 
             orderLineOutput.supplierWarehouseId(supplyWarehouseId).itemId(itemId).orderQuantities(quantity);
             // If I_ID has an unused value (see Clause 2.4.1.5), a "not-found"
@@ -141,18 +141,11 @@ public class NewOrderTransaction implements Transaction {
             // The row in the ITEM table with matching I_ID (equals OL_I_ID) is
             // selected and I_PRICE, the price of the item, I_NAME, the name of
             // the item, and I_DATA are retrieved.
-            Item item = itemRepository.findBy(itemId);
-            if (item == null) {
-                return TPCCCommand.newErrorMessage(aRequest, TRANSACTION_ABORTED);
-            }
+            Item item = itemRepository.find(itemId);
             orderLineOutput.itemId(item.getItemId()).itemName(item.getName()).itemPrice(item.getPrice());
 
             // clause 2.4.2.2 (dot 8.2)
-            Stock stock = stockRepository.findBy(itemId, supplyWarehouseId);
-            if (stock == null) {
-                return TPCCCommand.newErrorMessage(aRequest, TRANSACTION_ABORTED);
-            }
-
+            Stock stock = stockRepository.find(itemId, supplyWarehouseId);
             orderLineOutput.stockQuantities(stock.getQuantity());
 
             stock = Stock.from(stock)

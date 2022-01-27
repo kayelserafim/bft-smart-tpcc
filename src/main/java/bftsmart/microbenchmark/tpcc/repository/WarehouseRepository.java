@@ -1,7 +1,5 @@
 package bftsmart.microbenchmark.tpcc.repository;
 
-import java.util.Optional;
-
 import org.javatuples.Tuple;
 
 import com.google.inject.Inject;
@@ -17,12 +15,9 @@ public class WarehouseRepository {
     @Inject
     private KVRepository<Tuple, Warehouse> warehouseDao;
 
-    public Optional<Warehouse> find(int warehouseId) {
-        return warehouseDao.find(Warehouse.key(warehouseId));
-    }
-
-    public Warehouse findBy(int warehouseId) {
-        return find(warehouseId).orElseThrow(() -> new NotFoundException("Warehouse %s not found", warehouseId));
+    public Warehouse find(int warehouseId) {
+        Tuple key = Warehouse.key(warehouseId);
+        return warehouseDao.find(key).orElseThrow(() -> new NotFoundException("Warehouse %s not found", key));
     }
 
     public Warehouse save(Warehouse warehouse) {

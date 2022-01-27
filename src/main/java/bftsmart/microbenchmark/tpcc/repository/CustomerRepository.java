@@ -3,7 +3,6 @@ package bftsmart.microbenchmark.tpcc.repository;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.javatuples.Tuple;
@@ -22,17 +21,13 @@ public class CustomerRepository {
     @Inject
     private KVRepository<Tuple, Customer> customerDao;
 
-    public Optional<Customer> find(int customerId, int districtId, int warehouseId) {
-        return customerDao.find(Customer.key(warehouseId, districtId, customerId));
-    }
-
-    public Customer findBy(int customerId, int districtId, int warehouseId) {
-        return find(customerId, districtId, warehouseId)
-                .orElseThrow(() -> new NotFoundException("Customer %s not found", customerId));
-    }
-
     public Customer save(Customer customer) {
         return customerDao.save(customer);
+    }
+
+    public Customer find(Integer customerId, Integer districtId, Integer warehouseId) {
+        Tuple key = Customer.key(warehouseId, districtId, customerId);
+        return customerDao.find(key).orElseThrow(() -> new NotFoundException("Customer [%s] not found", key));
     }
 
     /**
@@ -43,7 +38,7 @@ public class CustomerRepository {
      *            The last name to find
      * @return The list of customers that match with the last name
      */
-    public Customer findBy(String lastName, int districtId, int warehouseId) {
+    public Customer find(String lastName, Integer districtId, Integer warehouseId) {
         List<Customer> customers = customerDao.findAll(Customer.districtKey(warehouseId, districtId))
                 .stream()
                 .filter(customer -> Objects.equals(customer.getLast(), lastName))

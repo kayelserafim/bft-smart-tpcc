@@ -63,7 +63,7 @@ public class DeliveryTransaction implements Transaction {
         for (int districtId = 1; districtId <= TPCCConfig.DIST_PER_WHSE; districtId++) {
             Integer warehouseId = input.getWarehouseId();
             Integer orderId =
-                    newOrderRepository.findFirstBy(districtId, warehouseId).map(NewOrder::getOrderId).orElse(-1);
+                    newOrderRepository.findFirst(districtId, warehouseId).map(NewOrder::getOrderId).orElse(-1);
 
             if (orderId != -1) {
                 Order order = orderRepository.findByOrderId(orderId, districtId, warehouseId);
@@ -71,17 +71,12 @@ public class DeliveryTransaction implements Transaction {
                     String message = String.format("Order [%s] not found", orderId);
                     return TPCCCommand.newErrorMessage(aRequest, message);
                 }
-                Customer customer = customerRepository.findBy(order.getCustomerId(), districtId, warehouseId);
+                Customer customer = customerRepository.find(order.getCustomerId(), districtId, warehouseId);
 
-                if (customer == null) {
-                    String msg = "Customer [%s] not found. D_ID [%s], W_ID [%s]";
-                    return TPCCCommand.newErrorMessage(aRequest, msg, order.getCustomerId(), districtId, warehouseId);
-                }
-
-                List<OrderLine> orderLineList = orderLineRepository.findBy(orderId, districtId, warehouseId)
+                List<OrderLine> orderLineList = orderLineRepository.find(orderId, districtId, warehouseId)
                         .parallelStream()
                         .map(OrderLine::from)
-                        .map(builder -> builder.deliveryDateTime(Times.currentTimeMillis()))
+                        .map(builder -> builder.deliveryDateTime(Times.now()))
                         .map(OrderLine.Builder::build)
                         .collect(Collectors.toList());
 
@@ -97,7 +92,7 @@ public class DeliveryTransaction implements Transaction {
 
         orders.forEach(order -> {
             orderRepository.save(order);
-            newOrderRepository.deleteBy(order);
+            newOrderRepository.delete(order);
             deliveryBuilder.orderId(new OrderOutput(order.getDistrictId(), order.getOrderId()));
         });
         customers.parallelStream()

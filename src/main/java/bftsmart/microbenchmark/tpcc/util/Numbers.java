@@ -22,12 +22,11 @@ public class Numbers {
      *            value by which this Long is to be divided.
      * @return number / divisor
      */
-    public static Double divide(Integer number, Long divisor) {
+    public static Double divide(Number number, Number divisor) {
         if (number == null || divisor == null) {
             return 0D;
         }
-        // with implicit casting
-        return number * 1.0 / divisor;
+        return number.doubleValue() / divisor.doubleValue();
     }
 
     /**

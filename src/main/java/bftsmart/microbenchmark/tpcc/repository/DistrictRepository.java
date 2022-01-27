@@ -1,7 +1,5 @@
 package bftsmart.microbenchmark.tpcc.repository;
 
-import java.util.Optional;
-
 import org.javatuples.Tuple;
 
 import com.google.inject.Inject;
@@ -17,13 +15,9 @@ public class DistrictRepository {
     @Inject
     private KVRepository<Tuple, District> districtDao;
 
-    public Optional<District> find(int districtId, int warehouseId) {
-        return districtDao.find(District.key(warehouseId, districtId));
-    }
-
-    public District findBy(int districtId, int warehouseId) {
-        return find(districtId, warehouseId)
-                .orElseThrow(() -> new NotFoundException("District %s not found", districtId));
+    public District find(int districtId, int warehouseId) {
+        Tuple key = District.key(warehouseId, districtId);
+        return districtDao.find(key).orElseThrow(() -> new NotFoundException("District %s not found", key));
     }
 
     public District save(District district) {

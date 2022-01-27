@@ -54,7 +54,6 @@ public class TPCCConfig {
         if (parentFile != null && !parentFile.exists()) {
             parentFile.mkdir();
         }
-
         return file;
     }
 

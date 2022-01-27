@@ -46,19 +46,15 @@ public class StockLevelTransaction implements Transaction {
         Integer districtId = input.getDistrictId();
         Integer threshold = input.getThreshold();
 
-        District district = districtRepository.findBy(districtId, warehouseId);
-
-        List<Integer> orderLines = orderLineRepository.findBy(district, warehouseId)
+        District district = districtRepository.find(districtId, warehouseId);
+        List<Integer> orderLines = orderLineRepository.find(district, warehouseId)
                 .parallelStream()
                 .map(OrderLine::getItemId)
                 .collect(Collectors.toList());
 
-        long stockCount = stockRepository.countBy(orderLines, warehouseId, threshold);
+        long stockCount = stockRepository.count(orderLines, warehouseId, threshold);
 
-        stockBuilder.warehouseId(warehouseId)
-                .districtId(districtId)
-                .threshold(threshold)
-                .stockCount(stockCount);
+        stockBuilder.warehouseId(warehouseId).districtId(districtId).threshold(threshold).stockCount(stockCount);
 
         return TPCCCommand.newSuccessMessage(aRequest, outputScreen(stockBuilder.build()));
     }

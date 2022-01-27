@@ -9,6 +9,7 @@ import org.javatuples.Tuple;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import bftsmart.microbenchmark.tpcc.exception.NotFoundException;
 import bftsmart.microbenchmark.tpcc.repository.base.KVRepository;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 
@@ -18,15 +19,16 @@ public class StockRepository {
     @Inject
     private KVRepository<Tuple, Stock> stockDao;
 
-    public Stock findBy(int itemId, int warehouseId) {
-        return stockDao.find(Stock.key(warehouseId, itemId)).orElse(null);
+    public Stock find(int itemId, int warehouseId) {
+        Tuple key = Stock.key(warehouseId, itemId);
+        return stockDao.find(key).orElseThrow(() -> new NotFoundException("Stock [%s] not found", key));
     }
 
     public Stock save(Stock stock) {
         return stockDao.save(stock);
     }
 
-    public List<Stock> findBy(List<Integer> orderLineIds, int warehouseId, int threshold) {
+    public List<Stock> find(List<Integer> orderLineIds, int warehouseId, int threshold) {
         return orderLineIds.stream()
                 .map(itemId -> Stock.key(warehouseId, itemId))
                 .map(stockDao::findAll)
@@ -35,8 +37,8 @@ public class StockRepository {
                 .collect(Collectors.toList());
     }
 
-    public long countBy(List<Integer> orderLineIds, int warehouseId, int threshold) {
-        return findBy(orderLineIds, warehouseId, threshold).parallelStream().map(Stock::getItemId).distinct().count();
+    public long count(List<Integer> orderLineIds, int warehouseId, int threshold) {
+        return find(orderLineIds, warehouseId, threshold).parallelStream().map(Stock::getItemId).distinct().count();
     }
 
 }

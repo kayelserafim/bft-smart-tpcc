@@ -123,7 +123,7 @@ public class TPCCDataGenerator {
                             .state(random.getAString(2))
                             .zip(random.getAZip())
                             .phone(random.getNString(16))
-                            .since(Times.currentTimeMillis())
+                            .since(Times.now())
                             .credit(random.nextInt(1, 10) == 1 ? "BC" : "GC")
                             .creditLimit(BigDecimal.valueOf(50000))
                             .discount(BigDecimal.valueOf(random.getAPercent(0, 0.5)))
@@ -192,7 +192,7 @@ public class TPCCDataGenerator {
                             .warehouseId(w)
                             .customerDistrictId(customer.getDistrictId())
                             .customerWarehouseId(customer.getWarehouseId())
-                            .date(Times.currentTimeMillis())
+                            .date(Times.now())
                             .amount(BigDecimal.TEN)
                             .data(random.getAString(12, 24))
                             .build();
@@ -213,13 +213,13 @@ public class TPCCDataGenerator {
                 for (int o = 1; o <= TPCCConfig.CUST_PER_DIST; o++) {
                     int c = random.nextInt(1, TPCCConfig.CUST_PER_DIST);
 
-                    // random within [1 .. 10] if O_ID < 2,101, null otherwise
+                    // carrierId: random within [1 .. 10] if O_ID < 2,101, null otherwise
                     Order order = Order.builder()
                             .orderId(o)
                             .districtId(d)
                             .warehouseId(w)
                             .customerId(c)
-                            .entryDate(Times.currentTimeMillis())
+                            .entryDate(Times.now())
                             .carrierId(o < TPCCConfig.LIMIT_ORDER ? random.nextInt(1, 10) : null)
                             .orderLineCounter(random.nextInt(5, 15))
                             .allLocal(1)

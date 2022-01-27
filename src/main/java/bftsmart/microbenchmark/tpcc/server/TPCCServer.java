@@ -36,7 +36,7 @@ public class TPCCServer implements SingleExecutable {
         if (aRequest == null) {
             return reply.getBytes();
         }
-        LOGGER.debug("[INFO] Processing an unordered request of type [{}]", reply.getCommandType());
+        LOGGER.debug("[INFO] Processing an ordered request of type [{}]", reply.getCommandType());
 
         TPCCCommandType commandType = aRequest.getCommandType();
         reply = transactionFactory.getFactory(commandType).process(aRequest);
