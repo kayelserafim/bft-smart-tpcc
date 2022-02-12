@@ -1,5 +1,6 @@
 package bftsmart.microbenchmark.tpcc.config;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -82,10 +83,16 @@ public class WorkloadConfig {
     }
 
     public Set<TPCCCommandType> getWriteTransactions() {
+        if (writeTransactions == null) {
+            writeTransactions = new HashSet<>();
+        }
         return writeTransactions;
     }
 
     public Set<TPCCCommandType> getReadTransactions() {
+        if (readTransactions == null) {
+            readTransactions = new HashSet<>();
+        }
         return readTransactions;
     }
 

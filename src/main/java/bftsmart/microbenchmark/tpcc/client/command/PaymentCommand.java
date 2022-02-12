@@ -1,15 +1,13 @@
 package bftsmart.microbenchmark.tpcc.client.command;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.Map;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class PaymentCommand implements Command {
@@ -59,17 +57,16 @@ public class PaymentCommand implements Command {
 
         BigDecimal paymentAmount = random.nextBigDecimal(100, 500000).divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP);
 
-        Map<String, Serializable> params = new HashMap<>();
-        params.put("w_id", terminalData.getWarehouseId());
-        params.put("d_id", districtId);
-        params.put("c_w_id", customerWarehouseID);
-        params.put("c_d_id", customerDistrictID);
-        params.put("c_id", customerId);
-        params.put("c_name", customerLastName);
-        params.put("c_by_name", customerByName);
-        params.put("payment_amount", paymentAmount);
+        PaymentInput input = new PaymentInput().withWarehouseId(terminalData.getWarehouseId())
+                .withDistrictId(districtId)
+                .withCustomerWarehouseId(customerWarehouseID)
+                .withCustomerDistrictId(customerDistrictID)
+                .withCustomerId(customerId)
+                .withCustomerLastName(customerLastName)
+                .withCustomerByName(customerByName)
+                .withPaymentAmount(paymentAmount);
 
-        return new TPCCCommand(commandType, params);
+        return new TPCCCommand(commandType, input);
     }
 
 }

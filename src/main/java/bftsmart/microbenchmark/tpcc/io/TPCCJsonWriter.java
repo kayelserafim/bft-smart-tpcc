@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.io;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
-import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
 
 @Singleton
 public class TPCCJsonWriter {
@@ -34,7 +34,7 @@ public class TPCCJsonWriter {
         try {
             mapper.writeValue(file, tpccData);
         } catch (IOException ioe) {
-            throw new ConfigurationException(ioe.getMessage(), ioe);
+            throw new UncheckedIOException(ioe);
         }
         LOGGER.info("Json Data saved to file {}", fileName);
     }

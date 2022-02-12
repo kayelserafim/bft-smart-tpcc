@@ -49,7 +49,7 @@ public class MetricCollector {
                     TPCCCommandType key = entry.getKey();
                     List<RawResult> value = entry.getValue();
                     Duration elapsed = value.stream().map(RawResult::getElapsed).reduce(Duration.ZERO, Duration::plus);
-                    long totalErrors = value.stream().map(RawResult::getResult).filter(result -> result < 0).count();
+                    long totalErrors = value.stream().map(RawResult::getStatus).filter(result -> result < 0).count();
                     return new BenchResult(key, elapsed, value.size(), totalErrors);
                 })
                 .collect(Collectors.toList());

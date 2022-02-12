@@ -84,11 +84,11 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
     private RawResult executeTransaction() {
         RawResult rawResult = new RawResult(terminalData.getTerminalId(), terminalData.getTerminalName());
 
-        TPCCCommand response = transaction.process(terminalData, random);
+        TPCCCommand tpccCommand = transaction.process(terminalData, random);
         rawResult.stop();
-        rawResult.setCommandType(response.getCommandType());
-        rawResult.setResult(response.getResult());
-        rawResult.setMessage("Response received: " + response.getMessage());
+        rawResult.setCommandType(tpccCommand.getCommandType());
+        rawResult.setStatus(tpccCommand.getStatus());
+        rawResult.setMessage("Response received: " + tpccCommand.getResponse());
 
         return rawResult;
     }

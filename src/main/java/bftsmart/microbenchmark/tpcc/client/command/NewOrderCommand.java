@@ -1,15 +1,14 @@
 package bftsmart.microbenchmark.tpcc.client.command;
 
-import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class NewOrderCommand implements Command {
@@ -27,15 +26,15 @@ public class NewOrderCommand implements Command {
 
     @Override
     public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
-        int customerID = random.getCustomerID();
-        int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+        final Integer customerID = random.getCustomerID();
+        final Integer districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
 
         // o_ol_cnt
-        int numItems = random.nextInt(5, 15);
-        int[] itemIDs = new int[numItems];
-        int[] supplierWarehouses = new int[numItems];
-        int[] orderQuantities = new int[numItems];
-        Set<Integer> itemObjIds = new HashSet<>();
+        final Integer numItems = random.nextInt(5, 15);
+        final Integer[] itemIDs = new Integer[numItems];
+        final Integer[] supplierWarehouses = new Integer[numItems];
+        final Integer[] orderQuantities = new Integer[numItems];
+        final Set<Integer> itemObjIds = new HashSet<>();
         // see clause 2.4.2.2 (dot 6)
         int allLocal = 1;
         // clause 2.4.1.5
@@ -47,7 +46,7 @@ public class NewOrderCommand implements Command {
                 // see clause 2.4.1.5 (dot 2)
                 do {
                     supplierWarehouses[i] = random.nextInt(1, terminalData.getWarehouseCount());
-                } while (supplierWarehouses[i] == terminalData.getWarehouseId()
+                } while (supplierWarehouses[i].equals(terminalData.getWarehouseId())
                         && terminalData.getWarehouseCount() > 1);
                 // see clause 2.4.2.2 (dot 6)
                 allLocal = 0;
@@ -62,17 +61,16 @@ public class NewOrderCommand implements Command {
             itemObjIds.add(itemIDs[numItems - 1]);
         }
 
-        Map<String, Serializable> params = new HashMap<>();
-        params.put("w_id", terminalData.getWarehouseId());
-        params.put("d_id", districtId);
-        params.put("c_id", customerID);
-        params.put("ol_o_cnt", numItems);
-        params.put("o_all_local", allLocal);
-        params.put("itemIds", itemIDs);
-        params.put("supplierWarehouseIDs", supplierWarehouses);
-        params.put("orderQuantities", orderQuantities);
+        NewOrderInput input = new NewOrderInput().withWarehouseId(terminalData.getWarehouseId())
+                .withDistrictId(districtId)
+                .withCustomerId(customerID)
+                .withOrderLineCnt(numItems)
+                .withOrderAllLocal(allLocal)
+                .withItemIds(Arrays.asList(itemIDs))
+                .withSupplierWarehouseIds(Arrays.asList(supplierWarehouses))
+                .withOrderQuantities(Arrays.asList(orderQuantities));
 
-        return new TPCCCommand(commandType, params);
+        return new TPCCCommand(commandType, input);
     }
 
 }

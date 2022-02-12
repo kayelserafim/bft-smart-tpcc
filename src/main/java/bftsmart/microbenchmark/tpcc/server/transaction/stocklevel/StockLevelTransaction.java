@@ -1,11 +1,8 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.stocklevel;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
@@ -22,8 +19,6 @@ import bftsmart.microbenchmark.tpcc.table.OrderLine;
 public class StockLevelTransaction implements Transaction {
 
     @Inject
-    private ObjectMapper objectMapper;
-    @Inject
     private DistrictRepository districtRepository;
     @Inject
     private OrderLineRepository orderLineRepository;
@@ -36,11 +31,9 @@ public class StockLevelTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand aRequest) {
-        Map<String, Serializable> params = aRequest.getRequest();
-
+    public TPCCCommand process(final TPCCCommand command) {
+        StockLevelInput input = (StockLevelInput) command.getRequest();
         StockLevelOutput.Builder stockBuilder = StockLevelOutput.builder();
-        StockLevelInput input = objectMapper.convertValue(params, StockLevelInput.class);
 
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
@@ -56,7 +49,7 @@ public class StockLevelTransaction implements Transaction {
 
         stockBuilder.warehouseId(warehouseId).districtId(districtId).threshold(threshold).stockCount(stockCount);
 
-        return TPCCCommand.newSuccessMessage(aRequest, outputScreen(stockBuilder.build()));
+        return TPCCCommand.newSuccessMessage(command, outputScreen(stockBuilder.build()));
     }
 
     private String outputScreen(StockLevelOutput stockLevel) {

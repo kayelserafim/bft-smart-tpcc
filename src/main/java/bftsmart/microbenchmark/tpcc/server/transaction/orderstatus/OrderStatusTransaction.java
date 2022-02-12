@@ -1,14 +1,11 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.orderstatus;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
@@ -28,8 +25,6 @@ import bftsmart.microbenchmark.tpcc.util.Times;
 public class OrderStatusTransaction implements Transaction {
 
     @Inject
-    private ObjectMapper objectMapper;
-    @Inject
     private CustomerRepository customerRepository;
     @Inject
     private OrderRepository orderRepository;
@@ -42,22 +37,20 @@ public class OrderStatusTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand aRequest) {
-        Map<String, Serializable> params = aRequest.getRequest();
-
+    public TPCCCommand process(final TPCCCommand command) {
+        OrderStatusInput input = (OrderStatusInput) command.getRequest();
         OrderStatusOutput.Builder orderBuilder = OrderStatusOutput.builder().dateTime(LocalDateTime.now());
-        OrderStatusInput input = objectMapper.convertValue(params, OrderStatusInput.class);
 
         int warehouseId = input.getWarehouseId();
         int districtId = input.getDistrictId();
         Customer customer;
         if (BooleanUtils.isTrue(input.getCustomerByName())) {
             // clause 2.6.2.2 (dot 3, Case 2)
-            customer = customerRepository.find(input.getCustomerName(), districtId, warehouseId);
+            customer = customerRepository.find(input.getCustomerLastName(), districtId, warehouseId);
             if (customer == null) {
                 String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
-                String msg = String.format(text, input.getCustomerName(), districtId, warehouseId);
-                return TPCCCommand.newErrorMessage(aRequest, msg);
+                String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
+                return TPCCCommand.newErrorMessage(command, msg);
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
@@ -90,7 +83,7 @@ public class OrderStatusTransaction implements Transaction {
             }
         }
 
-        return TPCCCommand.newSuccessMessage(aRequest, outputScreen(orderBuilder.build()));
+        return TPCCCommand.newSuccessMessage(command, outputScreen(orderBuilder.build()));
     }
 
     private String outputScreen(OrderStatusOutput orderStatus) {

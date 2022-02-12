@@ -1,13 +1,10 @@
 package bftsmart.microbenchmark.tpcc.client.command;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class OrderStatusCommand implements Command {
@@ -40,14 +37,13 @@ public class OrderStatusCommand implements Command {
             customerId = random.getCustomerID();
         }
 
-        Map<String, Serializable> params = new HashMap<>();
-        params.put("w_id", terminalData.getWarehouseId());
-        params.put("d_id", districtId);
-        params.put("c_id", customerId);
-        params.put("c_by_name", customerByName);
-        params.put("c_name", customerLastName);
+        OrderStatusInput input = new OrderStatusInput().withWarehouseId(terminalData.getWarehouseId())
+                .withDistrictId(districtId)
+                .withCustomerId(customerId)
+                .withCustomerByName(customerByName)
+                .withCustomerLastName(customerLastName);
 
-        return new TPCCCommand(commandType, params);
+        return new TPCCCommand(commandType, input);
     }
 
 }

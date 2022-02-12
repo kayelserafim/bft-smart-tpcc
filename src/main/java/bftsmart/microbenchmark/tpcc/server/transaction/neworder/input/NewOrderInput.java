@@ -1,10 +1,13 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.neworder.input;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class NewOrderInput {
+public class NewOrderInput implements Serializable {
+
+    private static final long serialVersionUID = -5998555582667194482L;
 
     @JsonProperty("w_id")
     private Integer warehouseId;
@@ -31,12 +34,22 @@ public class NewOrderInput {
         this.warehouseId = warehouseId;
     }
 
+    public NewOrderInput withWarehouseId(Integer warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
     public Integer getDistrictId() {
         return districtId;
     }
 
     public void setDistrictId(Integer districtId) {
         this.districtId = districtId;
+    }
+
+    public NewOrderInput withDistrictId(Integer districtId) {
+        setDistrictId(districtId);
+        return this;
     }
 
     public Integer getCustomerId() {
@@ -47,12 +60,22 @@ public class NewOrderInput {
         this.customerId = customerId;
     }
 
+    public NewOrderInput withCustomerId(Integer customerId) {
+        setCustomerId(customerId);
+        return this;
+    }
+
     public Integer getOrderLineCnt() {
         return orderLineCnt;
     }
 
     public void setOrderLineCnt(Integer orderLineCnt) {
         this.orderLineCnt = orderLineCnt;
+    }
+
+    public NewOrderInput withOrderLineCnt(Integer orderLineCnt) {
+        setOrderLineCnt(orderLineCnt);
+        return this;
     }
 
     public Integer getOrderAllLocal() {
@@ -63,12 +86,22 @@ public class NewOrderInput {
         this.orderAllLocal = orderAllLocal;
     }
 
+    public NewOrderInput withOrderAllLocal(Integer orderAllLocal) {
+        setOrderAllLocal(orderAllLocal);
+        return this;
+    }
+
     public List<Integer> getItemIds() {
         return itemIds;
     }
 
     public void setItemIds(List<Integer> itemIds) {
         this.itemIds = itemIds;
+    }
+
+    public NewOrderInput withItemIds(List<Integer> itemIds) {
+        setItemIds(itemIds);
+        return this;
     }
 
     public List<Integer> getSupplierWarehouseIds() {
@@ -79,12 +112,22 @@ public class NewOrderInput {
         this.supplierWarehouseIds = supplierWarehouseIds;
     }
 
+    public NewOrderInput withSupplierWarehouseIds(List<Integer> supplierWarehouseIds) {
+        setSupplierWarehouseIds(supplierWarehouseIds);
+        return this;
+    }
+
     public List<Integer> getOrderQuantities() {
         return orderQuantities;
     }
 
     public void setOrderQuantities(List<Integer> orderQuantities) {
         this.orderQuantities = orderQuantities;
+    }
+
+    public NewOrderInput withOrderQuantities(List<Integer> orderQuantities) {
+        setOrderQuantities(orderQuantities);
+        return this;
     }
 
     @Override

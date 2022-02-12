@@ -1,14 +1,11 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.delivery;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
@@ -31,8 +28,6 @@ import bftsmart.microbenchmark.tpcc.util.Times;
 public class DeliveryTransaction implements Transaction {
 
     @Inject
-    private ObjectMapper objectMapper;
-    @Inject
     private NewOrderRepository newOrderRepository;
     @Inject
     private OrderRepository orderRepository;
@@ -47,10 +42,8 @@ public class DeliveryTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand aRequest) {
-        Map<String, Serializable> params = aRequest.getRequest();
-
-        DeliveryInput input = objectMapper.convertValue(params, DeliveryInput.class);
+    public TPCCCommand process(final TPCCCommand command) {
+        DeliveryInput input = (DeliveryInput) command.getRequest();
         DeliveryOutput.Builder deliveryBuilder = DeliveryOutput.builder()
                 .dateTime(LocalDateTime.now())
                 .warehouseId(input.getWarehouseId())
@@ -69,7 +62,7 @@ public class DeliveryTransaction implements Transaction {
                 Order order = orderRepository.findByOrderId(orderId, districtId, warehouseId);
                 if (order == null) {
                     String message = String.format("Order [%s] not found", orderId);
-                    return TPCCCommand.newErrorMessage(aRequest, message);
+                    return TPCCCommand.newErrorMessage(command, message);
                 }
                 Customer customer = customerRepository.find(order.getCustomerId(), districtId, warehouseId);
 
@@ -100,7 +93,7 @@ public class DeliveryTransaction implements Transaction {
                 .forEach(customerRepository::save);
         orderLines.forEach(orderLineRepository::save);
 
-        return TPCCCommand.newSuccessMessage(aRequest, outputScreen(deliveryBuilder.build()));
+        return TPCCCommand.newSuccessMessage(command, outputScreen(deliveryBuilder.build()));
     }
 
     private String outputScreen(DeliveryOutput delivery) {

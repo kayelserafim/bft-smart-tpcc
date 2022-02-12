@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.config.module;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,6 @@ import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
-import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
 import bftsmart.microbenchmark.tpcc.io.TPCCData;
 import io.vavr.control.Try;
 
@@ -30,7 +30,7 @@ public class DataFileModule extends AbstractModule {
             File file = TPCCConfig.getWorkloadConfigFile();
             return propsMapper.readValue(file, WorkloadConfig.class);
         } catch (IOException ioe) {
-            throw new ConfigurationException(ioe.getMessage(), ioe);
+            throw new UncheckedIOException(ioe);
         }
     }
 

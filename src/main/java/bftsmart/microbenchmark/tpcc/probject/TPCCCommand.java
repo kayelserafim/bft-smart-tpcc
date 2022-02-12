@@ -1,8 +1,6 @@
 package bftsmart.microbenchmark.tpcc.probject;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,16 +10,15 @@ public class TPCCCommand implements Serializable {
     private static final long serialVersionUID = 6569180706287210660L;
 
     private TPCCCommandType commandType;
-    private Map<String, Serializable> request;
-    private String message;
-    private Integer result = -1;
+    private Serializable request;
+    private String response;
+    private Integer status = -1;
 
     private TPCCCommand() {
         super();
-        result = -1;
     }
 
-    public TPCCCommand(TPCCCommandType commandType, Map<String, Serializable> request) {
+    public TPCCCommand(TPCCCommandType commandType, Serializable request) {
         this.commandType = commandType;
         this.request = request;
     }
@@ -30,16 +27,16 @@ public class TPCCCommand implements Serializable {
         return commandType;
     }
 
-    public Map<String, Serializable> getRequest() {
+    public Serializable getRequest() {
         return request;
     }
 
-    public String getMessage() {
-        return message;
+    public String getResponse() {
+        return response;
     }
 
-    public Integer getResult() {
-        return result;
+    public Integer getStatus() {
+        return status;
     }
 
     public static TPCCCommand from(TPCCCommand command) {
@@ -47,15 +44,15 @@ public class TPCCCommand implements Serializable {
         if (command != null) {
             tpccMessage.commandType = command.getCommandType();
             tpccMessage.request = command.getRequest();
-            tpccMessage.message = command.getMessage();
-            tpccMessage.result = command.getResult();
+            tpccMessage.response = command.getResponse();
+            tpccMessage.status = command.getStatus();
         }
         return tpccMessage;
     }
 
     public static TPCCCommand from(TPCCCommand command, String description) {
         TPCCCommand tpccMessage = from(command);
-        tpccMessage.message += " " + description;
+        tpccMessage.response += " " + description;
         return tpccMessage;
     }
 
@@ -64,8 +61,8 @@ public class TPCCCommand implements Serializable {
         if (command != null) {
             tpccMessage.commandType = command.getCommandType();
             tpccMessage.request = command.getRequest();
-            tpccMessage.message = StringUtils.defaultIfBlank(successMessage, "OK");
-            tpccMessage.result = 0;
+            tpccMessage.response = StringUtils.defaultIfBlank(successMessage, "OK");
+            tpccMessage.status = 0;
         }
         return tpccMessage;
     }
@@ -76,8 +73,8 @@ public class TPCCCommand implements Serializable {
             tpccMessage.commandType = command.getCommandType();
             tpccMessage.request = command.getRequest();
         }
-        tpccMessage.message = errorMessage;
-        tpccMessage.result = -1;
+        tpccMessage.response = errorMessage;
+        tpccMessage.status = -1;
         return tpccMessage;
     }
 
@@ -85,12 +82,9 @@ public class TPCCCommand implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Comand Type: ").append(commandType).append("\n");
-        sb.append("Request Params:").append("\n");
-        for (Entry<String, Serializable> entry : request.entrySet()) {
-            sb.append("key: ").append(entry.getKey()).append(", value: ").append(entry.getValue()).append("\n");
-        }
-        sb.append("Result message: ").append(message).append("\n");
-        sb.append("Result type: ").append(result);
+        sb.append("Request Params: ").append(request);
+        sb.append("Result message: ").append(response).append("\n");
+        sb.append("Result type: ").append(status);
         return sb.toString();
     }
 
@@ -99,7 +93,7 @@ public class TPCCCommand implements Serializable {
     }
 
     public static TPCCCommand getObject(byte[] bytes) {
-        return (TPCCCommand) SerializationUtils.deserialize(bytes);
+        return SerializationUtils.deserialize(bytes);
     }
 
 }

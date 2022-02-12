@@ -1,8 +1,12 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.input;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class StockLevelInput {
+public class StockLevelInput implements Serializable {
+
+    private static final long serialVersionUID = -1939225465527379511L;
 
     @JsonProperty("w_id")
     private Integer warehouseId;
@@ -19,6 +23,11 @@ public class StockLevelInput {
         this.warehouseId = warehouseId;
     }
 
+    public StockLevelInput withWarehouseId(Integer warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
     public Integer getDistrictId() {
         return districtId;
     }
@@ -27,12 +36,22 @@ public class StockLevelInput {
         this.districtId = districtId;
     }
 
+    public StockLevelInput withDistrictId(Integer districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
     public Integer getThreshold() {
         return threshold;
     }
 
     public void setThreshold(Integer threshold) {
         this.threshold = threshold;
+    }
+
+    public StockLevelInput withThreshold(Integer threshold) {
+        setThreshold(threshold);
+        return this;
     }
 
     @Override

@@ -12,7 +12,7 @@ public class RawResult {
     private String terminalName;
     private TPCCCommandType commandType;
     private Duration elapsed;
-    private Integer result;
+    private Integer status;
     private String message;
     private final Stopwatch stopwatch;
 
@@ -60,12 +60,12 @@ public class RawResult {
         this.elapsed = elapsed;
     }
 
-    public Integer getResult() {
-        return result;
+    public Integer getStatus() {
+        return status;
     }
 
-    public void setResult(Integer result) {
-        this.result = result;
+    public void setStatus(Integer result) {
+        this.status = result;
     }
 
     public String getMessage() {
@@ -74,10 +74,6 @@ public class RawResult {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public Stopwatch getStopwatch() {
-        return stopwatch;
     }
 
     @Override
@@ -91,8 +87,8 @@ public class RawResult {
                 .append(commandType)
                 .append(", elapsed=")
                 .append(elapsed)
-                .append(", result=")
-                .append(result)
+                .append(", status=")
+                .append(status)
                 .append(", message=")
                 .append(message)
                 .append(", stopwatch=")

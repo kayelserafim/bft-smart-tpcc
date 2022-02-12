@@ -1,12 +1,9 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.payment;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import org.apache.commons.lang3.BooleanUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
@@ -27,8 +24,6 @@ import bftsmart.microbenchmark.tpcc.util.Times;
 public class PaymentTransaction implements Transaction {
 
     @Inject
-    private ObjectMapper objectMapper;
-    @Inject
     private WarehouseRepository warehouseRepository;
     @Inject
     private DistrictRepository districtRepository;
@@ -43,11 +38,9 @@ public class PaymentTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand aRequest) {
-        Map<String, Serializable> params = aRequest.getRequest();
-
+    public TPCCCommand process(final TPCCCommand command) {
+        PaymentInput input = (PaymentInput) command.getRequest();
         PaymentOutput.Builder paymentBuilder = PaymentOutput.builder().dateTime(LocalDateTime.now());
-        PaymentInput input = objectMapper.convertValue(params, PaymentInput.class);
 
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
@@ -57,11 +50,11 @@ public class PaymentTransaction implements Transaction {
         Customer customer;
         if (BooleanUtils.isTrue(input.getCustomerByName())) {
             // clause 2.6.2.2 (dot 3, Case 2)
-            customer = customerRepository.find(input.getCustomerName(), districtId, warehouseId);
+            customer = customerRepository.find(input.getCustomerLastName(), districtId, warehouseId);
             if (customer == null) {
                 String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
-                String msg = String.format(text, input.getCustomerName(), districtId, warehouseId);
-                return TPCCCommand.newErrorMessage(aRequest, msg);
+                String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
+                return TPCCCommand.newErrorMessage(command, msg);
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
@@ -128,7 +121,7 @@ public class PaymentTransaction implements Transaction {
 
         paymentBuilder.warehouse(warehouse).district(district).customer(customer).amountPaid(input.getPaymentAmount());
 
-        return TPCCCommand.newSuccessMessage(aRequest, outputScreen(paymentBuilder.build()));
+        return TPCCCommand.newSuccessMessage(command, outputScreen(paymentBuilder.build()));
     }
 
     private String outputScreen(PaymentOutput paymentOutput) {

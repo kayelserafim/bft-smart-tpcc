@@ -1,13 +1,10 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.neworder;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
@@ -39,8 +36,6 @@ public class NewOrderTransaction implements Transaction {
     private static final String TRANSACTION_ABORTED = "TRANSACTION_ABORTED";
 
     @Inject
-    private ObjectMapper objectMapper;
-    @Inject
     private CustomerRepository customerRepository;
     @Inject
     private WarehouseRepository warehouseRepository;
@@ -63,12 +58,9 @@ public class NewOrderTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand aRequest) {
-        Map<String, Serializable> params = aRequest.getRequest();
-
+    public TPCCCommand process(final TPCCCommand command) {
+        NewOrderInput input = (NewOrderInput) command.getRequest();
         NewOrderOutput.Builder orderBuilder = NewOrderOutput.builder().dateTime(LocalDateTime.now());
-
-        NewOrderInput input = objectMapper.convertValue(params, NewOrderInput.class);
 
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
@@ -135,7 +127,7 @@ public class NewOrderTransaction implements Transaction {
                 // data...
                 // we throw an illegal access exception and the transaction gets
                 // rolled back later on
-                return TPCCCommand.newErrorMessage(aRequest, TRANSACTION_ABORTED);
+                return TPCCCommand.newErrorMessage(command, TRANSACTION_ABORTED);
             }
 
             // The row in the ITEM table with matching I_ID (equals OL_I_ID) is
@@ -198,7 +190,7 @@ public class NewOrderTransaction implements Transaction {
         stocks.forEach(stockRepository::save);
         orderLines.forEach(orderLineRepository::save);
 
-        return TPCCCommand.newSuccessMessage(aRequest, outputScreen(orderBuilder.build()));
+        return TPCCCommand.newSuccessMessage(command, outputScreen(orderBuilder.build()));
     }
 
     private String getDistrictInfo(District district, Stock stock) {

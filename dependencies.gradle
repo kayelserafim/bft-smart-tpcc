@@ -1,42 +1,62 @@
+ext['jackson_version'] = '2.13.1'
+ext['commonsLang_version'] = '3.12.0'
+ext['commonsCodec_version'] = '1.11'
+ext['commonsMath_version'] = '3.2'
+ext['commonsIo_version'] = '2.4'
+ext['guice_version'] = '5.0.1'
+ext['poi_version'] = '4.1.2'
+ext['vavr_version'] = '0.10.4'
+ext['javatuples_version'] = '1.2'
+ext['slf4j_version'] = '1.7.32'
+ext['logback_version'] = '1.2.10'
+ext['netty_version'] = '4.1.67.Final'
+ext['crypto_version'] = '1.69'
+ext['junitJupiter_version'] = '5.8.2'
+ext['junitPlatform_version'] = '1.8.2'
+ext['assertj_version'] = '3.22.0'
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     
     // Jackson
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.3'
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-properties', version: '2.8.8'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jackson_version
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-properties', version: jackson_version
     
     // Apache
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-	implementation group: 'commons-codec', name: 'commons-codec', version: '1.11'
-	implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.2'
-	implementation group: 'commons-io', name: 'commons-io', version: '2.4'
-	
-	// Google Guava
-	implementation group: 'com.google.guava', name: 'guava', version: '31.0.1-jre'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: commonsLang_version
+	implementation group: 'commons-codec', name: 'commons-codec', version: commonsCodec_version
+	implementation group: 'org.apache.commons', name: 'commons-math3', version: commonsMath_version
+	implementation group: 'commons-io', name: 'commons-io', version: commonsIo_version
 	
 	// Google Guice
-	implementation group: 'com.google.inject', name: 'guice', version: '5.0.1'
+	implementation group: 'com.google.inject', name: 'guice', version: guice_version
 	
 	// Apache POI
-	implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
-	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+	implementation group: 'org.apache.poi', name: 'poi', version: poi_version
+	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: poi_version
 	
     // Vavr
-	implementation group: 'io.vavr', name: 'vavr', version: '0.10.4'
+	implementation group: 'io.vavr', name: 'vavr', version: vavr_version
     
     // Java Tuples
-    implementation group: 'org.javatuples', name: 'javatuples', version: '1.2'
+    implementation group: 'org.javatuples', name: 'javatuples', version: javatuples_version
 
 	// SLF4J Logging API
-    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
     
     // Logback
-    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.10'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
     
     // Netty
-    implementation group: 'io.netty', name: 'netty-all', version: '4.1.67.Final'
+    implementation group: 'io.netty', name: 'netty-all', version: netty_version
     
     // Bouncy Castle Crypto Package
-    implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.69'
-    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.69'
+    implementation group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: crypto_version
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: crypto_version
+    
+    // JUnit 5
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: junitPlatform_version
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitJupiter_version
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitJupiter_version
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: assertj_version
 }
