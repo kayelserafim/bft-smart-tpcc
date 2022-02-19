@@ -10,7 +10,7 @@ import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.repository.NewOrderRepository;
 import bftsmart.microbenchmark.tpcc.repository.OrderLineRepository;
@@ -37,8 +37,8 @@ public class DeliveryTransaction implements Transaction {
     private CustomerRepository customerRepository;
 
     @Override
-    public TPCCCommandType commandType() {
-        return TPCCCommandType.DELIVERY;
+    public TransactionType transactionType() {
+        return TransactionType.DELIVERY;
     }
 
     @Override

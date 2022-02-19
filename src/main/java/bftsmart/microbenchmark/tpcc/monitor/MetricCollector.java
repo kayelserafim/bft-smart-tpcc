@@ -14,7 +14,7 @@ import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.monitor.spreadsheet.BenchResultSpreadsheetBuilder;
 import bftsmart.microbenchmark.tpcc.monitor.spreadsheet.RawResultSpreadsheetBuilder;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 @Singleton
 public class MetricCollector {
@@ -42,11 +42,11 @@ public class MetricCollector {
 
     public void writeResultsByTransaction(List<RawResult> results) {
         List<BenchResult> benchResult = results.stream()
-                .collect(Collectors.groupingBy(RawResult::getCommandType))
+                .collect(Collectors.groupingBy(RawResult::getTransactionType))
                 .entrySet()
                 .stream()
                 .map(entry -> {
-                    TPCCCommandType key = entry.getKey();
+                    TransactionType key = entry.getKey();
                     List<RawResult> value = entry.getValue();
                     Duration elapsed = value.stream().map(RawResult::getElapsed).reduce(Duration.ZERO, Duration::plus);
                     long totalErrors = value.stream().map(RawResult::getStatus).filter(result -> result < 0).count();

@@ -9,7 +9,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 @Singleton
 public class CommandFactory {
@@ -19,12 +19,12 @@ public class CommandFactory {
     @Inject
     private Set<Command> commands;
 
-    public Command getFactory(TPCCCommandType commandType) {
-        LOGGER.debug("Starting txn: {}, thread name: {}", commandType, Thread.currentThread().getName());
+    public Command getFactory(TransactionType transactionType) {
+        LOGGER.debug("Starting txn: {}, thread name: {}", transactionType, Thread.currentThread().getName());
         return commands.stream()
-                .filter(message -> message.commandType().equals(commandType))
+                .filter(message -> message.transactionType().equals(transactionType))
                 .findFirst()
-                .orElseThrow(() -> new ConfigurationException("There is no command for " + commandType));
+                .orElseThrow(() -> new ConfigurationException("There is no command for " + transactionType));
     }
 
 }

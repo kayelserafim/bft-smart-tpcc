@@ -9,7 +9,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.repository.OrderLineRepository;
 import bftsmart.microbenchmark.tpcc.repository.OrderRepository;
@@ -32,8 +32,8 @@ public class OrderStatusTransaction implements Transaction {
     private OrderLineRepository orderLineRepository;
 
     @Override
-    public TPCCCommandType commandType() {
-        return TPCCCommandType.ORDER_STATUS;
+    public TransactionType transactionType() {
+        return TransactionType.ORDER_STATUS;
     }
 
     @Override

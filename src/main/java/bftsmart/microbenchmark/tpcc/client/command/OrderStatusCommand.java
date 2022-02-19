@@ -3,21 +3,15 @@ package bftsmart.microbenchmark.tpcc.client.command;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class OrderStatusCommand implements Command {
 
-    private final TPCCCommandType commandType;
-
-    public OrderStatusCommand() {
-        this.commandType = TPCCCommandType.ORDER_STATUS;
-    }
-
     @Override
-    public TPCCCommandType commandType() {
-        return commandType;
+    public TransactionType transactionType() {
+        return TransactionType.ORDER_STATUS;
     }
 
     @Override
@@ -43,7 +37,7 @@ public class OrderStatusCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withCustomerLastName(customerLastName);
 
-        return new TPCCCommand(commandType, input);
+        return new TPCCCommand(transactionType(), input);
     }
 
 }

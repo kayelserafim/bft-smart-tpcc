@@ -6,7 +6,7 @@ import java.math.RoundingMode;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
@@ -14,15 +14,9 @@ public class PaymentCommand implements Command {
 
     private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
 
-    private final TPCCCommandType commandType;
-
-    public PaymentCommand() {
-        this.commandType = TPCCCommandType.PAYMENT;
-    }
-
     @Override
-    public TPCCCommandType commandType() {
-        return commandType;
+    public TransactionType transactionType() {
+        return TransactionType.PAYMENT;
     }
 
     @Override
@@ -66,7 +60,7 @@ public class PaymentCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withPaymentAmount(paymentAmount);
 
-        return new TPCCCommand(commandType, input);
+        return new TPCCCommand(transactionType(), input);
     }
 
 }

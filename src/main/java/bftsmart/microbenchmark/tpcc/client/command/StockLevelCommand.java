@@ -2,21 +2,15 @@ package bftsmart.microbenchmark.tpcc.client.command;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.input.StockLevelInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class StockLevelCommand implements Command {
 
-    private final TPCCCommandType commandType;
-
-    public StockLevelCommand() {
-        this.commandType = TPCCCommandType.STOCK_LEVEL;
-    }
-
     @Override
-    public TPCCCommandType commandType() {
-        return commandType;
+    public TransactionType transactionType() {
+        return TransactionType.STOCK_LEVEL;
     }
 
     @Override
@@ -27,7 +21,7 @@ public class StockLevelCommand implements Command {
                 .withDistrictId(terminalData.getDistrictId())
                 .withThreshold(threshold);
 
-        return new TPCCCommand(commandType, input);
+        return new TPCCCommand(transactionType(), input);
     }
 
 }

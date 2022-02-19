@@ -8,7 +8,7 @@ import com.google.inject.name.Named;
 
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.TransactionFactory;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ServiceReplica;
@@ -36,12 +36,12 @@ public class TPCCServer implements SingleExecutable {
         if (aRequest == null) {
             return reply.getBytes();
         }
-        LOGGER.debug("[INFO] Processing an ordered request of type [{}]", reply.getCommandType());
+        LOGGER.debug("[INFO] Processing an ordered request of type [{}]", reply.getTransactionType());
 
-        TPCCCommandType commandType = aRequest.getCommandType();
-        reply = transactionFactory.getFactory(commandType).process(aRequest);
-        if (!workloadConfig.getWriteTransactions().contains(commandType)) {
-            String description = String.format("The transaction [%s] should be unordered", commandType);
+        TransactionType transactionType = aRequest.getTransactionType();
+        reply = transactionFactory.getFactory(transactionType).process(aRequest);
+        if (!workloadConfig.getWriteTransactions().contains(transactionType)) {
+            String description = String.format("The transaction [%s] should be unordered", transactionType);
             reply = TPCCCommand.from(reply, description);
         }
 
@@ -58,10 +58,10 @@ public class TPCCServer implements SingleExecutable {
         }
         LOGGER.debug("[INFO] Processing an unordered request");
 
-        TPCCCommandType commandType = aRequest.getCommandType();
-        reply = transactionFactory.getFactory(commandType).process(aRequest);
-        if (!workloadConfig.getReadTransactions().contains(commandType)) {
-            String description = String.format("The transaction [%s] should be ordered", commandType);
+        TransactionType transactionType = aRequest.getTransactionType();
+        reply = transactionFactory.getFactory(transactionType).process(aRequest);
+        if (!workloadConfig.getReadTransactions().contains(transactionType)) {
+            String description = String.format("The transaction [%s] should be ordered", transactionType);
             reply = TPCCCommand.from(reply, description);
         }
 

@@ -1,6 +1,6 @@
 package bftsmart.microbenchmark.tpcc.probject;
 
-public enum TPCCCommandType {
+public enum TransactionType {
 
     NEW_ORDER,
     PAYMENT,

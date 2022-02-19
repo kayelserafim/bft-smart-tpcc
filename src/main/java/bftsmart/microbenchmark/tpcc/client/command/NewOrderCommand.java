@@ -7,21 +7,15 @@ import java.util.Set;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class NewOrderCommand implements Command {
 
-    private final TPCCCommandType commandType;
-
-    public NewOrderCommand() {
-        this.commandType = TPCCCommandType.NEW_ORDER;
-    }
-
     @Override
-    public TPCCCommandType commandType() {
-        return commandType;
+    public TransactionType transactionType() {
+        return TransactionType.NEW_ORDER;
     }
 
     @Override
@@ -70,7 +64,7 @@ public class NewOrderCommand implements Command {
                 .withSupplierWarehouseIds(Arrays.asList(supplierWarehouses))
                 .withOrderQuantities(Arrays.asList(orderQuantities));
 
-        return new TPCCCommand(commandType, input);
+        return new TPCCCommand(transactionType(), input);
     }
 
 }

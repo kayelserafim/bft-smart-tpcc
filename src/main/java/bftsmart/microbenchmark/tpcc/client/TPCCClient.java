@@ -61,7 +61,7 @@ public class TPCCClient {
                     .workload(workload)
                     .build();
 
-            LOGGER.debug("Client {} starting terminal for warehouse ", terminalData.getTerminalName());
+            LOGGER.info("Client {} starting terminal for warehouse ", terminalData.getTerminalName());
             tasks.add(executorService.submit(terminalFactory.create(terminalData, random, sem)));
         }
         executorService.shutdown();
@@ -69,7 +69,7 @@ public class TPCCClient {
         List<RawResult> results = tasks.stream()
                 .map(Futures::getUnchecked)
                 .flatMap(List<RawResult>::stream)
-                .sorted(Comparator.comparing(RawResult::getCommandType))
+                .sorted(Comparator.comparing(RawResult::getTransactionType))
                 .collect(Collectors.toList());
 
         LOGGER.info("{} has finished", Thread.currentThread().getName());

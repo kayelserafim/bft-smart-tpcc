@@ -7,7 +7,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.repository.HistoryRepository;
@@ -33,8 +33,8 @@ public class PaymentTransaction implements Transaction {
     private HistoryRepository historyRepository;
 
     @Override
-    public TPCCCommandType commandType() {
-        return TPCCCommandType.PAYMENT;
+    public TransactionType transactionType() {
+        return TransactionType.PAYMENT;
     }
 
     @Override

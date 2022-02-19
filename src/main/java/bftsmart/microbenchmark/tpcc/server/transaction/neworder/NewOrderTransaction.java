@@ -8,7 +8,7 @@ import java.util.List;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.repository.ItemRepository;
@@ -53,8 +53,8 @@ public class NewOrderTransaction implements Transaction {
     private OrderLineRepository orderLineRepository;
 
     @Override
-    public TPCCCommandType commandType() {
-        return TPCCCommandType.NEW_ORDER;
+    public TransactionType transactionType() {
+        return TransactionType.NEW_ORDER;
     }
 
     @Override

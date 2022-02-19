@@ -29,11 +29,7 @@
 		<neverBlock>true</neverBlock>
 	</appender>
 
-	<logger name="bftsmart" level="DEBUG">
-		<appender-ref ref="FILE-ASYNC" />
-	</logger>
-
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="STDOUT-ASYNC" />
 		<appender-ref ref="FILE-ASYNC" />
 	</root>

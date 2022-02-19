@@ -7,7 +7,7 @@ import org.apache.commons.lang3.Range;
 
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class TPCCTerminalData {
 
@@ -98,22 +98,22 @@ public class TPCCTerminalData {
         return Range.between(fromInclusive, toInclusive);
     }
 
-    public TPCCCommandType getTPCCCommandType(Integer transactionType) {
-        TPCCCommandType commandType;
-        if (getNewOrderWeight().contains(transactionType)) {
-            commandType = TPCCCommandType.NEW_ORDER;
-        } else if (getPaymentWeight().contains(transactionType)) {
-            commandType = TPCCCommandType.PAYMENT;
-        } else if (getStockLevelWeight().contains(transactionType)) {
-            commandType = TPCCCommandType.STOCK_LEVEL;
-        } else if (getOrderStatusWeight().contains(transactionType)) {
-            commandType = TPCCCommandType.ORDER_STATUS;
-        } else if (getDeliveryWeight().contains(transactionType)) {
-            commandType = TPCCCommandType.DELIVERY;
+    public TransactionType getTransactionType(Integer transactionTypeNumber) {
+        TransactionType transactionType;
+        if (getNewOrderWeight().contains(transactionTypeNumber)) {
+            transactionType = TransactionType.NEW_ORDER;
+        } else if (getPaymentWeight().contains(transactionTypeNumber)) {
+            transactionType = TransactionType.PAYMENT;
+        } else if (getStockLevelWeight().contains(transactionTypeNumber)) {
+            transactionType = TransactionType.STOCK_LEVEL;
+        } else if (getOrderStatusWeight().contains(transactionTypeNumber)) {
+            transactionType = TransactionType.ORDER_STATUS;
+        } else if (getDeliveryWeight().contains(transactionTypeNumber)) {
+            transactionType = TransactionType.DELIVERY;
         } else {
-            throw new ConfigurationException("The sum of mix percentage parameters of transactions exceeds 100%!");
+            throw new ConfigurationException("The sum of transaction percentage parameters exceeds 100%!");
         }
-        return commandType;
+        return transactionType;
     }
 
     public Integer getWarehouseCount() {

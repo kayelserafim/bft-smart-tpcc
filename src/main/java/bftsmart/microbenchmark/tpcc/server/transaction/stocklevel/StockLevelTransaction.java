@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.repository.OrderLineRepository;
 import bftsmart.microbenchmark.tpcc.repository.StockRepository;
@@ -26,8 +26,8 @@ public class StockLevelTransaction implements Transaction {
     private StockRepository stockRepository;
 
     @Override
-    public TPCCCommandType commandType() {
-        return TPCCCommandType.STOCK_LEVEL;
+    public TransactionType transactionType() {
+        return TransactionType.STOCK_LEVEL;
     }
 
     @Override

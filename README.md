@@ -1,12 +1,6 @@
 # bft-smart-tpcc
 A TPC-C like test tool for BFT-SMaRt.
 
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
 ### Compiling ###
 
 Type `./gradlew installDist` in the main directory. The required jar files and default configuration files will be available in the `build/install/bft-smart-tpcc` directory.
@@ -43,14 +37,3 @@ The TPCC worload must be specified in the properties file (see `config/workload.
 ```
 ./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCClientApplication
 ```
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact

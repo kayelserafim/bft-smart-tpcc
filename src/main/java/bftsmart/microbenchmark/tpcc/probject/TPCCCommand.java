@@ -9,7 +9,7 @@ public class TPCCCommand implements Serializable {
 
     private static final long serialVersionUID = 6569180706287210660L;
 
-    private TPCCCommandType commandType;
+    private TransactionType transactionType;
     private Serializable request;
     private String response;
     private Integer status = -1;
@@ -18,13 +18,13 @@ public class TPCCCommand implements Serializable {
         super();
     }
 
-    public TPCCCommand(TPCCCommandType commandType, Serializable request) {
-        this.commandType = commandType;
+    public TPCCCommand(TransactionType transactionType, Serializable request) {
+        this.transactionType = transactionType;
         this.request = request;
     }
 
-    public TPCCCommandType getCommandType() {
-        return commandType;
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 
     public Serializable getRequest() {
@@ -42,7 +42,7 @@ public class TPCCCommand implements Serializable {
     public static TPCCCommand from(TPCCCommand command) {
         TPCCCommand tpccMessage = new TPCCCommand();
         if (command != null) {
-            tpccMessage.commandType = command.getCommandType();
+            tpccMessage.transactionType = command.getTransactionType();
             tpccMessage.request = command.getRequest();
             tpccMessage.response = command.getResponse();
             tpccMessage.status = command.getStatus();
@@ -59,7 +59,7 @@ public class TPCCCommand implements Serializable {
     public static TPCCCommand newSuccessMessage(TPCCCommand command, String successMessage) {
         TPCCCommand tpccMessage = new TPCCCommand();
         if (command != null) {
-            tpccMessage.commandType = command.getCommandType();
+            tpccMessage.transactionType = command.getTransactionType();
             tpccMessage.request = command.getRequest();
             tpccMessage.response = StringUtils.defaultIfBlank(successMessage, "OK");
             tpccMessage.status = 0;
@@ -70,7 +70,7 @@ public class TPCCCommand implements Serializable {
     public static TPCCCommand newErrorMessage(TPCCCommand command, String errorMessage) {
         TPCCCommand tpccMessage = new TPCCCommand();
         if (command != null) {
-            tpccMessage.commandType = command.getCommandType();
+            tpccMessage.transactionType = command.getTransactionType();
             tpccMessage.request = command.getRequest();
         }
         tpccMessage.response = errorMessage;
@@ -81,7 +81,7 @@ public class TPCCCommand implements Serializable {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Comand Type: ").append(commandType).append("\n");
+        sb.append("Transaction Type: ").append(transactionType).append("\n");
         sb.append("Request Params: ").append(request);
         sb.append("Result message: ").append(response).append("\n");
         sb.append("Result type: ").append(status);

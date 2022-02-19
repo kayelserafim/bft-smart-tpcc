@@ -3,7 +3,7 @@ buildscript {
         sonarqubeGradleVersion = '2.7.1'
     }
     dependencies {
-        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7.1")
+        classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${sonarqubeGradleVersion}")
     }
 }
 

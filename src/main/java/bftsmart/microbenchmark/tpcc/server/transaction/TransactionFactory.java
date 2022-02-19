@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 @Singleton
 public class TransactionFactory {
@@ -14,11 +14,11 @@ public class TransactionFactory {
     @Inject
     private Set<Transaction> transactions;
 
-    public Transaction getFactory(TPCCCommandType commandType) {
+    public Transaction getFactory(TransactionType transactionType) {
         return transactions.stream()
-                .filter(transaction -> transaction.commandType().equals(commandType))
+                .filter(transaction -> transaction.transactionType().equals(transactionType))
                 .findFirst()
-                .orElseThrow(() -> new ConfigurationException("There is no transaction for " + commandType));
+                .orElseThrow(() -> new ConfigurationException("There is no transaction for " + transactionType));
     }
 
 }

@@ -10,7 +10,7 @@ import bftsmart.microbenchmark.tpcc.client.command.OrderStatusCommand;
 import bftsmart.microbenchmark.tpcc.client.command.PaymentCommand;
 import bftsmart.microbenchmark.tpcc.client.command.StockLevelCommand;
 
-public final class MessageModule extends AbstractModule {
+public final class CommandModule extends AbstractModule {
 
     @Override
     protected void configure() {

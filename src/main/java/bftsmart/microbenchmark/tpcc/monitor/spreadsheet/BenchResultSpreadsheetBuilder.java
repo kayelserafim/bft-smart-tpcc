@@ -39,7 +39,7 @@ public class BenchResultSpreadsheetBuilder {
         spreadsheetBuilder.addHeader(HEADER);
         for (BenchResult result : results) {
             int position = 0;
-            spreadsheetBuilder.addColumn(position++, result.getCommandType().name());
+            spreadsheetBuilder.addColumn(position++, result.getTransactionType().name());
             spreadsheetBuilder.addColumn(position++, result.getSize());
             spreadsheetBuilder.addColumn(position++, result.getTotalErrors());
             spreadsheetBuilder.addColumn(position++, result.getElapsed().toMillis());

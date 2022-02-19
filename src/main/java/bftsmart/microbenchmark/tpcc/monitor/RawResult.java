@@ -4,13 +4,13 @@ import java.time.Duration;
 
 import com.google.common.base.Stopwatch;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class RawResult {
 
     private int terminalId;
     private String terminalName;
-    private TPCCCommandType commandType;
+    private TransactionType transactionType;
     private Duration elapsed;
     private Integer status;
     private String message;
@@ -44,12 +44,12 @@ public class RawResult {
         this.terminalName = terminalName;
     }
 
-    public TPCCCommandType getCommandType() {
-        return commandType;
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 
-    public void setCommandType(TPCCCommandType commandType) {
-        this.commandType = commandType;
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
     public Duration getElapsed() {
@@ -84,7 +84,7 @@ public class RawResult {
                 .append(", terminalName=")
                 .append(terminalName)
                 .append(", commandType=")
-                .append(commandType)
+                .append(transactionType)
                 .append(", elapsed=")
                 .append(elapsed)
                 .append(", status=")

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class WorkloadConfig {
 
@@ -34,9 +34,9 @@ public class WorkloadConfig {
     @JsonProperty("stockLevelWeight")
     private Integer stockLevelWeight;
     @JsonProperty("transactionWrites")
-    private Set<TPCCCommandType> writeTransactions;
+    private Set<TransactionType> writeTransactions;
     @JsonProperty("transactionReads")
-    private Set<TPCCCommandType> readTransactions;
+    private Set<TransactionType> readTransactions;
 
     public Integer getWarehouses() {
         return warehouses;
@@ -82,14 +82,14 @@ public class WorkloadConfig {
         return stockLevelWeight;
     }
 
-    public Set<TPCCCommandType> getWriteTransactions() {
+    public Set<TransactionType> getWriteTransactions() {
         if (writeTransactions == null) {
             writeTransactions = new HashSet<>();
         }
         return writeTransactions;
     }
 
-    public Set<TPCCCommandType> getReadTransactions() {
+    public Set<TransactionType> getReadTransactions() {
         if (readTransactions == null) {
             readTransactions = new HashSet<>();
         }

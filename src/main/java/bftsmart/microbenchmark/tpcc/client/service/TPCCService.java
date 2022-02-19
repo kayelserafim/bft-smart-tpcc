@@ -10,7 +10,7 @@ import bftsmart.microbenchmark.tpcc.client.command.CommandFactory;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommandType;
+import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 import bftsmart.tom.ServiceProxy;
 
@@ -27,13 +27,13 @@ public class TPCCService {
     private WorkloadConfig config;
 
     public TPCCCommand process(TPCCTerminalData terminalData, TPCCRandom random) {
-        TPCCCommandType commandType = terminalData.getTPCCCommandType(random.nextInt(1, 100));
-        TPCCCommand command = commandFactory.getFactory(commandType).createCommand(terminalData, random);
+        TransactionType transactionType = terminalData.getTransactionType(random.nextInt(1, 100));
+        TPCCCommand command = commandFactory.getFactory(transactionType).createCommand(terminalData, random);
         ServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalData.getTerminalId());
 
         try {
             byte[] response;
-            if (config.getReadTransactions().contains(command.getCommandType())) {
+            if (config.getReadTransactions().contains(command.getTransactionType())) {
                 response = serviceProxy.invokeUnordered(command.getBytes());
             } else {
                 response = serviceProxy.invokeOrdered(command.getBytes());
