@@ -3,6 +3,7 @@ package bftsmart.microbenchmark.tpcc.monitor.spreadsheet;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -12,14 +13,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 
 public class SpreadsheetBuilder {
-    
+
     public static final Logger LOGGER = LoggerFactory.getLogger(SpreadsheetBuilder.class);
 
     private static final String XLSX_SUFFIX = ".xlsx";
@@ -29,11 +30,10 @@ public class SpreadsheetBuilder {
     private final Font font;
     private final CellStyle cellStyle;
     private int currentRow = 0;
-    private int headersLength;
 
     private SpreadsheetBuilder(String sheetName) {
         this.sheetName = sheetName;
-        this.workbook = new XSSFWorkbook();
+        this.workbook = new SXSSFWorkbook();
         this.sheet = workbook.createSheet(sheetName);
 
         font = workbook.createFont();
@@ -49,7 +49,6 @@ public class SpreadsheetBuilder {
     }
 
     public SpreadsheetBuilder addHeader(String[] headers) {
-        this.headersLength = headers.length;
         cellStyle.setFont(font);
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
@@ -102,12 +101,6 @@ public class SpreadsheetBuilder {
         return this;
     }
 
-    public void autoSizeColumns() {
-        for (int i = 0; i < headersLength; i++) {
-            sheet.autoSizeColumn(i);
-        }
-    }
-
     /**
      * Save spreadsheet to defined directory.
      * 
@@ -121,7 +114,7 @@ public class SpreadsheetBuilder {
             workbook.write(fileOut);
             IOUtils.closeQuietly(workbook);
         } catch (IOException ioe) {
-            LOGGER.error(ioe.getMessage(), ioe);
+            throw new UncheckedIOException(ioe);
         }
     }
 

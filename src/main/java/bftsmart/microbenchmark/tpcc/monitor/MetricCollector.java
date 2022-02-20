@@ -2,11 +2,13 @@ package bftsmart.microbenchmark.tpcc.monitor;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -24,7 +26,20 @@ public class MetricCollector {
     @Inject
     private WorkloadConfig workload;
 
-    public void writeResults(List<RawResult> results) {
+    public void writeAllResults(List<RawResult> results) {
+        LOGGER.info("Saving all metrics files");
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        CompletableFuture<Void> rawResults = CompletableFuture.runAsync(() -> write(results));
+        CompletableFuture<Void> resultsByTransaction = CompletableFuture.runAsync(() -> writeByTransaction(results));
+        CompletableFuture.allOf(rawResults, resultsByTransaction).join();
+
+        LOGGER.info("{}ms elapsed time to save metrics", stopwatch.stop().elapsed().toMillis());
+    }
+
+    public void write(List<RawResult> results) {
+        LOGGER.info("Writing Raw Result list");
+
         RawResultSpreadsheetBuilder.builder("Metric_Raw_Terminal_Number_" + workload.getTerminals())
                 .addLine("Warehouses", workload.getWarehouses())
                 .addLine("Terminals", workload.getTerminals())
@@ -40,11 +55,13 @@ public class MetricCollector {
         LOGGER.info("Raw Result list size: {}", results.size());
     }
 
-    public void writeResultsByTransaction(List<RawResult> results) {
+    public void writeByTransaction(List<RawResult> results) {
+        LOGGER.info("Writing results per transaction");
+
         List<BenchResult> benchResult = results.stream()
                 .collect(Collectors.groupingBy(RawResult::getTransactionType))
                 .entrySet()
-                .stream()
+                .parallelStream()
                 .map(entry -> {
                     TransactionType key = entry.getKey();
                     List<RawResult> value = entry.getValue();
@@ -66,8 +83,7 @@ public class MetricCollector {
                 .addResult(benchResult)
                 .write(TPCCConfig.DATA_FOLDER);
 
-        LOGGER.info("List of results: {}", benchResult);
-        LOGGER.info("Result list size: {}", results.size());
+        LOGGER.info("Result list size per transaction: {}", benchResult.size());
     }
 
 }

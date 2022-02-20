@@ -74,10 +74,8 @@ public class TPCCClient {
 
         LOGGER.info("{} has finished", Thread.currentThread().getName());
         LOGGER.info("{}ms elapsed time", stopwatch.stop().elapsed().toMillis());
-        LOGGER.info("Saving metrics files");
 
-        metricCollector.writeResults(results);
-        metricCollector.writeResultsByTransaction(results);
+        metricCollector.writeAllResults(results);
 
         System.exit(0);
     }

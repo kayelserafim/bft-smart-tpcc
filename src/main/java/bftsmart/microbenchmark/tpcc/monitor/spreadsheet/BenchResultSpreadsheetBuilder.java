@@ -1,6 +1,5 @@
 package bftsmart.microbenchmark.tpcc.monitor.spreadsheet;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import bftsmart.microbenchmark.tpcc.monitor.BenchResult;
@@ -53,10 +52,8 @@ public class BenchResultSpreadsheetBuilder {
      * 
      * @param location
      *            The folder location
-     * @throws IOException
      */
     public void write(String location) {
-        spreadsheetBuilder.autoSizeColumns();
         spreadsheetBuilder.write(location);
     }
 
