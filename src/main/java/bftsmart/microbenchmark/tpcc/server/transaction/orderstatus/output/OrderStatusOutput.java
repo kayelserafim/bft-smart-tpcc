@@ -168,11 +168,6 @@ public class OrderStatusOutput {
             return this;
         }
 
-        public Builder orderLines(List<OrderLineOutput> orderLines) {
-            this.orderLines = orderLines;
-            return this;
-        }
-
         public OrderStatusOutput build() {
             return new OrderStatusOutput(this);
         }

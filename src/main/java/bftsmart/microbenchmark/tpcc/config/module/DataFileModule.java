@@ -38,11 +38,11 @@ public class DataFileModule extends AbstractModule {
     @Singleton
     public TPCCData tpccData(ObjectMapper objectMapper, WorkloadConfig workloadConfig) {
         File file = TPCCConfig.getTPCCDataFile(workloadConfig.getFileName());
-        LOGGER.info("Reading TpccData from Json file {}", file.getName());
+        LOGGER.info("Reading TPCCData from Json file {}", file.getName());
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         TPCCData tpccData = Try.of(() -> objectMapper.readValue(file, TPCCData.class))
-                .onFailure(e -> LOGGER.error("Erro ao ler o arquivo [{}].", file.getName(), e))
+                .onFailure(e -> LOGGER.error("Error reading file [{}].", file.getName(), e))
                 .getOrElse(new TPCCData());
 
         stopwatch.stop();

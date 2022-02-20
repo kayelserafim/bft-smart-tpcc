@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.monitor;
 
+import static java.time.Duration.ZERO;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -26,64 +28,68 @@ public class MetricCollector {
     @Inject
     private WorkloadConfig workload;
 
-    public void writeAllResults(List<RawResult> results) {
+    public CompletableFuture<Void> writeAllResults(List<RawResult> results) {
         LOGGER.info("Saving all metrics files");
 
         Stopwatch stopwatch = Stopwatch.createStarted();
-        CompletableFuture<Void> rawResults = CompletableFuture.runAsync(() -> write(results));
-        CompletableFuture<Void> resultsByTransaction = CompletableFuture.runAsync(() -> writeByTransaction(results));
-        CompletableFuture.allOf(rawResults, resultsByTransaction).join();
+        CompletableFuture<Void> rawResults = write(results);
+        CompletableFuture<Void> resultsByTransaction = writeByTransaction(results);
 
-        LOGGER.info("{}ms elapsed time to save metrics", stopwatch.stop().elapsed().toMillis());
+        return CompletableFuture.allOf(rawResults, resultsByTransaction)
+                .thenRun(() -> LOGGER.info("Metrics saved, {}ms elapsed time", stopwatch.stop().elapsed().toMillis()));
     }
 
-    public void write(List<RawResult> results) {
-        LOGGER.info("Writing Raw Result list");
+    public CompletableFuture<Void> write(List<RawResult> results) {
+        return CompletableFuture.runAsync(() -> {
+            LOGGER.info("Writing Raw Result list");
 
-        RawResultSpreadsheetBuilder.builder("Metric_Raw_Terminal_Number_" + workload.getTerminals())
-                .addLine("Warehouses", workload.getWarehouses())
-                .addLine("Terminals", workload.getTerminals())
-                .addLine("New Order Weight", workload.getNewOrderWeight())
-                .addLine("Payment Weight", workload.getPaymentWeight())
-                .addLine("Order Status Weight", workload.getOrderStatusWeight())
-                .addLine("Delivery Weight", workload.getDeliveryWeight())
-                .addLine("Stock Level Weight", workload.getStockLevelWeight())
-                .addBlankLine()
-                .addResult(results)
-                .write(TPCCConfig.DATA_FOLDER);
+            RawResultSpreadsheetBuilder.builder("Metric_Raw_Terminal_Number_" + workload.getTerminals())
+                    .addLine("Warehouses", workload.getWarehouses())
+                    .addLine("Terminals", workload.getTerminals())
+                    .addLine("New Order Weight", workload.getNewOrderWeight())
+                    .addLine("Payment Weight", workload.getPaymentWeight())
+                    .addLine("Order Status Weight", workload.getOrderStatusWeight())
+                    .addLine("Delivery Weight", workload.getDeliveryWeight())
+                    .addLine("Stock Level Weight", workload.getStockLevelWeight())
+                    .addBlankLine()
+                    .addResult(results)
+                    .write(TPCCConfig.DATA_FOLDER);
 
-        LOGGER.info("Raw Result list size: {}", results.size());
+            LOGGER.info("Raw Result list size: {}", results.size());
+        });
     }
 
-    public void writeByTransaction(List<RawResult> results) {
-        LOGGER.info("Writing results per transaction");
+    public CompletableFuture<Void> writeByTransaction(List<RawResult> results) {
+        return CompletableFuture.runAsync(() -> {
+            LOGGER.info("Writing results per transaction");
 
-        List<BenchResult> benchResult = results.stream()
-                .collect(Collectors.groupingBy(RawResult::getTransactionType))
-                .entrySet()
-                .parallelStream()
-                .map(entry -> {
-                    TransactionType key = entry.getKey();
-                    List<RawResult> value = entry.getValue();
-                    Duration elapsed = value.stream().map(RawResult::getElapsed).reduce(Duration.ZERO, Duration::plus);
-                    long totalErrors = value.stream().map(RawResult::getStatus).filter(result -> result < 0).count();
-                    return new BenchResult(key, elapsed, value.size(), totalErrors);
-                })
-                .collect(Collectors.toList());
+            List<BenchResult> benchResult = results.stream()
+                    .collect(Collectors.groupingBy(RawResult::getTransactionType))
+                    .entrySet()
+                    .parallelStream()
+                    .map(entry -> {
+                        TransactionType key = entry.getKey();
+                        List<RawResult> value = entry.getValue();
+                        Duration elapsed = value.stream().map(RawResult::getElapsed).reduce(ZERO, Duration::plus);
+                        long errors = value.stream().map(RawResult::getStatus).filter(status -> status < 0).count();
+                        return new BenchResult(key, elapsed, value.size(), errors);
+                    })
+                    .collect(Collectors.toList());
 
-        BenchResultSpreadsheetBuilder.builder("Metric_Terminal_Number_" + workload.getTerminals())
-                .addRow("Warehouses", workload.getWarehouses())
-                .addRow("Terminals", workload.getTerminals())
-                .addRow("New Order Weight", workload.getNewOrderWeight())
-                .addRow("Payment Weight", workload.getPaymentWeight())
-                .addRow("Order Status Weight", workload.getOrderStatusWeight())
-                .addRow("Delivery Weight", workload.getDeliveryWeight())
-                .addRow("Stock Level Weight", workload.getStockLevelWeight())
-                .addBlankRow()
-                .addResult(benchResult)
-                .write(TPCCConfig.DATA_FOLDER);
+            BenchResultSpreadsheetBuilder.builder("Metric_Terminal_Number_" + workload.getTerminals())
+                    .addRow("Warehouses", workload.getWarehouses())
+                    .addRow("Terminals", workload.getTerminals())
+                    .addRow("New Order Weight", workload.getNewOrderWeight())
+                    .addRow("Payment Weight", workload.getPaymentWeight())
+                    .addRow("Order Status Weight", workload.getOrderStatusWeight())
+                    .addRow("Delivery Weight", workload.getDeliveryWeight())
+                    .addRow("Stock Level Weight", workload.getStockLevelWeight())
+                    .addBlankRow()
+                    .addResult(benchResult)
+                    .write(TPCCConfig.DATA_FOLDER);
 
-        LOGGER.info("Result list size per transaction: {}", benchResult.size());
+            LOGGER.info("Result list size per transaction: {}", benchResult.size());
+        });
     }
 
 }

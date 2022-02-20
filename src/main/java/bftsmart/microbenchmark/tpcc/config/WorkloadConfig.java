@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.config;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -107,35 +108,20 @@ public class WorkloadConfig {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("WorkloadConfig [warehouses=")
-                .append(warehouses)
-                .append(", terminals=")
-                .append(terminals)
-                .append(", txnsPerTerminal=")
-                .append(txnsPerTerminal)
-                .append(", runMins=")
-                .append(runMins)
-                .append(", limitTxnsPerMin=")
-                .append(limitTxnsPerMin)
-                .append(", warmupIterations=")
-                .append(warmupIterations)
-                .append(", newOrderWeight=")
-                .append(newOrderWeight)
-                .append(", paymentWeight=")
-                .append(paymentWeight)
-                .append(", orderStatusWeight=")
-                .append(orderStatusWeight)
-                .append(", deliveryWeight=")
-                .append(deliveryWeight)
-                .append(", stockLevelWeight=")
-                .append(stockLevelWeight)
-                .append(", writeTransactions=")
-                .append(writeTransactions)
-                .append(", readTransactions=")
-                .append(readTransactions)
-                .append("]");
-        return builder.toString();
+        return new StringJoiner(", ", WorkloadConfig.class.getSimpleName() + "[", "]")
+                .add("warehouses=" + warehouses)
+                .add("terminals=" + terminals)
+                .add("txnsPerTerminal=" + txnsPerTerminal)
+                .add("runMins=" + runMins)
+                .add("limitTxnsPerMin=" + limitTxnsPerMin)
+                .add("warmupIterations=" + warmupIterations)
+                .add("newOrderWeight=" + newOrderWeight)
+                .add("paymentWeight=" + paymentWeight)
+                .add("orderStatusWeight=" + orderStatusWeight)
+                .add("deliveryWeight=" + deliveryWeight)
+                .add("stockLevelWeight=" + stockLevelWeight)
+                .add("writeTransactions=" + writeTransactions)
+                .add("readTransactions=" + readTransactions)
+                .toString();
     }
-
 }

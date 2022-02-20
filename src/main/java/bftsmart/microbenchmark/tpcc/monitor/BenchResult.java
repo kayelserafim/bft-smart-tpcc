@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.monitor;
 
 import java.time.Duration;
+import java.util.StringJoiner;
 
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.Numbers;
@@ -41,15 +42,11 @@ public class BenchResult {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Result [transactionType=")
-                .append(transactionType)
-                .append(", elapsed=")
-                .append(elapsed)
-                .append(", size=")
-                .append(size)
-                .append("]");
-        return builder.toString();
+        return new StringJoiner(", ", BenchResult.class.getSimpleName() + "[", "]")
+                .add("transactionType=" + transactionType)
+                .add("elapsed=" + elapsed)
+                .add("size=" + size)
+                .add("totalErrors=" + totalErrors)
+                .toString();
     }
-
 }

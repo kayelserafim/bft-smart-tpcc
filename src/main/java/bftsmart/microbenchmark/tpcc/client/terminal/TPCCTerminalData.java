@@ -15,7 +15,6 @@ public class TPCCTerminalData {
     private final String terminalName;
     private final Integer warehouseId;
     private final Integer districtId;
-    private final Integer numTransactions;
     private final Integer limitPerTerminal;
     private final Integer warmupIterations;
     private final Integer runMins;
@@ -40,10 +39,6 @@ public class TPCCTerminalData {
 
     public Integer getDistrictId() {
         return districtId;
-    }
-
-    public Integer getNumTransactions() {
-        return numTransactions;
     }
 
     public Integer getLimitPerTerminal() {
@@ -129,7 +124,6 @@ public class TPCCTerminalData {
         terminalName = builder.terminalName;
         warehouseId = builder.warehouseId;
         districtId = builder.districtId;
-        numTransactions = builder.numTransactions;
         limitPerTerminal = builder.limitPerTerminal;
         warmupIterations = builder.warmupIterations;
         runMins = builder.runMins;
@@ -147,7 +141,6 @@ public class TPCCTerminalData {
         private String terminalName;
         private Integer warehouseId;
         private Integer districtId;
-        private Integer numTransactions;
         private Integer limitPerTerminal;
         private Integer warmupIterations;
         private Integer runMins;
@@ -204,11 +197,6 @@ public class TPCCTerminalData {
             return this;
         }
 
-        public Builder numTransactions(Integer numTransactions) {
-            this.numTransactions = numTransactions;
-            return this;
-        }
-
         public Builder limitPerTerminal(Integer limitPerTerminal) {
             this.limitPerTerminal = limitPerTerminal;
             return this;
@@ -225,17 +213,14 @@ public class TPCCTerminalData {
         }
 
         public Builder workload(WorkloadConfig workload) {
-            newOrderWeight(workload.getNewOrderWeight());
-            paymentWeight(workload.getPaymentWeight());
-            deliveryWeight(workload.getDeliveryWeight());
-            orderStatusWeight(workload.getOrderStatusWeight());
-            stockLevelWeight(workload.getStockLevelWeight());
-            warehouseCount(workload.getWarehouses());
-            limitPerTerminal(workload.getLimitTxnsPerMin());
-            warmupIterations(workload.getWarmupIterations());
-            runMins(workload.getRunMins());
-            numTransactions(workload.getTxnsPerTerminal());
-            return this;
+            return warehouseCount(workload.getWarehouses()).stockLevelWeight(workload.getStockLevelWeight())
+                    .orderStatusWeight(workload.getOrderStatusWeight())
+                    .deliveryWeight(workload.getDeliveryWeight())
+                    .paymentWeight(workload.getPaymentWeight())
+                    .newOrderWeight(workload.getNewOrderWeight())
+                    .limitPerTerminal(workload.getTxnsPerTerminal())
+                    .warmupIterations(workload.getWarmupIterations())
+                    .runMins(workload.getRunMins());
         }
 
         public TPCCTerminalData build() {

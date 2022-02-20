@@ -10,6 +10,6 @@ public enum ModelType {
     ORDER,
     ORDER_LINE,
     ITEM,
-    STOCK;
+    STOCK
 
 }

@@ -26,7 +26,7 @@ public class TPCCServer implements SingleExecutable {
             @Named("replicaId") String replicaId) {
         this.transactionFactory = transactionFactory;
         this.workloadConfig = workloadConfig;
-        new ServiceReplica(Integer.valueOf(replicaId), this, null);
+        new ServiceReplica(Integer.parseInt(replicaId), this, null);
     }
 
     @Override

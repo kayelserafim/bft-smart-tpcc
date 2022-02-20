@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.server.transaction.payment.input;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -132,25 +133,15 @@ public class PaymentInput implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PaymentInput [warehouseId=")
-                .append(warehouseId)
-                .append(", customerWarehouseId=")
-                .append(customerWarehouseId)
-                .append(", districtId=")
-                .append(districtId)
-                .append(", customerDistrictId=")
-                .append(customerDistrictId)
-                .append(", customerId=")
-                .append(customerId)
-                .append(", customerLastName=")
-                .append(customerLastName)
-                .append(", customerByName=")
-                .append(customerByName)
-                .append(", paymentAmount=")
-                .append(paymentAmount)
-                .append(']');
-        return builder.toString();
+        return new StringJoiner(", ", PaymentInput.class.getSimpleName() + "[", "]")
+                .add("warehouseId=" + warehouseId)
+                .add("customerWarehouseId=" + customerWarehouseId)
+                .add("districtId=" + districtId)
+                .add("customerDistrictId=" + customerDistrictId)
+                .add("customerId=" + customerId)
+                .add("customerLastName='" + customerLastName + "'")
+                .add("customerByName=" + customerByName)
+                .add("paymentAmount=" + paymentAmount)
+                .toString();
     }
-
 }

@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.probject;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -78,16 +79,6 @@ public class TPCCCommand implements Serializable {
         return tpccMessage;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Transaction Type: ").append(transactionType).append("\n");
-        sb.append("Request Params: ").append(request);
-        sb.append("Result message: ").append(response).append("\n");
-        sb.append("Result type: ").append(status);
-        return sb.toString();
-    }
-
     public byte[] getBytes() {
         return SerializationUtils.serialize(this);
     }
@@ -96,4 +87,13 @@ public class TPCCCommand implements Serializable {
         return SerializationUtils.deserialize(bytes);
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", TPCCCommand.class.getSimpleName() + "[", "]")
+                .add("transactionType=" + transactionType)
+                .add("request=" + request)
+                .add("response='" + response + "'")
+                .add("status=" + status)
+                .toString();
+    }
 }

@@ -76,14 +76,6 @@ public class TPCCRandom {
     }
 
     /**
-     * <code>nextFloat(x, y)</code>
-     * Produce a random number uniformly distributed in [x .. y]
-     */
-    public float nextFloat(long x, long y) {
-        return (float) nextDouble(x, y);
-    }
-
-    /**
      * <code>nextDouble(x, y)</code>
      * Produce a random number uniformly distributed in [x .. y]
      */
@@ -122,7 +114,7 @@ public class TPCCRandom {
      *            random (x, y) stands for randomly selected within [x .. y]
      * @param y
      *            random (x, y) stands for randomly selected within [x .. y]
-     * @return
+     * @return The term non-uniform random
      */
     public long nonUniformRandom(long type, long a, long x, long y) {
         return (((nextLong(0L, a) | nextLong(x, y)) + type) % (y - x + 1)) + x;
@@ -206,7 +198,7 @@ public class TPCCRandom {
         String data = getAString(26, 50);
         if (nextInt(1, 100) <= 10) {
             int number = nextInt(0, data.length() - 8);
-            data = data.substring(0, number) + "ORIGINAL" + data.substring(number + 8, data.length());
+            data = data.substring(0, number) + "ORIGINAL" + data.substring(number + 8);
         }
         return data;
     }
@@ -262,7 +254,7 @@ public class TPCCRandom {
     }
 
     /**
-     * Produces a non uniform random Customer ID.
+     * Produces a non-uniform random Customer ID.
      * 
      * @return a customer ID
      */
@@ -271,7 +263,7 @@ public class TPCCRandom {
     }
 
     /**
-     * Produce a non uniform random Item ID.
+     * Produce a non-uniform random Item ID.
      * 
      * @return an Item ID
      */

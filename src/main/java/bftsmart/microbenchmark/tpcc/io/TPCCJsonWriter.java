@@ -39,8 +39,4 @@ public class TPCCJsonWriter {
         LOGGER.info("Json Data saved to file {}", fileName);
     }
 
-    public String getFileName() {
-        return fileName;
-    }
-
 }

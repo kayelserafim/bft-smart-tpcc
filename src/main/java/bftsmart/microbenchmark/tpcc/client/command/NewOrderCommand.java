@@ -1,8 +1,6 @@
 package bftsmart.microbenchmark.tpcc.client.command;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
@@ -24,11 +22,10 @@ public class NewOrderCommand implements Command {
         final Integer districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
 
         // o_ol_cnt
-        final Integer numItems = random.nextInt(5, 15);
+        final int numItems = random.nextInt(5, 15);
         final Integer[] itemIDs = new Integer[numItems];
         final Integer[] supplierWarehouses = new Integer[numItems];
         final Integer[] orderQuantities = new Integer[numItems];
-        final Set<Integer> itemObjIds = new HashSet<>();
         // see clause 2.4.2.2 (dot 6)
         int allLocal = 1;
         // clause 2.4.1.5
@@ -52,7 +49,6 @@ public class NewOrderCommand implements Command {
         // clause 2.4.1.5 (dot 1)
         if (random.nextInt(1, 100) == 1) {
             itemIDs[numItems - 1] = -12345;
-            itemObjIds.add(itemIDs[numItems - 1]);
         }
 
         NewOrderInput input = new NewOrderInput().withWarehouseId(terminalData.getWarehouseId())

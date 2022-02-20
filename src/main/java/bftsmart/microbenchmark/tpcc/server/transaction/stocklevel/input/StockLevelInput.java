@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.input;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -56,15 +57,10 @@ public class StockLevelInput implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("StockLevelInput [warehouseId=")
-                .append(warehouseId)
-                .append(", districtId=")
-                .append(districtId)
-                .append(", threshold=")
-                .append(threshold)
-                .append(']');
-        return builder.toString();
+        return new StringJoiner(", ", StockLevelInput.class.getSimpleName() + "[", "]")
+                .add("warehouseId=" + warehouseId)
+                .add("districtId=" + districtId)
+                .add("threshold=" + threshold)
+                .toString();
     }
-
 }

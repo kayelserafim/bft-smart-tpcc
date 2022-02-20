@@ -127,7 +127,7 @@ public class PaymentTransaction implements Transaction {
     private String outputScreen(PaymentOutput paymentOutput) {
         StringBuilder message = new StringBuilder();
         message.append("\n+---------------------------- PAYMENT ----------------------------+");
-        message.append("\n Date: " + paymentOutput.getDateTime().format(Times.DATE_TIME_FORMAT));
+        message.append("\n Date: ").append(paymentOutput.getDateTime().format(Times.DATE_TIME_FORMAT));
         message.append("\n\n Warehouse: ");
         message.append(paymentOutput.getWarehouseId());
         message.append("\n   Street 1(W):  ");
@@ -187,12 +187,12 @@ public class PaymentTransaction implements Transaction {
         if ("BC".equals(paymentOutput.getCustomerCredit())) {
             String customerData = paymentOutput.getCustomerData();
             if (customerData.length() > 40) {
-                message.append("\n\n Cust-Data: " + customerData.substring(0, 50));
+                message.append("\n\n Cust-Data: ").append(customerData.substring(0, 50));
                 int dataChunks = customerData.length() > 200 ? 4 : customerData.length() / 50;
                 for (int n = 1; n < dataChunks; n++)
-                    message.append("\n            " + customerData.substring(n * 50, (n + 1) * 50));
+                    message.append("\n            ").append(customerData.substring(n * 50, (n + 1) * 50));
             } else {
-                message.append("\n\n Cust-Data: " + customerData);
+                message.append("\n\n Cust-Data: ").append(customerData);
             }
         }
         message.append("\n+-----------------------------------------------------------------+\n\n");

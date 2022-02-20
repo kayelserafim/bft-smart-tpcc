@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.delivery.output;
 
+import java.util.StringJoiner;
+
 public class OrderOutput {
 
     private final Integer districtId;
@@ -21,9 +23,9 @@ public class OrderOutput {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OrderOutput [districtId=").append(districtId).append(", orderId=").append(orderId).append(']');
-        return builder.toString();
+        return new StringJoiner(", ", OrderOutput.class.getSimpleName() + "[", "]")
+                .add("districtId=" + districtId)
+                .add("orderId=" + orderId)
+                .toString();
     }
-
 }

@@ -29,7 +29,7 @@ public class TPCCDataGenerator {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(TPCCDataGenerator.class);
 
-    private TPCCRandom random = new TPCCRandom();
+    private final TPCCRandom random = new TPCCRandom();
 
     private final TPCCData tpccData;
     private final TPCCJsonWriter jsonWriter;

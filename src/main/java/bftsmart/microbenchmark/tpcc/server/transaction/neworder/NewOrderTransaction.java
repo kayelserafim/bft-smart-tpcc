@@ -113,10 +113,9 @@ public class NewOrderTransaction implements Transaction {
         List<OrderLine> orderLines = new ArrayList<>();
         for (int index = 1; index <= order.getOrderLineCounter(); index++) {
             OrderLineOutput.Builder orderLineOutput = OrderLineOutput.builder();
-            int number = index;
-            int supplyWarehouseId = input.getSupplierWarehouseIds().get(number - 1);
-            int itemId = input.getItemIds().get(number - 1);
-            int quantity = input.getOrderQuantities().get(number - 1);
+            int supplyWarehouseId = input.getSupplierWarehouseIds().get(index - 1);
+            int itemId = input.getItemIds().get(index - 1);
+            int quantity = input.getOrderQuantities().get(index - 1);
 
             orderLineOutput.supplierWarehouseId(supplyWarehouseId).itemId(itemId).orderQuantities(quantity);
             // If I_ID has an unused value (see Clause 2.4.1.5), a "not-found"
@@ -151,9 +150,9 @@ public class NewOrderTransaction implements Transaction {
 
             // clause 2.4.2.2 (dot 8.3)
             BigDecimal amount = item.getPrice().multiply(BigDecimal.valueOf(quantity));
-            Character brandGeneric;
+            char brandGeneric;
             // clause 2.4.2.2 (dot 8.4)
-            if (item.getData().indexOf("GENERIC") != -1 && stock.getData().indexOf("GENERIC") != -1) {
+            if (item.getData().contains("GENERIC") && stock.getData().contains("GENERIC")) {
                 brandGeneric = 'B';
             } else {
                 brandGeneric = 'G';
@@ -173,7 +172,7 @@ public class NewOrderTransaction implements Transaction {
                     .orderId(nextOrderId)
                     .districtId(districtId)
                     .warehouseId(warehouseId)
-                    .number(number)
+                    .number(index)
                     .itemId(itemId)
                     .supplyWarehouseId(supplyWarehouseId)
                     .quantity(quantity)

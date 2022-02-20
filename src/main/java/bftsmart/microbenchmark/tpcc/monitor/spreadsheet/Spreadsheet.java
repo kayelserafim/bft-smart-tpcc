@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 
-public class SpreadsheetBuilder {
+public class Spreadsheet {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(SpreadsheetBuilder.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(Spreadsheet.class);
 
     private static final String XLSX_SUFFIX = ".xlsx";
     private final String sheetName;
@@ -31,7 +31,7 @@ public class SpreadsheetBuilder {
     private final CellStyle cellStyle;
     private int currentRow = 0;
 
-    private SpreadsheetBuilder(String sheetName) {
+    public Spreadsheet(String sheetName) {
         this.sheetName = sheetName;
         this.workbook = new SXSSFWorkbook();
         this.sheet = workbook.createSheet(sheetName);
@@ -44,11 +44,7 @@ public class SpreadsheetBuilder {
         cellStyle.setFont(font);
     }
 
-    public static SpreadsheetBuilder builder(final String sheetName) {
-        return new SpreadsheetBuilder(sheetName);
-    }
-
-    public SpreadsheetBuilder addHeader(String[] headers) {
+    public void addHeader(String[] headers) {
         cellStyle.setFont(font);
         cellStyle.setAlignment(HorizontalAlignment.CENTER);
 
@@ -58,47 +54,33 @@ public class SpreadsheetBuilder {
             cell.setCellValue(headers[i]);
             cell.setCellStyle(cellStyle);
         }
-        return this;
     }
 
-    public SpreadsheetBuilder addRow(String label, String value) {
-        Row row = sheet.createRow(currentRow++);
-        Cell cell = row.createCell(0);
-        cell.setCellValue(label);
-        cell.setCellStyle(cellStyle);
-        row.createCell(1).setCellValue(value);
-        return this;
-    }
-
-    public SpreadsheetBuilder addRow(String label, Number value) {
+    public void addRow(String label, Number value) {
         Row row = sheet.createRow(currentRow++);
         Cell cell = row.createCell(0);
         cell.setCellValue(label);
         row.createCell(1).setCellValue(Numbers.toDouble(value));
-        return this;
     }
 
-    public SpreadsheetBuilder addBlankRow() {
+    public void addBlankRow() {
         sheet.createRow(currentRow++);
-        return this;
     }
 
-    public SpreadsheetBuilder addColumn(Integer column, String value) {
+    public void addColumn(Integer column, String value) {
         Row row = sheet.getRow(currentRow - 1);
         if (column == 0 || row == null) {
             row = sheet.createRow(currentRow++);
         }
         row.createCell(column).setCellValue(value);
-        return this;
     }
 
-    public SpreadsheetBuilder addColumn(Integer column, Number value) {
+    public void addColumn(Integer column, Number value) {
         Row row = sheet.getRow(currentRow - 1);
         if (column == 0) {
             row = sheet.createRow(currentRow++);
         }
         row.createCell(column).setCellValue(Numbers.toDouble(value));
-        return this;
     }
 
     /**
@@ -106,7 +88,6 @@ public class SpreadsheetBuilder {
      * 
      * @param location
      *            The folder location
-     * @throws IOException
      */
     public void write(String location) {
         File file = new File(location + File.separator + sheetName + XLSX_SUFFIX);

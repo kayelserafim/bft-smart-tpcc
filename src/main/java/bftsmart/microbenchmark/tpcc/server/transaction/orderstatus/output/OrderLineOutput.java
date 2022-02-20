@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.output;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.StringJoiner;
 
 public class OrderLineOutput {
 
@@ -83,19 +84,12 @@ public class OrderLineOutput {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OrderLineOutput [supplierWarehouseId=")
-                .append(supplierWarehouseId)
-                .append(", itemId=")
-                .append(itemId)
-                .append(", orderQuantities=")
-                .append(orderQuantities)
-                .append(", amount=")
-                .append(amount)
-                .append(", deliveryDateTime=")
-                .append(deliveryDateTime)
-                .append("]");
-        return builder.toString();
+        return new StringJoiner(", ", OrderLineOutput.class.getSimpleName() + "[", "]")
+                .add("supplierWarehouseId=" + supplierWarehouseId)
+                .add("itemId=" + itemId)
+                .add("orderQuantities=" + orderQuantities)
+                .add("amount=" + amount)
+                .add("deliveryDateTime=" + deliveryDateTime)
+                .toString();
     }
-
 }

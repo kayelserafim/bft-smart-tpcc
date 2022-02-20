@@ -6,44 +6,39 @@ import bftsmart.microbenchmark.tpcc.monitor.RawResult;
 
 public class RawResultSpreadsheetBuilder {
 
-    private final SpreadsheetBuilder spreadsheetBuilder;
+    private final Spreadsheet spreadsheet;
 
     private static final String[] HEADER =
             { "Transaction Type", "Terminal Id", "Terminal Name", "Latency (ms)", "Status", "Message" };
 
     private RawResultSpreadsheetBuilder(String sheetName) {
-        this.spreadsheetBuilder = SpreadsheetBuilder.builder(sheetName);
+        this.spreadsheet = new Spreadsheet(sheetName);
     }
 
     public static RawResultSpreadsheetBuilder builder(final String sheetName) {
         return new RawResultSpreadsheetBuilder(sheetName);
     }
 
-    public RawResultSpreadsheetBuilder addLine(String label, String value) {
-        spreadsheetBuilder.addRow(label, value);
-        return this;
-    }
-
     public RawResultSpreadsheetBuilder addLine(String label, Number value) {
-        spreadsheetBuilder.addRow(label, value);
+        spreadsheet.addRow(label, value);
         return this;
     }
 
     public RawResultSpreadsheetBuilder addBlankLine() {
-        spreadsheetBuilder.addBlankRow();
+        spreadsheet.addBlankRow();
         return this;
     }
 
     public RawResultSpreadsheetBuilder addResult(Collection<RawResult> results) {
-        spreadsheetBuilder.addHeader(HEADER);
+        spreadsheet.addHeader(HEADER);
         for (RawResult result : results) {
             int position = 0;
-            spreadsheetBuilder.addColumn(position++, String.valueOf(result.getTransactionType()));
-            spreadsheetBuilder.addColumn(position++, result.getTerminalId());
-            spreadsheetBuilder.addColumn(position++, result.getTerminalName());
-            spreadsheetBuilder.addColumn(position++, result.getElapsed().toMillis());
-            spreadsheetBuilder.addColumn(position++, result.getStatus());
-            spreadsheetBuilder.addColumn(position, result.getMessage());
+            spreadsheet.addColumn(position++, String.valueOf(result.getTransactionType()));
+            spreadsheet.addColumn(position++, result.getTerminalId());
+            spreadsheet.addColumn(position++, result.getTerminalName());
+            spreadsheet.addColumn(position++, result.getElapsed().toMillis());
+            spreadsheet.addColumn(position++, result.getStatus());
+            spreadsheet.addColumn(position, result.getMessage());
         }
         return this;
     }
@@ -55,7 +50,7 @@ public class RawResultSpreadsheetBuilder {
      *            The folder location
      */
     public void write(String location) {
-        spreadsheetBuilder.write(location);
+        spreadsheet.write(location);
     }
 
 }

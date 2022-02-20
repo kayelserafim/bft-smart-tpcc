@@ -2,17 +2,18 @@ package bftsmart.microbenchmark.tpcc.server.transaction.neworder.output;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.StringJoiner;
 
 public class OrderLineOutput {
 
-    private Integer supplierWarehouseId;
-    private Integer itemId;
-    private String itemName;
-    private Integer orderQuantities;
-    private Integer stockQuantities;
-    private Character brandGeneric;
-    private BigDecimal itemPrice;
-    private BigDecimal orderLineAmounts;
+    private final Integer supplierWarehouseId;
+    private final Integer itemId;
+    private final String itemName;
+    private final Integer orderQuantities;
+    private final Integer stockQuantities;
+    private final Character brandGeneric;
+    private final BigDecimal itemPrice;
+    private final BigDecimal orderLineAmounts;
 
     public OrderLineOutput(Builder builder) {
         this.supplierWarehouseId = builder.supplierWarehouseId;
@@ -29,64 +30,32 @@ public class OrderLineOutput {
         return supplierWarehouseId;
     }
 
-    public void setSupplierWarehouseId(Integer supplierWarehouseId) {
-        this.supplierWarehouseId = supplierWarehouseId;
-    }
-
     public Integer getItemId() {
         return itemId;
-    }
-
-    public void setItemId(Integer itemId) {
-        this.itemId = itemId;
     }
 
     public String getItemName() {
         return itemName;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
     public Integer getOrderQuantities() {
         return orderQuantities;
-    }
-
-    public void setOrderQuantities(Integer orderQuantities) {
-        this.orderQuantities = orderQuantities;
     }
 
     public Integer getStockQuantities() {
         return stockQuantities;
     }
 
-    public void setStockQuantities(Integer stockQuantities) {
-        this.stockQuantities = stockQuantities;
-    }
-
     public Character getBrandGeneric() {
         return brandGeneric;
-    }
-
-    public void setBrandGeneric(Character brandGeneric) {
-        this.brandGeneric = brandGeneric;
     }
 
     public BigDecimal getItemPrice() {
         return itemPrice;
     }
 
-    public void setItemPrice(BigDecimal itemPrice) {
-        this.itemPrice = itemPrice;
-    }
-
     public BigDecimal getOrderLineAmounts() {
         return orderLineAmounts;
-    }
-
-    public void setOrderLineAmounts(BigDecimal orderLineAmounts) {
-        this.orderLineAmounts = orderLineAmounts;
     }
 
     public static Builder builder() {
@@ -152,25 +121,15 @@ public class OrderLineOutput {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OrderLineOutput [supplierWarehouseId=")
-                .append(supplierWarehouseId)
-                .append(", itemId=")
-                .append(itemId)
-                .append(", itemName=")
-                .append(itemName)
-                .append(", orderQuantities=")
-                .append(orderQuantities)
-                .append(", stockQuantities=")
-                .append(stockQuantities)
-                .append(", brandGeneric=")
-                .append(brandGeneric)
-                .append(", itemPrice=")
-                .append(itemPrice)
-                .append(", orderLineAmounts=")
-                .append(orderLineAmounts)
-                .append("]");
-        return builder.toString();
+        return new StringJoiner(", ", OrderLineOutput.class.getSimpleName() + "[", "]")
+                .add("supplierWarehouseId=" + supplierWarehouseId)
+                .add("itemId=" + itemId)
+                .add("itemName='" + itemName + "'")
+                .add("orderQuantities=" + orderQuantities)
+                .add("stockQuantities=" + stockQuantities)
+                .add("brandGeneric=" + brandGeneric)
+                .add("itemPrice=" + itemPrice)
+                .add("orderLineAmounts=" + orderLineAmounts)
+                .toString();
     }
-
 }

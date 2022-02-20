@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.monitor;
 
 import java.time.Duration;
+import java.util.StringJoiner;
 
 import com.google.common.base.Stopwatch;
 
@@ -8,13 +9,13 @@ import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class RawResult {
 
-    private int terminalId;
-    private String terminalName;
+    private final Stopwatch stopwatch;
+    private final int terminalId;
+    private final String terminalName;
     private TransactionType transactionType;
     private Duration elapsed;
     private Integer status;
     private String message;
-    private final Stopwatch stopwatch;
 
     public RawResult(int terminalId, String terminalName) {
         this.stopwatch = Stopwatch.createStarted();
@@ -32,16 +33,8 @@ public class RawResult {
         return terminalId;
     }
 
-    public void setTerminalId(int terminalId) {
-        this.terminalId = terminalId;
-    }
-
     public String getTerminalName() {
         return terminalName;
-    }
-
-    public void setTerminalName(String terminalName) {
-        this.terminalName = terminalName;
     }
 
     public TransactionType getTransactionType() {
@@ -54,10 +47,6 @@ public class RawResult {
 
     public Duration getElapsed() {
         return elapsed;
-    }
-
-    public void setElapsed(Duration elapsed) {
-        this.elapsed = elapsed;
     }
 
     public Integer getStatus() {
@@ -78,23 +67,13 @@ public class RawResult {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RawResult [terminalId=")
-                .append(terminalId)
-                .append(", terminalName=")
-                .append(terminalName)
-                .append(", commandType=")
-                .append(transactionType)
-                .append(", elapsed=")
-                .append(elapsed)
-                .append(", status=")
-                .append(status)
-                .append(", message=")
-                .append(message)
-                .append(", stopwatch=")
-                .append(stopwatch)
-                .append("]");
-        return builder.toString();
+        return new StringJoiner(", ", RawResult.class.getSimpleName() + "[", "]")
+                .add("terminalId=" + terminalId)
+                .add("terminalName='" + terminalName + "'")
+                .add("transactionType=" + transactionType)
+                .add("elapsed=" + elapsed)
+                .add("status=" + status)
+                .add("message='" + message + "'")
+                .toString();
     }
-
 }

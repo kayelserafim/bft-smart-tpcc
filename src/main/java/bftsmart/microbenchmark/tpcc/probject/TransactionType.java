@@ -6,6 +6,6 @@ public enum TransactionType {
     PAYMENT,
     ORDER_STATUS,
     DELIVERY,
-    STOCK_LEVEL;
+    STOCK_LEVEL
 
 }

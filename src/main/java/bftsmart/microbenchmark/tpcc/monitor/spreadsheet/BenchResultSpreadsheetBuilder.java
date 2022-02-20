@@ -6,43 +6,38 @@ import bftsmart.microbenchmark.tpcc.monitor.BenchResult;
 
 public class BenchResultSpreadsheetBuilder {
 
-    private final SpreadsheetBuilder spreadsheetBuilder;
+    private final Spreadsheet spreadsheet;
 
     private static final String[] HEADER =
             { "Transaction", "Number of requests", "Number of errors", "Latency (ms)", "Throughput (op/ms)" };
 
     private BenchResultSpreadsheetBuilder(String sheetName) {
-        this.spreadsheetBuilder = SpreadsheetBuilder.builder(sheetName);
+        this.spreadsheet = new Spreadsheet(sheetName);
     }
 
     public static BenchResultSpreadsheetBuilder builder(final String sheetName) {
         return new BenchResultSpreadsheetBuilder(sheetName);
     }
 
-    public BenchResultSpreadsheetBuilder addRow(String label, String value) {
-        spreadsheetBuilder.addRow(label, value);
-        return this;
-    }
-
     public BenchResultSpreadsheetBuilder addRow(String label, Number value) {
-        spreadsheetBuilder.addRow(label, value);
+        spreadsheet.addRow(label, value);
         return this;
     }
 
     public BenchResultSpreadsheetBuilder addBlankRow() {
-        spreadsheetBuilder.addBlankRow();
+        spreadsheet.addBlankRow();
         return this;
     }
 
     public BenchResultSpreadsheetBuilder addResult(Collection<BenchResult> results) {
-        spreadsheetBuilder.addHeader(HEADER);
+        spreadsheet.addHeader(HEADER);
         for (BenchResult result : results) {
             int position = 0;
-            spreadsheetBuilder.addColumn(position++, result.getTransactionType().name());
-            spreadsheetBuilder.addColumn(position++, result.getSize());
-            spreadsheetBuilder.addColumn(position++, result.getTotalErrors());
-            spreadsheetBuilder.addColumn(position++, result.getElapsed().toMillis());
-            spreadsheetBuilder.addColumn(position, result.getThroughput());
+            spreadsheet.addColumn(position++, result.getTransactionType().name());
+            spreadsheet.addColumn(position++, result.getSize());
+            spreadsheet.addColumn(position++, result.getTotalErrors());
+            spreadsheet.addColumn(position++, result.getElapsed().toMillis());
+            spreadsheet.addColumn(position, result.getThroughput());
         }
         return this;
     }
@@ -54,7 +49,7 @@ public class BenchResultSpreadsheetBuilder {
      *            The folder location
      */
     public void write(String location) {
-        spreadsheetBuilder.write(location);
+        spreadsheet.write(location);
     }
 
 }

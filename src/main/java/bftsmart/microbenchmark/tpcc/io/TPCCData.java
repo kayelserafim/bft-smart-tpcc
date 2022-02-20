@@ -21,15 +21,15 @@ public class TPCCData {
     private Long cLoad;
     private Integer warehouseCount;
 
-    private Set<Warehouse> warehouses;
-    private Set<Item> items;
-    private Set<Stock> stocks;
-    private Set<District> districts;
-    private Set<Customer> customers;
-    private Set<Order> orders;
-    private Set<NewOrder> newOrders;
-    private Set<OrderLine> orderLines;
-    private Set<History> histories;
+    private final Set<Warehouse> warehouses;
+    private final Set<Item> items;
+    private final Set<Stock> stocks;
+    private final Set<District> districts;
+    private final Set<Customer> customers;
+    private final Set<Order> orders;
+    private final Set<NewOrder> newOrders;
+    private final Set<OrderLine> orderLines;
+    private final Set<History> histories;
 
     public TPCCData() {
         super();
@@ -46,7 +46,7 @@ public class TPCCData {
 
     public TPCCData(final Integer warehouseCount) {
         this();
-        this.warehouseCount = warehouseCount;
+        setWarehouseCount(warehouseCount);
     }
 
     public Long getcLoad() {
@@ -69,72 +69,36 @@ public class TPCCData {
         return warehouses;
     }
 
-    public void setWarehouses(Set<Warehouse> warehouses) {
-        this.warehouses = warehouses;
-    }
-
     public Set<Item> getItems() {
         return items;
-    }
-
-    public void setItems(Set<Item> items) {
-        this.items = items;
     }
 
     public Set<Stock> getStocks() {
         return stocks;
     }
 
-    public void setStocks(Set<Stock> stocks) {
-        this.stocks = stocks;
-    }
-
     public Set<District> getDistricts() {
         return districts;
-    }
-
-    public void setDistricts(Set<District> districts) {
-        this.districts = districts;
     }
 
     public Set<Customer> getCustomers() {
         return customers;
     }
 
-    public void setCustomers(Set<Customer> customers) {
-        this.customers = customers;
-    }
-
     public Set<Order> getOrders() {
         return orders;
-    }
-
-    public void setOrders(Set<Order> orders) {
-        this.orders = orders;
     }
 
     public Set<NewOrder> getNewOrders() {
         return newOrders;
     }
 
-    public void setNewOrders(Set<NewOrder> newOrders) {
-        this.newOrders = newOrders;
-    }
-
     public Set<OrderLine> getOrderLines() {
         return orderLines;
     }
 
-    public void setOrderLines(Set<OrderLine> orderLines) {
-        this.orderLines = orderLines;
-    }
-
     public Set<History> getHistories() {
         return histories;
-    }
-
-    public void setHistories(Set<History> histories) {
-        this.histories = histories;
     }
 
     @Override

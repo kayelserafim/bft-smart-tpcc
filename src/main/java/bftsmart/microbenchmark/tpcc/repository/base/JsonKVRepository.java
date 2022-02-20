@@ -25,8 +25,8 @@ public class JsonKVRepository implements KVRepository<Tuple, PRObject> {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(JsonKVRepository.class);
 
-    private Map<Tuple, Set<PRObject>> records = new ConcurrentHashMap<>();
-    private Map<Tuple, Set<Tuple>> indexes = new ConcurrentHashMap<>();
+    private final Map<Tuple, Set<PRObject>> records = new ConcurrentHashMap<>();
+    private final Map<Tuple, Set<Tuple>> indexes = new ConcurrentHashMap<>();
 
     @Inject
     JsonKVRepository(final TPCCData tpccData) {
@@ -42,8 +42,8 @@ public class JsonKVRepository implements KVRepository<Tuple, PRObject> {
         tpccData.getStocks().forEach(this::save);
         tpccData.getWarehouses().forEach(this::save);
 
-        long totalIndexes = indexes.values().stream().flatMap(Set::stream).count();
-        long totalRecords = records.values().stream().flatMap(Set::stream).count();
+        long totalIndexes = indexes.values().stream().mapToLong(Set::size).sum();
+        long totalRecords = records.values().stream().mapToLong(Set::size).sum();
 
         LOGGER.info("KVRepository initialized");
         LOGGER.info("Total indexes: {} ", totalIndexes);

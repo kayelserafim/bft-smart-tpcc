@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.server.transaction.neworder.input;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -132,25 +133,15 @@ public class NewOrderInput implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("NewOrderInput [warehouseId=")
-                .append(warehouseId)
-                .append(", districtId=")
-                .append(districtId)
-                .append(", customerId=")
-                .append(customerId)
-                .append(", orderLineCnt=")
-                .append(orderLineCnt)
-                .append(", orderAllLocal=")
-                .append(orderAllLocal)
-                .append(", itemIds=")
-                .append(itemIds)
-                .append(", supplierWarehouseIds=")
-                .append(supplierWarehouseIds)
-                .append(", orderQuantities=")
-                .append(orderQuantities)
-                .append(']');
-        return builder.toString();
+        return new StringJoiner(", ", NewOrderInput.class.getSimpleName() + "[", "]")
+                .add("warehouseId=" + warehouseId)
+                .add("districtId=" + districtId)
+                .add("customerId=" + customerId)
+                .add("orderLineCnt=" + orderLineCnt)
+                .add("orderAllLocal=" + orderAllLocal)
+                .add("itemIds=" + itemIds)
+                .add("supplierWarehouseIds=" + supplierWarehouseIds)
+                .add("orderQuantities=" + orderQuantities)
+                .toString();
     }
-
 }

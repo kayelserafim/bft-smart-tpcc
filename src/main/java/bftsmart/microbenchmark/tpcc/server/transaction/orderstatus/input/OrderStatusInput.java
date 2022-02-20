@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -86,19 +87,12 @@ public class OrderStatusInput implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("OrderStatusInput [warehouseId=")
-                .append(warehouseId)
-                .append(", districtId=")
-                .append(districtId)
-                .append(", customerId=")
-                .append(customerId)
-                .append(", customerByName=")
-                .append(customerByName)
-                .append(", customerLastName=")
-                .append(customerLastName)
-                .append(']');
-        return builder.toString();
+        return new StringJoiner(", ", OrderStatusInput.class.getSimpleName() + "[", "]")
+                .add("warehouseId=" + warehouseId)
+                .add("districtId=" + districtId)
+                .add("customerId=" + customerId)
+                .add("customerByName=" + customerByName)
+                .add("customerLastName='" + customerLastName + "'")
+                .toString();
     }
-
 }

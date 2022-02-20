@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.delivery.input;
 
 import java.io.Serializable;
+import java.util.StringJoiner;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -41,13 +42,9 @@ public class DeliveryInput implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("DeliveryInput [warehouseId=")
-                .append(warehouseId)
-                .append(", orderCarrierId=")
-                .append(orderCarrierId)
-                .append(']');
-        return builder.toString();
+        return new StringJoiner(", ", DeliveryInput.class.getSimpleName() + "[", "]")
+                .add("warehouseId=" + warehouseId)
+                .add("orderCarrierId=" + orderCarrierId)
+                .toString();
     }
-
 }

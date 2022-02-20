@@ -8,16 +8,6 @@ public class NotFoundException extends RuntimeException {
     private static final long serialVersionUID = -2515448000831646951L;
 
     /**
-     * Construct an exception with a message.
-     *
-     * @param message
-     *            The reason for the exception
-     */
-    public NotFoundException(String message) {
-        super(message);
-    }
-
-    /**
      * Construct an exception with a message and arguments.
      *
      * @param message
@@ -28,18 +18,6 @@ public class NotFoundException extends RuntimeException {
      */
     public NotFoundException(String message, Object... args) {
         super(String.format(message, args));
-    }
-
-    /**
-     * Construct an exception with a message.
-     *
-     * @param message
-     *            The reason for the exception
-     * @param cause
-     *            The cause
-     */
-    public NotFoundException(String message, Exception cause) {
-        super(message + " because of " + cause.toString(), cause);
     }
 
 }

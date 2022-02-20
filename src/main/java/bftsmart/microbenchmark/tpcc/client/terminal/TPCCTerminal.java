@@ -23,7 +23,7 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
     private final List<RawResult> results;
     private final TimedSemaphore timedSemaphore;
 
-    private TPCCService transaction;
+    private final TPCCService transaction;
 
     public TPCCTerminal(TPCCService transaction, TPCCTerminalData terminalData, TPCCRandom random,
             TimedSemaphore timedSemaphore) {
@@ -59,8 +59,8 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
     }
 
     private void executeTransactions() {
-        if (terminalData.getNumTransactions() > 0) {
-            int numTransactions = terminalData.getNumTransactions();
+        if (terminalData.getLimitPerTerminal() > 0) {
+            int numTransactions = terminalData.getLimitPerTerminal();
             LOGGER.debug("Executing {} transactions...", numTransactions);
             while (numTransactions > 0) {
                 if (timedSemaphore.tryAcquire()) {

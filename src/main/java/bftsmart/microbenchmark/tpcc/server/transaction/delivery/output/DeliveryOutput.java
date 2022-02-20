@@ -67,11 +67,6 @@ public class DeliveryOutput {
             return this;
         }
 
-        public Builder orderIds(List<OrderOutput> orderIds) {
-            this.orderIds = orderIds;
-            return this;
-        }
-
         public DeliveryOutput build() {
             return new DeliveryOutput(this);
         }
