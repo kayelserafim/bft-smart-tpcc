@@ -15,9 +15,9 @@ public class StockLevelCommand implements Command {
 
     @Override
     public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
-        int threshold = random.nextInt(10, 20);
+        final int threshold = random.nextInt(10, 20);
 
-        StockLevelInput input = new StockLevelInput().withWarehouseId(terminalData.getWarehouseId())
+        final StockLevelInput input = new StockLevelInput().withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(terminalData.getDistrictId())
                 .withThreshold(threshold);
 

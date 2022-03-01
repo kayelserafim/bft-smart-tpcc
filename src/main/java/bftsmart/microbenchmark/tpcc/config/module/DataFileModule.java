@@ -21,7 +21,7 @@ import io.vavr.control.Try;
 
 public class DataFileModule extends AbstractModule {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(DataFileModule.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataFileModule.class);
 
     @Provides
     @Singleton

@@ -17,7 +17,7 @@ import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 @Singleton
 public class TPCCJsonWriter {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TPCCJsonWriter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCJsonWriter.class);
 
     private final ObjectMapper mapper;
     private final String fileName;

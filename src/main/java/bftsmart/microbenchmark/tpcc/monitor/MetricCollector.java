@@ -23,7 +23,7 @@ import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 @Singleton
 public class MetricCollector {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(MetricCollector.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetricCollector.class);
 
     @Inject
     private WorkloadConfig workload;

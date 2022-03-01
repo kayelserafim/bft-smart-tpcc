@@ -16,9 +16,9 @@ public class OrderStatusCommand implements Command {
 
     @Override
     public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
-        int y = random.nextInt(1, 100);
+        final int y = random.nextInt(1, 100);
+        final int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
         int customerId = -1;
-        int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
         boolean customerByName;
         String customerLastName = null;
         if (y <= 60) {
@@ -31,7 +31,7 @@ public class OrderStatusCommand implements Command {
             customerId = random.getCustomerID();
         }
 
-        OrderStatusInput input = new OrderStatusInput().withWarehouseId(terminalData.getWarehouseId())
+        final OrderStatusInput input = new OrderStatusInput().withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)
                 .withCustomerId(customerId)
                 .withCustomerByName(customerByName)

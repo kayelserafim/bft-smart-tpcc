@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -46,9 +46,9 @@ public class YCSBMessage implements Serializable {
     private String table;
     private String key;
     private Set<String> fields;
-    private HashMap<String, byte[]> values;
+    private Map<String, byte[]> values;
     private int result = -1;
-    private HashMap<String, byte[]> results;
+    private Map<String, byte[]> results;
     private String errorMsg;
 
     private YCSBMessage() {
@@ -56,7 +56,7 @@ public class YCSBMessage implements Serializable {
         result = -1;
     }
 
-    public static YCSBMessage newInsertRequest(String table, String key, HashMap<String, byte[]> values) {
+    public static YCSBMessage newInsertRequest(String table, String key, Map<String, byte[]> values) {
         YCSBMessage message = new YCSBMessage();
         message.type = Type.CREATE;
         message.entity = Entity.RECORD;
@@ -66,7 +66,7 @@ public class YCSBMessage implements Serializable {
         return message;
     }
 
-    public static YCSBMessage newUpdateRequest(String table, String key, HashMap<String, byte[]> values) {
+    public static YCSBMessage newUpdateRequest(String table, String key, Map<String, byte[]> values) {
         YCSBMessage message = new YCSBMessage();
         message.type = Type.UPDATE;
         message.entity = Entity.RECORD;
@@ -76,7 +76,7 @@ public class YCSBMessage implements Serializable {
         return message;
     }
 
-    public static YCSBMessage newReadRequest(String table, String key, Set<String> fields, HashMap<String, byte[]> results) {
+    public static YCSBMessage newReadRequest(String table, String key, Set<String> fields, Map<String, byte[]> results) {
         YCSBMessage message = new YCSBMessage();
         message.type = Type.READ;
         message.entity = Entity.RECORD;
@@ -87,19 +87,13 @@ public class YCSBMessage implements Serializable {
         return message;
     }
 
-    public static YCSBMessage newInsertResponse(int result) {
+    public static YCSBMessage newResponse(int result) {
         YCSBMessage message = new YCSBMessage();
         message.result = result;
         return message;
     }
 
-    public static YCSBMessage newUpdateResponse(int result) {
-        YCSBMessage message = new YCSBMessage();
-        message.result = result;
-        return message;
-    }
-
-    public static YCSBMessage newReadResponse(HashMap<String, byte[]> results, int result) {
+    public static YCSBMessage newResponse(Map<String, byte[]> results, int result) {
         YCSBMessage message = new YCSBMessage();
         message.result = result;
         message.results = results;
@@ -125,7 +119,7 @@ public class YCSBMessage implements Serializable {
             aBaos.close();
             return aArray;
         } catch (IOException ex) {
-            return null;
+            return new byte[0];
         }
     }
 
@@ -154,7 +148,7 @@ public class YCSBMessage implements Serializable {
         return result;
     }
 
-    public HashMap<String, byte[]> getResults() {
+    public Map<String, byte[]> getResults() {
         return results;
     }
 
@@ -178,7 +172,7 @@ public class YCSBMessage implements Serializable {
         return fields;
     }
 
-    public HashMap<String, byte[]> getValues() {
+    public Map<String, byte[]> getValues() {
         return values;
     }
 

@@ -14,7 +14,7 @@ import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 @Singleton
 public class CommandFactory {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(CommandFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommandFactory.class);
 
     @Inject
     private Set<Command> commands;

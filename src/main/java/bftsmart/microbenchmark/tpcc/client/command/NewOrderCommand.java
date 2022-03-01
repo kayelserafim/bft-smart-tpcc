@@ -18,8 +18,8 @@ public class NewOrderCommand implements Command {
 
     @Override
     public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
-        final Integer customerID = random.getCustomerID();
-        final Integer districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+        final int customerID = random.getCustomerID();
+        final int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
 
         // o_ol_cnt
         final int numItems = random.nextInt(5, 15);
@@ -51,7 +51,7 @@ public class NewOrderCommand implements Command {
             itemIDs[numItems - 1] = -12345;
         }
 
-        NewOrderInput input = new NewOrderInput().withWarehouseId(terminalData.getWarehouseId())
+        final NewOrderInput input = new NewOrderInput().withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)
                 .withCustomerId(customerID)
                 .withOrderLineCnt(numItems)

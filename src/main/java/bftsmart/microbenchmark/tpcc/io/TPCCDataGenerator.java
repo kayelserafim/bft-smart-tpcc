@@ -27,7 +27,7 @@ import bftsmart.microbenchmark.tpcc.util.Times;
 @Singleton
 public class TPCCDataGenerator {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TPCCDataGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCDataGenerator.class);
 
     private final TPCCRandom random = new TPCCRandom();
 

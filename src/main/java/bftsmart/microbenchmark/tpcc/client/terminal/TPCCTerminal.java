@@ -16,7 +16,7 @@ import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class TPCCTerminal implements Callable<List<RawResult>> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TPCCTerminal.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCTerminal.class);
 
     private final TPCCTerminalData terminalData;
     private final TPCCRandom random;

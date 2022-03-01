@@ -23,7 +23,7 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
 @Singleton
 public class JsonKVRepository implements KVRepository<Tuple, PRObject> {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(JsonKVRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonKVRepository.class);
 
     private final Map<Tuple, Set<PRObject>> records = new ConcurrentHashMap<>();
     private final Map<Tuple, Set<Tuple>> indexes = new ConcurrentHashMap<>();

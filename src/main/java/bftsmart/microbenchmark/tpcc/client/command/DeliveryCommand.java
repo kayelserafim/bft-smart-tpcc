@@ -15,9 +15,9 @@ public class DeliveryCommand implements Command {
 
     @Override
     public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
-        int orderCarrierId = random.nextInt(1, 10);
+        final int orderCarrierId = random.nextInt(1, 10);
 
-        DeliveryInput input =
+        final DeliveryInput input =
                 new DeliveryInput().withWarehouseId(terminalData.getWarehouseId()).withOrderCarrierId(orderCarrierId);
 
         return new TPCCCommand(transactionType(), input);

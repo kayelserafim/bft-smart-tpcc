@@ -21,8 +21,8 @@ public class PaymentCommand implements Command {
 
     @Override
     public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
-        int x = random.nextInt(1, 100);
-        int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+        final int x = random.nextInt(1, 100);
+        final int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
         int customerDistrictID;
         int customerWarehouseID;
         if (x <= 85) {
@@ -35,7 +35,7 @@ public class PaymentCommand implements Command {
             } while (customerWarehouseID == terminalData.getWarehouseId() && terminalData.getWarehouseCount() > 1);
         }
 
-        int y = random.nextInt(1, 100);
+        final int y = random.nextInt(1, 100);
         int customerId = -1;
         boolean customerByName;
         String customerLastName = null;
@@ -49,9 +49,10 @@ public class PaymentCommand implements Command {
             customerId = random.getCustomerID();
         }
 
-        BigDecimal paymentAmount = random.nextBigDecimal(100, 500000).divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP);
+        final BigDecimal paymentAmount =
+                random.nextBigDecimal(100, 500000).divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP);
 
-        PaymentInput input = new PaymentInput().withWarehouseId(terminalData.getWarehouseId())
+        final PaymentInput input = new PaymentInput().withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)
                 .withCustomerWarehouseId(customerWarehouseID)
                 .withCustomerDistrictId(customerDistrictID)

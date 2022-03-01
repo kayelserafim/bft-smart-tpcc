@@ -17,7 +17,7 @@ import bftsmart.tom.ServiceProxy;
 @Singleton
 public class TPCCService {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TPCCService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCService.class);
 
     @Inject
     private BFTServiceProxy bftServiceProxy;

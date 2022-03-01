@@ -28,7 +28,7 @@ import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class TPCCClient {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TPCCClient.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCClient.class);
 
     private final WorkloadConfig workload;
     private final TPCCRandom random;

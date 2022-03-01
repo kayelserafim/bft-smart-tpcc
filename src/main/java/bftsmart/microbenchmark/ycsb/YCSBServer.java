@@ -18,12 +18,18 @@ package bftsmart.microbenchmark.ycsb;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.TreeMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import bftsmart.microbenchmark.ycsb.YCSBMessage.Entity;
+import bftsmart.microbenchmark.ycsb.YCSBMessage.Type;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.defaultservices.DefaultRecoverable;
@@ -35,151 +41,115 @@ import bftsmart.tom.server.defaultservices.DefaultRecoverable;
  */
 public class YCSBServer extends DefaultRecoverable {
 
-	private static final boolean _debug = false;
-	private TreeMap<String, YCSBTable> mTables;
+    private static final Logger LOGGER = LoggerFactory.getLogger(YCSBServer.class);
+    private TreeMap<String, YCSBTable> mTables;
 
-	private boolean logPrinted = false;
+    public static void main(String[] args) {
+        if (args.length == 1) {
+            new YCSBServer(Integer.parseInt(args[0]));
+        } else {
+            LOGGER.error("Usage: java ... YCSBServer <replica_id>");
+        }
+    }
 
-	public static void main(String[] args) {
-		if (args.length == 1) {
-			new YCSBServer(new Integer(args[0]));
-		} else {
-			System.out.println("Usage: java ... YCSBServer <replica_id>");
-		}
-	}
+    private YCSBServer(int id) {
+        this.mTables = new TreeMap<>();
+        new ServiceReplica(id, this, this);
+    }
 
-	private YCSBServer(int id) {
-		this.mTables = new TreeMap<>();
-		new ServiceReplica(id, this, this);
-	}
+    @Override
+    public byte[][] appExecuteBatch(byte[][] commands, MessageContext[] msgCtx) {
+        byte[][] replies = new byte[commands.length][];
+        int index = 0;
+        for (byte[] command : commands) {
+            if (msgCtx != null && msgCtx[index] != null && msgCtx[index].getConsensusId() % 1000 == 0) {
+                LOGGER.info("YCSBServer executing CID: {}", msgCtx[index].getConsensusId());
+            }
 
-	@Override
-	public byte[][] appExecuteBatch(byte[][] commands, MessageContext[] msgCtx) {
-		byte[][] replies = new byte[commands.length][];
-		int index = 0;
-		for (byte[] command : commands) {
-			if (msgCtx != null && msgCtx[index] != null && msgCtx[index].getConsensusId() % 1000 == 0 && !logPrinted) {
-				System.out.println("YCSBServer executing CID: " + msgCtx[index].getConsensusId());
-				logPrinted = true;
-			} else {
-				logPrinted = false;
-			}
+            YCSBMessage aRequest = YCSBMessage.getObject(command);
+            YCSBMessage reply = YCSBMessage.newErrorMessage("");
+            if (aRequest == null) {
+                replies[index] = reply.getBytes();
+                continue;
+            }
+            LOGGER.info("[INFO] Processing an ordered request");
+            switch (aRequest.getType()) {
+            // ##### operation: create #####
+            case CREATE:
+                // ##### entity: record #####
+                if (aRequest.getEntity() == Entity.RECORD) {
+                    if (!mTables.containsKey(aRequest.getTable())) {
+                        mTables.put(aRequest.getTable(), new YCSBTable());
+                    }
+                    if (!mTables.get(aRequest.getTable()).containsKey(aRequest.getKey())) {
+                        mTables.get(aRequest.getTable()).put(aRequest.getKey(), aRequest.getValues());
+                        reply = YCSBMessage.newResponse(0);
+                    }
+                }
+                break;
+            // ##### operation: update #####
+            case UPDATE:
+                // ##### entity: record #####
+                if (aRequest.getEntity() == Entity.RECORD) {
+                    if (!mTables.containsKey(aRequest.getTable())) {
+                        mTables.put(aRequest.getTable(), new YCSBTable());
+                    }
+                    mTables.get(aRequest.getTable()).put(aRequest.getKey(), aRequest.getValues());
+                    reply = YCSBMessage.newResponse(1);
+                }
+                break;
+            default:
+                LOGGER.info("[INFO] Entity {} not supported", aRequest.getType());
+            }
+            LOGGER.info("[INFO] Sending reply");
+            replies[index++] = reply.getBytes();
+        }
+        return replies;
+    }
 
-			YCSBMessage aRequest = YCSBMessage.getObject(command);
-			YCSBMessage reply = YCSBMessage.newErrorMessage("");
-			if (aRequest == null) {
-				replies[index] = reply.getBytes();
-				continue;
-			}
-			if (_debug) {
-				System.out.println("[INFO] Processing an ordered request");
-			}
-			switch (aRequest.getType()) {
-			case CREATE: { // ##### operation: create #####
-				switch (aRequest.getEntity()) {
-				case RECORD: // ##### entity: record #####
-					if (!mTables.containsKey(aRequest.getTable())) {
-						mTables.put(aRequest.getTable(), new YCSBTable());
-					}
-					if (!mTables.get(aRequest.getTable()).containsKey(aRequest.getKey())) {
-						mTables.get(aRequest.getTable()).put(aRequest.getKey(), aRequest.getValues());
-						reply = YCSBMessage.newInsertResponse(0);
-					}
-					break;
-				default: // Only create records
-					break;
-				}
-				break;
-			}
+    @Override
+    public byte[] appExecuteUnordered(byte[] theCommand, MessageContext theContext) {
+        YCSBMessage aRequest = YCSBMessage.getObject(theCommand);
+        YCSBMessage reply = YCSBMessage.newErrorMessage("");
+        if (aRequest == null) {
+            return reply.getBytes();
+        }
+        LOGGER.info("[INFO] Processing an unordered request");
 
-			case UPDATE: { // ##### operation: update #####
-				switch (aRequest.getEntity()) {
-				case RECORD: // ##### entity: record #####
-					if (!mTables.containsKey(aRequest.getTable())) {
-						mTables.put((String) aRequest.getTable(), new YCSBTable());
-					}
-					mTables.get(aRequest.getTable()).put(aRequest.getKey(), aRequest.getValues());
-					reply = YCSBMessage.newUpdateResponse(1);
-					break;
-				default: // Only update records
-					break;
-				}
-				break;
-			}
-			}
-			if (_debug) {
-				System.out.println("[INFO] Sending reply");
-			}
-			replies[index++] = reply.getBytes();
-		}
-//		System.out.println("RETURNING REPLY");
-		return replies;
-	}
+        // ##### operation: read AND entity: record #####
+        if (aRequest.getType() == Type.READ && aRequest.getEntity() == Entity.RECORD) {
+            if (!mTables.containsKey(aRequest.getTable())) {
+                reply = YCSBMessage.newErrorMessage("Table not found");
+            } else if (!mTables.get(aRequest.getTable()).containsKey(aRequest.getKey())) {
+                reply = YCSBMessage.newErrorMessage("Record not found");
+            } else {
+                reply = YCSBMessage.newResponse(mTables.get(aRequest.getTable()).get(aRequest.getKey()), 0);
+            }
 
-	@Override
-	public byte[] appExecuteUnordered(byte[] theCommand, MessageContext theContext) {
-		YCSBMessage aRequest = YCSBMessage.getObject(theCommand);
-		YCSBMessage reply = YCSBMessage.newErrorMessage("");
-		if (aRequest == null) {
-			return reply.getBytes();
-		}
-		if (_debug) {
-			System.out.println("[INFO] Processing an unordered request");
-		}
+        }
+        LOGGER.info("[INFO] Sending reply");
+        return reply.getBytes();
+    }
 
-		switch (aRequest.getType()) {
-		case READ: { // ##### operation: read #####
-			switch (aRequest.getEntity()) {
-			case RECORD: // ##### entity: record #####
-				if (!mTables.containsKey(aRequest.getTable())) {
-					reply = YCSBMessage.newErrorMessage("Table not found");
-					break;
-				}
-				if (!mTables.get(aRequest.getTable()).containsKey(aRequest.getKey())) {
-					reply = YCSBMessage.newErrorMessage("Record not found");
-					break;
-				} else {
-					reply = YCSBMessage.newReadResponse(mTables.get(aRequest.getTable()).get(aRequest.getKey()), 0);
-					break;
-				}
-			}
-		}
-		}
-		if (_debug) {
-			System.out.println("[INFO] Sending reply");
-		}
-		return reply.getBytes();
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public void installSnapshot(byte[] state) {
+        try (InputStream is = new ByteArrayInputStream(state); ObjectInput in = new ObjectInputStream(is)) {
+            mTables = (TreeMap<String, YCSBTable>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            LOGGER.info("[ERROR] Error deserializing state", e);
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void installSnapshot(byte[] state) {
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(state);
-			ObjectInput in = new ObjectInputStream(bis);
-			mTables = (TreeMap<String, YCSBTable>) in.readObject();
-			in.close();
-			bis.close();
-		} catch (IOException | ClassNotFoundException e) {
-			System.err.println("[ERROR] Error deserializing state: " + e.getMessage());
-		}
-	}
-
-	@Override
-	public byte[] getSnapshot() {
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutput out = new ObjectOutputStream(bos);
-			out.writeObject(mTables);
-			out.flush();
-			bos.flush();
-			out.close();
-			bos.close();
-			return bos.toByteArray();
-		} catch (IOException ioe) {
-			System.err.println("[ERROR] Error serializing state: " + ioe.getMessage());
-			return "ERROR".getBytes();
-		}
-	}
+    @Override
+    public byte[] getSnapshot() {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(); ObjectOutput out = new ObjectOutputStream(bos)) {
+            out.writeObject(mTables);
+            return bos.toByteArray();
+        } catch (IOException ioe) {
+            LOGGER.error("[ERROR] Error serializing state", ioe);
+            return "ERROR".getBytes();
+        }
+    }
 
 }

@@ -11,7 +11,7 @@ import bftsmart.microbenchmark.tpcc.server.TPCCServer;
 
 public class TPCCServerApplication {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TPCCServerApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCServerApplication.class);
 
     public static void main(String[] args) {
         if (args == null || args.length != 1) {

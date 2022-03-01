@@ -14,14 +14,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 
 public class Spreadsheet {
-
-    public static final Logger LOGGER = LoggerFactory.getLogger(Spreadsheet.class);
 
     private static final String XLSX_SUFFIX = ".xlsx";
     private final String sheetName;

@@ -16,7 +16,7 @@ import bftsmart.tom.server.SingleExecutable;
 
 public class TPCCServer implements SingleExecutable {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(TPCCServer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCServer.class);
 
     private final WorkloadConfig workloadConfig;
     private final TransactionFactory transactionFactory;
