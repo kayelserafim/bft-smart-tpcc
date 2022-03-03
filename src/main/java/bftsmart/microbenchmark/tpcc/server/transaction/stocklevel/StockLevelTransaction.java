@@ -7,9 +7,9 @@ import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
-import bftsmart.microbenchmark.tpcc.repository.DistrictRepository;
-import bftsmart.microbenchmark.tpcc.repository.OrderLineRepository;
-import bftsmart.microbenchmark.tpcc.repository.StockRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.StockRepository;
 import bftsmart.microbenchmark.tpcc.server.transaction.Transaction;
 import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.input.StockLevelInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.output.StockLevelOutput;

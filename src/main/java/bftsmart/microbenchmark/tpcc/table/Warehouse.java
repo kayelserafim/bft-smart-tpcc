@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Pair;
 import org.javatuples.Tuple;
 
@@ -171,7 +171,18 @@ public class Warehouse implements PRObject {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new StringJoiner(", ", Warehouse.class.getSimpleName() + "[", "]").add("key=" + key)
+                .add("secondaryKeys=" + secondaryKeys)
+                .add("warehouseId=" + warehouseId)
+                .add("name='" + name + "'")
+                .add("street1='" + street1 + "'")
+                .add("street2='" + street2 + "'")
+                .add("city='" + city + "'")
+                .add("state='" + state + "'")
+                .add("zip='" + zip + "'")
+                .add("tax=" + tax)
+                .add("yearToDateBalance=" + yearToDateBalance)
+                .toString();
     }
 
     @JsonPOJOBuilder

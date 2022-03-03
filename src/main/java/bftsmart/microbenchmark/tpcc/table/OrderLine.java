@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Quartet;
 import org.javatuples.Quintet;
 import org.javatuples.Triplet;
@@ -193,7 +193,19 @@ public class OrderLine implements PRObject {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new StringJoiner(", ", OrderLine.class.getSimpleName() + "[", "]").add("key=" + key)
+                .add("secondaryKeys=" + secondaryKeys)
+                .add("orderId=" + orderId)
+                .add("districtId=" + districtId)
+                .add("warehouseId=" + warehouseId)
+                .add("number=" + number)
+                .add("itemId=" + itemId)
+                .add("supplyWarehouseId=" + supplyWarehouseId)
+                .add("deliveryDateTime=" + deliveryDateTime)
+                .add("quantity=" + quantity)
+                .add("amount=" + amount)
+                .add("districtInfo='" + districtInfo + "'")
+                .toString();
     }
 
     @JsonPOJOBuilder

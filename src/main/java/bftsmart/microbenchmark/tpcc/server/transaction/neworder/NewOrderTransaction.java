@@ -9,14 +9,14 @@ import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
-import bftsmart.microbenchmark.tpcc.repository.CustomerRepository;
-import bftsmart.microbenchmark.tpcc.repository.DistrictRepository;
-import bftsmart.microbenchmark.tpcc.repository.ItemRepository;
-import bftsmart.microbenchmark.tpcc.repository.NewOrderRepository;
-import bftsmart.microbenchmark.tpcc.repository.OrderLineRepository;
-import bftsmart.microbenchmark.tpcc.repository.OrderRepository;
-import bftsmart.microbenchmark.tpcc.repository.StockRepository;
-import bftsmart.microbenchmark.tpcc.repository.WarehouseRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.ItemRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.NewOrderRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.OrderRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.StockRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.WarehouseRepository;
 import bftsmart.microbenchmark.tpcc.server.transaction.Transaction;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderOutput;
@@ -65,6 +65,18 @@ public class NewOrderTransaction implements Transaction {
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
         Integer customerId = input.getCustomerId();
+        List<Integer> itemIds = input.getItemIds();
+
+        // If I_ID has an unused value (see Clause 2.4.1.5), a "not-found"
+        // condition is signaled, resulting in a rollback of the database
+        // transaction (see Clause 2.4.2.3).
+        if (itemIds.contains(-12345)) {
+            // an expected condition generated 1% of the time in the test
+            // data...
+            // we throw an illegal access exception and the transaction gets
+            // rolled back later on
+            return TPCCCommand.newErrorMessage(command, TRANSACTION_ABORTED);
+        }
 
         // The row in the WAREHOUSE table with matching W_ID is selected and
         // W_TAX, the warehouse tax rate, is retrieved.
@@ -114,20 +126,10 @@ public class NewOrderTransaction implements Transaction {
         for (int index = 1; index <= order.getOrderLineCounter(); index++) {
             OrderLineOutput.Builder orderLineOutput = OrderLineOutput.builder();
             int supplyWarehouseId = input.getSupplierWarehouseIds().get(index - 1);
-            int itemId = input.getItemIds().get(index - 1);
+            int itemId = itemIds.get(index - 1);
             int quantity = input.getOrderQuantities().get(index - 1);
 
             orderLineOutput.supplierWarehouseId(supplyWarehouseId).itemId(itemId).orderQuantities(quantity);
-            // If I_ID has an unused value (see Clause 2.4.1.5), a "not-found"
-            // condition is signaled, resulting in a rollback of the database
-            // transaction (see Clause 2.4.2.3).
-            if (itemId == -12345) {
-                // an expected condition generated 1% of the time in the test
-                // data...
-                // we throw an illegal access exception and the transaction gets
-                // rolled back later on
-                return TPCCCommand.newErrorMessage(command, TRANSACTION_ABORTED);
-            }
 
             // The row in the ITEM table with matching I_ID (equals OL_I_ID) is
             // selected and I_PRICE, the price of the item, I_NAME, the name of

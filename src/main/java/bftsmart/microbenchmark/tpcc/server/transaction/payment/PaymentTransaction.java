@@ -8,10 +8,10 @@ import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
-import bftsmart.microbenchmark.tpcc.repository.CustomerRepository;
-import bftsmart.microbenchmark.tpcc.repository.DistrictRepository;
-import bftsmart.microbenchmark.tpcc.repository.HistoryRepository;
-import bftsmart.microbenchmark.tpcc.repository.WarehouseRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.HistoryRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.WarehouseRepository;
 import bftsmart.microbenchmark.tpcc.server.transaction.Transaction;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.output.PaymentOutput;
@@ -116,7 +116,12 @@ public class PaymentTransaction implements Transaction {
 
         warehouseRepository.save(warehouse);
         districtRepository.save(district);
-        customerRepository.save(Customer.from(customer).data(data).addBalance(input.getPaymentAmount()).build());
+        customerRepository.save(Customer.from(customer)
+                .data(data)
+                .paymentCntIncrement()
+                .subtractBalance(input.getPaymentAmount())
+                .yearToDateBalancePayment(input.getPaymentAmount())
+                .build());
         historyRepository.save(history);
 
         paymentBuilder.warehouse(warehouse).district(district).customer(customer).amountPaid(input.getPaymentAmount());

@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Quartet;
 import org.javatuples.Tuple;
 
@@ -170,7 +170,17 @@ public class History implements PRObject {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new StringJoiner(", ", History.class.getSimpleName() + "[", "]").add("key=" + key)
+                .add("secondaryKeys=" + secondaryKeys)
+                .add("customerId=" + customerId)
+                .add("customerDistrictId=" + customerDistrictId)
+                .add("customerWarehouseId=" + customerWarehouseId)
+                .add("districtId=" + districtId)
+                .add("warehouseId=" + warehouseId)
+                .add("date=" + date)
+                .add("amount=" + amount)
+                .add("data='" + data + "'")
+                .toString();
     }
 
     @JsonPOJOBuilder

@@ -5,9 +5,9 @@ import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Quartet;
 import org.javatuples.Triplet;
 import org.javatuples.Tuple;
@@ -30,7 +30,8 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
 public class Customer implements PRObject {
 
     private static final long serialVersionUID = -3840013081887501896L;
-    
+
+    private static final AtomicInteger PAYMENT_CNT = new AtomicInteger();
     private static final AtomicInteger DELIVERY_CNT = new AtomicInteger();
 
     public static final ModelType MODEL_TYPE = ModelType.CUSTOMER;
@@ -299,7 +300,30 @@ public class Customer implements PRObject {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new StringJoiner(", ", Customer.class.getSimpleName() + "[", "]").add("key=" + key)
+                .add("secondaryKeys=" + secondaryKeys)
+                .add("customerId=" + customerId)
+                .add("districtId=" + districtId)
+                .add("warehouseId=" + warehouseId)
+                .add("first='" + first + "'")
+                .add("middle='" + middle + "'")
+                .add("last='" + last + "'")
+                .add("street1='" + street1 + "'")
+                .add("street2='" + street2 + "'")
+                .add("city='" + city + "'")
+                .add("state='" + state + "'")
+                .add("zip='" + zip + "'")
+                .add("phone='" + phone + "'")
+                .add("since=" + since)
+                .add("credit='" + credit + "'")
+                .add("creditLimit=" + creditLimit)
+                .add("discount=" + discount)
+                .add("balance=" + balance)
+                .add("yearToDateBalancePayment=" + yearToDateBalancePayment)
+                .add("paymentCnt=" + paymentCnt)
+                .add("deliveryCnt=" + deliveryCnt)
+                .add("data='" + data + "'")
+                .toString();
     }
 
     @JsonPOJOBuilder
@@ -465,6 +489,11 @@ public class Customer implements PRObject {
             return this;
         }
 
+        public Builder subtractBalance(BigDecimal amount) {
+            this.balance = Optional.ofNullable(balance).orElse(BigDecimal.ZERO).subtract(amount);
+            return this;
+        }
+
         public Builder yearToDateBalancePayment(BigDecimal yearToDateBalancePayment) {
             this.yearToDateBalancePayment = yearToDateBalancePayment;
             return this;
@@ -472,6 +501,11 @@ public class Customer implements PRObject {
 
         public Builder paymentCnt(Integer paymentCnt) {
             this.paymentCnt = paymentCnt;
+            return this;
+        }
+
+        public Builder paymentCntIncrement() {
+            this.paymentCnt = PAYMENT_CNT.incrementAndGet();
             return this;
         }
 

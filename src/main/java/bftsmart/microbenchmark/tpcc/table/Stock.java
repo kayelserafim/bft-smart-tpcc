@@ -4,8 +4,9 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Triplet;
 import org.javatuples.Tuple;
 
@@ -27,6 +28,9 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
 public class Stock implements PRObject {
 
     private static final long serialVersionUID = -2966437037838760265L;
+
+    private static final AtomicInteger ORDER_CNT = new AtomicInteger();
+    private static final AtomicInteger REMOTE_CNT = new AtomicInteger();
 
     private static final ModelType MODEL_TYPE = ModelType.STOCK;
 
@@ -250,7 +254,26 @@ public class Stock implements PRObject {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new StringJoiner(", ", Stock.class.getSimpleName() + "[", "]").add("key=" + key)
+                .add("secondaryKeys=" + secondaryKeys)
+                .add("itemId=" + itemId)
+                .add("warehouseId=" + warehouseId)
+                .add("quantity=" + quantity)
+                .add("district01='" + district01 + "'")
+                .add("district02='" + district02 + "'")
+                .add("district03='" + district03 + "'")
+                .add("district04='" + district04 + "'")
+                .add("district05='" + district05 + "'")
+                .add("district06='" + district06 + "'")
+                .add("district07='" + district07 + "'")
+                .add("district08='" + district08 + "'")
+                .add("district09='" + district09 + "'")
+                .add("district10='" + district10 + "'")
+                .add("yearToDate=" + yearToDate)
+                .add("orderCount=" + orderCount)
+                .add("remoteCount=" + remoteCount)
+                .add("data='" + data + "'")
+                .toString();
     }
 
     @JsonPOJOBuilder
@@ -405,7 +428,7 @@ public class Stock implements PRObject {
         }
 
         public Builder orderCountIncrement() {
-            this.orderCount = Optional.ofNullable(orderCount).orElse(0) + 1;
+            this.orderCount = ORDER_CNT.incrementAndGet();
             return this;
         }
 
@@ -414,10 +437,9 @@ public class Stock implements PRObject {
             return this;
         }
 
-        public Builder remoteCntIncrement(boolean increment) {
-            this.remoteCount = Optional.ofNullable(remoteCount).orElse(0);
-            if (increment) {
-                this.remoteCount = this.remoteCount + 1;
+        public Builder remoteCntIncrement(boolean remote) {
+            if (remote) {
+                this.remoteCount = REMOTE_CNT.incrementAndGet();
             }
             return this;
         }

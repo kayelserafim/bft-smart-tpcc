@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.javatuples.Pair;
 import org.javatuples.Tuple;
 
@@ -125,7 +125,14 @@ public class Item implements PRObject {
 
     @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+        return new StringJoiner(", ", Item.class.getSimpleName() + "[", "]").add("key=" + key)
+                .add("secondaryKeys=" + secondaryKeys)
+                .add("itemId=" + itemId)
+                .add("imageId=" + imageId)
+                .add("name='" + name + "'")
+                .add("price=" + price)
+                .add("data='" + data + "'")
+                .toString();
     }
 
     @JsonPOJOBuilder

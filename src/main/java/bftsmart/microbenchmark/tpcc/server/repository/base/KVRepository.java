@@ -1,4 +1,4 @@
-package bftsmart.microbenchmark.tpcc.repository.base;
+package bftsmart.microbenchmark.tpcc.server.repository.base;
 
 import java.util.Optional;
 import java.util.Set;

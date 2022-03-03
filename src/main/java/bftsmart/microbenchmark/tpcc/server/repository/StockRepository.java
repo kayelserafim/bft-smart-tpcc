@@ -1,4 +1,4 @@
-package bftsmart.microbenchmark.tpcc.repository;
+package bftsmart.microbenchmark.tpcc.server.repository;
 
 import java.util.List;
 import java.util.Set;
@@ -10,7 +10,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.exception.NotFoundException;
-import bftsmart.microbenchmark.tpcc.repository.base.KVRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.base.KVRepository;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 
 @Singleton

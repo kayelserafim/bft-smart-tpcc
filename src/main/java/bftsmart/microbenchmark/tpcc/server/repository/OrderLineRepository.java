@@ -1,4 +1,4 @@
-package bftsmart.microbenchmark.tpcc.repository;
+package bftsmart.microbenchmark.tpcc.server.repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -8,7 +8,7 @@ import org.javatuples.Tuple;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import bftsmart.microbenchmark.tpcc.repository.base.KVRepository;
+import bftsmart.microbenchmark.tpcc.server.repository.base.KVRepository;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
 
