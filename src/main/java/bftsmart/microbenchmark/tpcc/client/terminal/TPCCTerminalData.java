@@ -15,15 +15,16 @@ public class TPCCTerminalData {
     private final String terminalName;
     private final Integer warehouseId;
     private final Integer districtId;
-    private final Integer limitPerTerminal;
-    private final Integer warmupIterations;
-    private final Integer runMins;
     private final Integer newOrderWeight;
     private final Integer paymentWeight;
     private final Integer deliveryWeight;
     private final Integer orderStatusWeight;
     private final Integer stockLevelWeight;
     private final Integer warehouseCount;
+    private final Integer limitPerTerminal;
+    private final Integer warmupIterations;
+    private final Integer runMins;
+    private final Boolean parallelExecution;
 
     public Integer getTerminalId() {
         return terminalId;
@@ -41,6 +42,10 @@ public class TPCCTerminalData {
         return districtId;
     }
 
+    public Integer getWarehouseCount() {
+        return warehouseCount;
+    }
+
     public Integer getLimitPerTerminal() {
         return limitPerTerminal;
     }
@@ -51,6 +56,10 @@ public class TPCCTerminalData {
 
     public Integer getRunMins() {
         return runMins;
+    }
+
+    public Boolean getParallelExecution() {
+        return parallelExecution;
     }
 
     public long getRunMins(TimeUnit unit) {
@@ -111,10 +120,6 @@ public class TPCCTerminalData {
         return transactionType;
     }
 
-    public Integer getWarehouseCount() {
-        return warehouseCount;
-    }
-
     public static Builder builder() {
         return new Builder();
     }
@@ -124,15 +129,16 @@ public class TPCCTerminalData {
         terminalName = builder.terminalName;
         warehouseId = builder.warehouseId;
         districtId = builder.districtId;
-        limitPerTerminal = builder.limitPerTerminal;
-        warmupIterations = builder.warmupIterations;
-        runMins = builder.runMins;
         newOrderWeight = builder.newOrderWeight;
         paymentWeight = builder.paymentWeight;
         deliveryWeight = builder.deliveryWeight;
         orderStatusWeight = builder.orderStatusWeight;
         stockLevelWeight = builder.stockLevelWeight;
         warehouseCount = builder.warehouseCount;
+        limitPerTerminal = builder.limitPerTerminal;
+        warmupIterations = builder.warmupIterations;
+        runMins = builder.runMins;
+        parallelExecution = builder.parallelExecution;
     }
 
     public static class Builder {
@@ -141,15 +147,16 @@ public class TPCCTerminalData {
         private String terminalName;
         private Integer warehouseId;
         private Integer districtId;
-        private Integer limitPerTerminal;
-        private Integer warmupIterations;
-        private Integer runMins;
         private Integer newOrderWeight;
         private Integer paymentWeight;
         private Integer deliveryWeight;
         private Integer orderStatusWeight;
         private Integer stockLevelWeight;
         private Integer warehouseCount;
+        private Integer limitPerTerminal;
+        private Integer warmupIterations;
+        private Integer runMins;
+        private Boolean parallelExecution;
 
         public Builder warehouseCount(Integer warehouseCount) {
             this.warehouseCount = warehouseCount;
@@ -212,6 +219,11 @@ public class TPCCTerminalData {
             return this;
         }
 
+        public Builder parallelExecution(Boolean parallelExecution) {
+            this.parallelExecution = parallelExecution;
+            return this;
+        }
+
         public Builder workload(WorkloadConfig workload) {
             return warehouseCount(workload.getWarehouses()).stockLevelWeight(workload.getStockLevelWeight())
                     .orderStatusWeight(workload.getOrderStatusWeight())
@@ -220,7 +232,8 @@ public class TPCCTerminalData {
                     .newOrderWeight(workload.getNewOrderWeight())
                     .limitPerTerminal(workload.getTxnsPerTerminal())
                     .warmupIterations(workload.getWarmupIterations())
-                    .runMins(workload.getRunMins());
+                    .runMins(workload.getRunMins())
+                    .parallelExecution(workload.getParallelExecution());
         }
 
         public TPCCTerminalData build() {

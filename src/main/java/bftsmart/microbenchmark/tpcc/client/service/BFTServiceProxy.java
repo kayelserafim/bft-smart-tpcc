@@ -5,15 +5,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.inject.Singleton;
 
-import bftsmart.tom.ServiceProxy;
+import bftsmart.tom.ParallelServiceProxy;
 
 @Singleton
 public class BFTServiceProxy {
 
-    private final Map<Integer, ServiceProxy> multitons = new ConcurrentHashMap<>();
+    private final Map<Integer, ParallelServiceProxy> multitons = new ConcurrentHashMap<>();
 
-    public ServiceProxy getInstance(final Integer terminalId) {
-        return multitons.computeIfAbsent(terminalId, ServiceProxy::new);
+    public ParallelServiceProxy getInstance(final Integer terminalId) {
+        return multitons.computeIfAbsent(terminalId, ParallelServiceProxy::new);
     }
 
 }

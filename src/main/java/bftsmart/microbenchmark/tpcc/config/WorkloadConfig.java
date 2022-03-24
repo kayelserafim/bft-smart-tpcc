@@ -1,12 +1,6 @@
 package bftsmart.microbenchmark.tpcc.config;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringJoiner;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class WorkloadConfig {
 
@@ -24,6 +18,8 @@ public class WorkloadConfig {
     private Integer limitTxnsPerMin;
     @JsonProperty("warmupIterations")
     private Integer warmupIterations;
+    @JsonProperty("parallelExecution")
+    private Boolean parallelExecution;
     @JsonProperty("newOrderWeight")
     private Integer newOrderWeight;
     @JsonProperty("paymentWeight")
@@ -34,10 +30,6 @@ public class WorkloadConfig {
     private Integer deliveryWeight;
     @JsonProperty("stockLevelWeight")
     private Integer stockLevelWeight;
-    @JsonProperty("transactionWrites")
-    private Set<TransactionType> writeTransactions;
-    @JsonProperty("transactionReads")
-    private Set<TransactionType> readTransactions;
 
     public Integer getWarehouses() {
         return warehouses;
@@ -63,6 +55,10 @@ public class WorkloadConfig {
         return warmupIterations;
     }
 
+    public Boolean getParallelExecution() {
+        return parallelExecution;
+    }
+
     public Integer getNewOrderWeight() {
         return newOrderWeight;
     }
@@ -83,20 +79,6 @@ public class WorkloadConfig {
         return stockLevelWeight;
     }
 
-    public Set<TransactionType> getWriteTransactions() {
-        if (writeTransactions == null) {
-            writeTransactions = new HashSet<>();
-        }
-        return writeTransactions;
-    }
-
-    public Set<TransactionType> getReadTransactions() {
-        if (readTransactions == null) {
-            readTransactions = new HashSet<>();
-        }
-        return readTransactions;
-    }
-
     public String getFileName() {
         StringBuilder sb = new StringBuilder(64);
         sb.append("w_").append(warehouses);
@@ -108,20 +90,33 @@ public class WorkloadConfig {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", WorkloadConfig.class.getSimpleName() + "[", "]")
-                .add("warehouses=" + warehouses)
-                .add("terminals=" + terminals)
-                .add("txnsPerTerminal=" + txnsPerTerminal)
-                .add("runMins=" + runMins)
-                .add("limitTxnsPerMin=" + limitTxnsPerMin)
-                .add("warmupIterations=" + warmupIterations)
-                .add("newOrderWeight=" + newOrderWeight)
-                .add("paymentWeight=" + paymentWeight)
-                .add("orderStatusWeight=" + orderStatusWeight)
-                .add("deliveryWeight=" + deliveryWeight)
-                .add("stockLevelWeight=" + stockLevelWeight)
-                .add("writeTransactions=" + writeTransactions)
-                .add("readTransactions=" + readTransactions)
-                .toString();
+        StringBuilder builder = new StringBuilder();
+        builder.append("WorkloadConfig [warehouses=")
+                .append(warehouses)
+                .append(", terminals=")
+                .append(terminals)
+                .append(", txnsPerTerminal=")
+                .append(txnsPerTerminal)
+                .append(", runMins=")
+                .append(runMins)
+                .append(", limitTxnsPerMin=")
+                .append(limitTxnsPerMin)
+                .append(", warmupIterations=")
+                .append(warmupIterations)
+                .append(", parallelExecution=")
+                .append(parallelExecution)
+                .append(", newOrderWeight=")
+                .append(newOrderWeight)
+                .append(", paymentWeight=")
+                .append(paymentWeight)
+                .append(", orderStatusWeight=")
+                .append(orderStatusWeight)
+                .append(", deliveryWeight=")
+                .append(deliveryWeight)
+                .append(", stockLevelWeight=")
+                .append(stockLevelWeight)
+                .append(']');
+        return builder.toString();
     }
+
 }

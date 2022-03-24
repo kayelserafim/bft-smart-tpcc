@@ -1,5 +1,6 @@
 package bftsmart.microbenchmark.tpcc.client.service;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,11 +9,11 @@ import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.client.command.CommandFactory;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
-import bftsmart.tom.ServiceProxy;
+import bftsmart.tom.ParallelServiceProxy;
+import parallelism.ParallelMapping;
 
 @Singleton
 public class TPCCService {
@@ -23,18 +24,16 @@ public class TPCCService {
     private BFTServiceProxy bftServiceProxy;
     @Inject
     private CommandFactory commandFactory;
-    @Inject
-    private WorkloadConfig config;
 
     public TPCCCommand process(TPCCTerminalData terminalData, TPCCRandom random) {
         TransactionType transactionType = terminalData.getTransactionType(random.nextInt(1, 100));
         TPCCCommand command = commandFactory.getFactory(transactionType).createCommand(terminalData, random);
-        ServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalData.getTerminalId());
+        ParallelServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalData.getTerminalId());
 
         try {
             byte[] response;
-            if (config.getReadTransactions().contains(command.getTransactionType())) {
-                response = serviceProxy.invokeUnordered(command.getBytes());
+            if (BooleanUtils.isTrue(terminalData.getParallelExecution())) {
+                response = serviceProxy.invokeParallel(command.getBytes(), ParallelMapping.SYNC_ALL);
             } else {
                 response = serviceProxy.invokeOrdered(command.getBytes());
             }

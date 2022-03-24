@@ -1,4 +1,4 @@
 rootProject.name = 'bft-smart-tpcc'
 
-include 'bft-smart'
-project(':bft-smart').projectDir = file('../bft-smart')
+include 'parallel-SMR'
+project(':parallel-SMR').projectDir = file('../parallel-SMR')

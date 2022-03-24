@@ -22,7 +22,7 @@ public class CommandFactory {
     public Command getFactory(TransactionType transactionType) {
         LOGGER.debug("Starting txn: {}, thread name: {}", transactionType, Thread.currentThread().getName());
         return commands.stream()
-                .filter(message -> message.transactionType().equals(transactionType))
+                .filter(message -> message.transactionType() == transactionType)
                 .findFirst()
                 .orElseThrow(() -> new ConfigurationException("There is no command for " + transactionType));
     }

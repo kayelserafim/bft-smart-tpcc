@@ -72,7 +72,7 @@ public class YCSBServer extends DefaultRecoverable {
                 replies[index] = reply.getBytes();
                 continue;
             }
-            LOGGER.info("[INFO] Processing an ordered request");
+            LOGGER.info("Processing an ordered request");
             switch (aRequest.getType()) {
             // ##### operation: create #####
             case CREATE:
@@ -99,9 +99,9 @@ public class YCSBServer extends DefaultRecoverable {
                 }
                 break;
             default:
-                LOGGER.info("[INFO] Entity {} not supported", aRequest.getType());
+                LOGGER.info("Entity {} not supported", aRequest.getType());
             }
-            LOGGER.info("[INFO] Sending reply");
+            LOGGER.info("Sending reply");
             replies[index++] = reply.getBytes();
         }
         return replies;
@@ -114,7 +114,7 @@ public class YCSBServer extends DefaultRecoverable {
         if (aRequest == null) {
             return reply.getBytes();
         }
-        LOGGER.info("[INFO] Processing an unordered request");
+        LOGGER.info("Processing an unordered request");
 
         // ##### operation: read AND entity: record #####
         if (aRequest.getType() == Type.READ && aRequest.getEntity() == Entity.RECORD) {
@@ -127,7 +127,7 @@ public class YCSBServer extends DefaultRecoverable {
             }
 
         }
-        LOGGER.info("[INFO] Sending reply");
+        LOGGER.info("Sending reply");
         return reply.getBytes();
     }
 
