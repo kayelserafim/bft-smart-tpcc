@@ -55,6 +55,7 @@ public class DeliveryTransaction implements Transaction {
         List<OrderLine> orderLines = new ArrayList<>();
         for (int districtId = 1; districtId <= TPCCConfig.DIST_PER_WHSE; districtId++) {
             Integer warehouseId = input.getWarehouseId();
+            // clause 2.7.4.2 (dot 3)
             Integer orderId =
                     newOrderRepository.findFirst(districtId, warehouseId).map(NewOrder::getOrderId).orElse(-1);
 

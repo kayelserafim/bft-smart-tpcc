@@ -20,7 +20,7 @@ public class TPCCServer implements SingleExecutable {
 
     @Override
     public byte[] executeOrdered(byte[] theCommand, MessageContext theContext) {
-        TPCCCommand aRequest = TPCCCommand.getObject(theCommand);
+        TPCCCommand aRequest = TPCCCommand.deserialize(theCommand);
         LOGGER.debug("Processing an ordered request of type [{}]", aRequest.getTransactionType());
 
         byte[] reply = execute(aRequest);
@@ -31,7 +31,7 @@ public class TPCCServer implements SingleExecutable {
 
     @Override
     public byte[] executeUnordered(byte[] theCommand, MessageContext theContext) {
-        TPCCCommand aRequest = TPCCCommand.getObject(theCommand);
+        TPCCCommand aRequest = TPCCCommand.deserialize(theCommand);
         LOGGER.debug("Processing an unordered request of type [{}]", aRequest.getTransactionType());
 
         byte[] reply = execute(aRequest);
@@ -41,14 +41,7 @@ public class TPCCServer implements SingleExecutable {
     }
 
     private byte[] execute(TPCCCommand aRequest) {
-        TPCCCommand reply = TPCCCommand.from(aRequest);
-        if (aRequest == null) {
-            return reply.getBytes();
-        }
-
-        reply = transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
-
-        return reply.getBytes();
+        return transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest).serialize();
     }
-    
+
 }

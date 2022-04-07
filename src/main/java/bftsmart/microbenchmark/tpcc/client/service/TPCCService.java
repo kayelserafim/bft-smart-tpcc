@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.client.service;
 
+import static parallelism.ParallelMapping.SYNC_ALL;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +15,8 @@ import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 import bftsmart.tom.ParallelServiceProxy;
-import parallelism.ParallelMapping;
+import bftsmart.util.MultiOperationRequest;
+import bftsmart.util.MultiOperationResponse;
 
 @Singleton
 public class TPCCService {
@@ -31,28 +34,17 @@ public class TPCCService {
         ParallelServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalData.getTerminalId());
 
         try {
-            byte[] response;
             if (BooleanUtils.isTrue(terminalData.getParallelExecution())) {
-                response = serviceProxy.invokeParallel(command.getBytes(), ParallelMapping.SYNC_ALL);
+                byte[] response = serviceProxy.invokeParallel(command.serialize(new MultiOperationRequest(1)), SYNC_ALL);
+                return TPCCCommand.deserialize(new MultiOperationResponse(response));
             } else {
-                response = serviceProxy.invokeOrdered(command.getBytes());
+                byte[] response = serviceProxy.invokeOrdered(command.serialize());
+                return TPCCCommand.deserialize(response);
             }
-            return getResponse(command, response);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return TPCCCommand.newErrorMessage(command, e.getMessage());
         }
-    }
-
-    private TPCCCommand getResponse(TPCCCommand tpccCommand, byte[] response) {
-        TPCCCommand command;
-        if (response != null) {
-            command = TPCCCommand.getObject(response);
-        } else {
-            String errorMessage = String.format("Server replied null value for [%s]", tpccCommand);
-            command = TPCCCommand.newErrorMessage(tpccCommand, errorMessage);
-        }
-        return command;
     }
 
 }

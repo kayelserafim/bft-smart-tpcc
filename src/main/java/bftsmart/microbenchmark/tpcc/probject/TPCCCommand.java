@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.StringJoiner;
 
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.StringUtils;
+
+import bftsmart.util.MultiOperationRequest;
+import bftsmart.util.MultiOperationResponse;
 
 public class TPCCCommand implements Serializable {
 
@@ -51,18 +53,12 @@ public class TPCCCommand implements Serializable {
         return tpccMessage;
     }
 
-    public static TPCCCommand from(TPCCCommand command, String description) {
-        TPCCCommand tpccMessage = from(command);
-        tpccMessage.response += " " + description;
-        return tpccMessage;
-    }
-
     public static TPCCCommand newSuccessMessage(TPCCCommand command, String successMessage) {
         TPCCCommand tpccMessage = new TPCCCommand();
         if (command != null) {
             tpccMessage.transactionType = command.getTransactionType();
             tpccMessage.request = command.getRequest();
-            tpccMessage.response = StringUtils.defaultIfBlank(successMessage, "OK");
+            tpccMessage.response = successMessage;
             tpccMessage.status = 0;
         }
         return tpccMessage;
@@ -79,12 +75,25 @@ public class TPCCCommand implements Serializable {
         return tpccMessage;
     }
 
-    public byte[] getBytes() {
+    public byte[] serialize() {
         return SerializationUtils.serialize(this);
     }
 
-    public static TPCCCommand getObject(byte[] bytes) {
+    public byte[] serialize(MultiOperationRequest request) {
+        request.add(0, serialize(), transactionType.getClassId());
+        return request.serialize();
+    }
+
+    public static TPCCCommand deserialize(byte[] bytes) {
         return SerializationUtils.deserialize(bytes);
+    }
+
+    public static TPCCCommand deserialize(MultiOperationRequest request) {
+        return deserialize(request.operations[0].data);
+    }
+
+    public static TPCCCommand deserialize(MultiOperationResponse response) {
+        return deserialize(response.operations[0].data);
     }
 
     @Override

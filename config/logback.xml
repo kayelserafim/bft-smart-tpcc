@@ -29,7 +29,7 @@
 		<neverBlock>true</neverBlock>
 	</appender>
 
-	<root level="INFO">
+	<root level="DEBUG">
 		<appender-ref ref="STDOUT-ASYNC" />
 		<appender-ref ref="FILE-ASYNC" />
 	</root>
