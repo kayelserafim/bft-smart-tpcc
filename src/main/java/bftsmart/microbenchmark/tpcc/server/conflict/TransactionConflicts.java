@@ -3,9 +3,11 @@ package bftsmart.microbenchmark.tpcc.server.conflict;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
@@ -17,6 +19,8 @@ public class TransactionConflicts {
 
     private static final Map<TransactionType, Collection<TransactionType>> CONFLICTING_TRANSACTIONS;
     private static final Map<TransactionType, Collection<TransactionType>> NOT_CONFLICTING_TRANSACTIONS;
+    private static final Set<TransactionType> PESSIMISTIC_MODEL =
+            Sets.newHashSet(TransactionType.STOCK_LEVEL, TransactionType.DELIVERY);
 
     private TransactionConflicts() {
         super();
@@ -66,6 +70,19 @@ public class TransactionConflicts {
 
     public static boolean hasNotConflict(TransactionType t1, TransactionType t2) {
         return NOT_CONFLICTING_TRANSACTIONS.get(t1).contains(t2);
+    }
+
+    /**
+     * The pessimistic locking model to prevent simultaneous updates to records.
+     * 
+     * @param t1
+     *            The first transaction type
+     * @param t2
+     *            The first transaction type
+     * @return true if it is, false otherwise
+     */
+    public static boolean isPessimistic(TransactionType t1, TransactionType t2) {
+        return PESSIMISTIC_MODEL.contains(t1) || PESSIMISTIC_MODEL.contains(t2);
     }
 
 }

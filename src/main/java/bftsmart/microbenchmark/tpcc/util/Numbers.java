@@ -44,4 +44,11 @@ public class Numbers {
         return number.doubleValue();
     }
 
+    public static boolean gt(Number number1, Number number2) {
+        if (number1 == null || number2 == null) {
+            return false;
+        }
+        return number1.doubleValue() > number2.doubleValue();
+    }
+
 }
