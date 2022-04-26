@@ -24,7 +24,7 @@ Initial database load:
 ./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCGeneratorApplication
 ```
 
-You can run the TPCC Server by executing the following commands, from within the main directory across four different consoles (3 replicas, to tolerate 1 fault):
+You can run the TPCC Server by executing the following commands, from within the main directory across three different consoles (3 replicas, to tolerate 1 fault):
 
 ```
 ./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCParallelServerApplication 0
@@ -32,8 +32,9 @@ You can run the TPCC Server by executing the following commands, from within the
 ./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCParallelServerApplication 2
 ```
 
-The TPCC worload must be specified in the properties file (see `config/workload.properties`). You can run the TPCC Client by executing the following command, from within the main directory:
+The TPCC workload must be specified in the properties file (see `config/workload.properties`). You can run the TPCC Client by executing the following command, from inside the main directory:
 
 ```
-./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCClientApplication
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCClientApplication 0
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCClientApplication 1
 ```

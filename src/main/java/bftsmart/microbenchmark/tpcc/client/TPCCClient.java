@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.client;
 
+import static java.lang.Runtime.getRuntime;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalFactory;
@@ -34,6 +37,8 @@ public class TPCCClient {
     private final TPCCRandom random;
     private final ExecutorService executorService;
     private final TimedSemaphore sem;
+    private final Integer clientId;
+    private final int numTerminals;
 
     @Inject
     private TPCCTerminalFactory terminalFactory;
@@ -41,10 +46,12 @@ public class TPCCClient {
     private MetricCollector metricCollector;
 
     @Inject
-    TPCCClient(TPCCData tpccData, WorkloadConfig workload) {
+    TPCCClient(TPCCData tpccData, WorkloadConfig workload, @Named("clientId") Integer clientId) {
         this.workload = workload;
         this.random = new TPCCRandom(tpccData.getcLoad());
-        this.executorService = Executors.newFixedThreadPool(workload.getTerminals());
+        this.clientId = clientId;
+        this.numTerminals = getRuntime().availableProcessors();
+        this.executorService = Executors.newFixedThreadPool(numTerminals);
         this.sem = new TimedSemaphore(1, TimeUnit.MINUTES, workload.getLimitTxnsPerMin());
 
         LOGGER.info("TPCCClient Initiated.");
@@ -53,9 +60,9 @@ public class TPCCClient {
     public void start() {
         List<Future<List<RawResult>>> tasks = new ArrayList<>();
         Stopwatch stopwatch = Stopwatch.createStarted();
-        for (int i = 0; i < workload.getTerminals(); i++) {
+        for (int i = 0; i < numTerminals; i++) {
             TPCCTerminalData terminalData = TPCCTerminalData.builder()
-                    .terminalId(i)
+                    .terminalId(clientId * workload.getMaximumTerminalsPerNode() + i)
                     .warehouseId(random.nextInt(1, workload.getWarehouses()))
                     .districtId(random.nextInt(1, TPCCConfig.DIST_PER_WHSE))
                     .workload(workload)

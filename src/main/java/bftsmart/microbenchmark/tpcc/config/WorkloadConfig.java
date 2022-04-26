@@ -8,8 +8,8 @@ public class WorkloadConfig {
 
     @JsonProperty("warehousesCnt")
     private Integer warehouses;
-    @JsonProperty("terminalsCnt")
-    private Integer terminals;
+    @JsonProperty("maximumTerminalsPerNode")
+    private Integer maximumTerminalsPerNode;
     @JsonProperty("terminalTxnsPerTerminal")
     private Integer txnsPerTerminal;
     @JsonProperty("terminalRunMins")
@@ -35,8 +35,8 @@ public class WorkloadConfig {
         return warehouses;
     }
 
-    public Integer getTerminals() {
-        return terminals;
+    public Integer getMaximumTerminalsPerNode() {
+        return maximumTerminalsPerNode;
     }
 
     public Integer getTxnsPerTerminal() {
@@ -93,8 +93,8 @@ public class WorkloadConfig {
         StringBuilder builder = new StringBuilder();
         builder.append("WorkloadConfig [warehouses=")
                 .append(warehouses)
-                .append(", terminals=")
-                .append(terminals)
+                .append(", maximumTerminalsPerNode=")
+                .append(maximumTerminalsPerNode)
                 .append(", txnsPerTerminal=")
                 .append(txnsPerTerminal)
                 .append(", runMins=")

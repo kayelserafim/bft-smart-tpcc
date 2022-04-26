@@ -12,18 +12,16 @@ apply plugin: "org.sonarqube"
 apply plugin: 'project-report'
 apply from: 'dependencies.gradle'
 
-eclipse {
-    classpath {
-        downloadJavadoc = true
-        downloadSources = true
-    }
-}
-
 group = 'bftsmart'
 version = '1.0.0-RC1'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
 
 jacoco {
     toolVersion = "0.8.5"

@@ -8,9 +8,9 @@ import parallelism.late.ConflictDefinition;
 
 public final class ServerModule extends AbstractModule {
 
-    private final String replicaId;
+    private final Integer replicaId;
 
-    public ServerModule(String replicaId) {
+    public ServerModule(Integer replicaId) {
         this.replicaId = replicaId;
     }
 

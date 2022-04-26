@@ -1,5 +1,6 @@
 package bftsmart.microbenchmark.tpcc.monitor;
 
+import static java.lang.Runtime.getRuntime;
 import static java.time.Duration.ZERO;
 
 import java.time.Duration;
@@ -19,14 +20,24 @@ import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.monitor.spreadsheet.BenchResultSpreadsheetBuilder;
 import bftsmart.microbenchmark.tpcc.monitor.spreadsheet.RawResultSpreadsheetBuilder;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.util.InetAddresses;
 
 @Singleton
 public class MetricCollector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricCollector.class);
 
-    @Inject
+    private final String hostname;
+    private final int numTerminals;
+
     private WorkloadConfig workload;
+
+    @Inject
+    public MetricCollector(WorkloadConfig workload) {
+        this.workload = workload;
+        this.numTerminals = getRuntime().availableProcessors();
+        this.hostname = InetAddresses.getHostName();
+    }
 
     public CompletableFuture<Void> writeAllResults(List<RawResult> results) {
         LOGGER.info("Saving all metrics files");
@@ -43,9 +54,9 @@ public class MetricCollector {
         return CompletableFuture.runAsync(() -> {
             LOGGER.info("Writing Raw Result list");
 
-            RawResultSpreadsheetBuilder.builder("Metric_Raw_Terminal_Number_" + workload.getTerminals())
+            RawResultSpreadsheetBuilder.builder("Metric_Raw_Terminal_Number_" + numTerminals + "_" + hostname)
                     .addLine("Warehouses", workload.getWarehouses())
-                    .addLine("Terminals", workload.getTerminals())
+                    .addLine("Terminals", numTerminals)
                     .addLine("New Order Weight", workload.getNewOrderWeight())
                     .addLine("Payment Weight", workload.getPaymentWeight())
                     .addLine("Order Status Weight", workload.getOrderStatusWeight())
@@ -76,9 +87,9 @@ public class MetricCollector {
                     })
                     .collect(Collectors.toList());
 
-            BenchResultSpreadsheetBuilder.builder("Metric_Terminal_Number_" + workload.getTerminals())
+            BenchResultSpreadsheetBuilder.builder("Metric_Terminal_Number_" + numTerminals + "_" + hostname)
                     .addRow("Warehouses", workload.getWarehouses())
-                    .addRow("Terminals", workload.getTerminals())
+                    .addRow("Terminals", numTerminals)
                     .addRow("New Order Weight", workload.getNewOrderWeight())
                     .addRow("Payment Weight", workload.getPaymentWeight())
                     .addRow("Order Status Weight", workload.getOrderStatusWeight())

@@ -9,9 +9,9 @@ import bftsmart.tom.ServiceReplica;
 public class TPCCSequentialServer extends TPCCServer {
 
     @Inject
-    TPCCSequentialServer(TransactionFactory transactionFactory, @Named("replicaId") String replicaId) {
+    TPCCSequentialServer(TransactionFactory transactionFactory, @Named("replicaId") Integer replicaId) {
         super(transactionFactory);
-        new ServiceReplica(Integer.parseInt(replicaId), this, null);
+        new ServiceReplica(replicaId, this, null);
     }
 
 }

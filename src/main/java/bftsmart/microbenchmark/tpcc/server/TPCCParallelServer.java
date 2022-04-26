@@ -1,5 +1,6 @@
 package bftsmart.microbenchmark.tpcc.server;
 
+import static java.lang.Runtime.getRuntime;
 import static parallelism.late.COSType.lockFreeGraph;
 
 import com.google.inject.Inject;
@@ -11,13 +12,11 @@ import parallelism.late.ConflictDefinition;
 
 public class TPCCParallelServer extends TPCCServer {
 
-    private final int numWorkers = Runtime.getRuntime().availableProcessors();
-
     @Inject
-    TPCCParallelServer(TransactionFactory transactionFactory, ConflictDefinition conflictDefinition,
-            @Named("replicaId") String replicaId) {
+    TPCCParallelServer(TransactionFactory transactionFactory, ConflictDefinition definition,
+            @Named("replicaId") Integer replicaId) {
         super(transactionFactory);
-        new CBASEServiceReplica(Integer.parseInt(replicaId), this, null, numWorkers, conflictDefinition, lockFreeGraph);
+        new CBASEServiceReplica(replicaId, this, null, getRuntime().availableProcessors(), definition, lockFreeGraph);
     }
 
 }

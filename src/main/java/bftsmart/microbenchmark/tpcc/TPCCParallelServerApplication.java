@@ -18,7 +18,7 @@ public class TPCCParallelServerApplication {
             LOGGER.info("Usage: java ... TPCCParallelServer <replica id>");
             return;
         }
-        Injector injector = Guice.createInjector(new ServerModule(args[0]));
+        Injector injector = Guice.createInjector(new ServerModule(Integer.valueOf(args[0])));
         injector.getInstance(TPCCParallelServer.class);
     }
 

@@ -18,7 +18,7 @@ public class TPCCSequentialServerApplication {
             LOGGER.info("Usage: java ... TPCCServer <replica id>");
             return;
         }
-        Injector injector = Guice.createInjector(new ServerModule(args[0]));
+        Injector injector = Guice.createInjector(new ServerModule(Integer.valueOf(args[0])));
         injector.getInstance(TPCCSequentialServer.class);
     }
 
