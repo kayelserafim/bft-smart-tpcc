@@ -78,7 +78,7 @@ distributions {
                 from jar
                 from(configurations.runtimeClasspath)
             }
-            from 'runscripts/smartrun.sh'
+            from 'runscripts/tpcc/smartrun.sh'
         }
     }
 }

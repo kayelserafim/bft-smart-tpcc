@@ -30,8 +30,8 @@ dist/
 # Log files
 *.txt
 *.log
-*.log.*
-*/logs*
+*/logs/*
+/logs/
 
 # compiled output
 */dist*

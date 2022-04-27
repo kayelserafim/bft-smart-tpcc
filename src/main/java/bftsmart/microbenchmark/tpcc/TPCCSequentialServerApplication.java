@@ -15,7 +15,7 @@ public class TPCCSequentialServerApplication {
 
     public static void main(String[] args) {
         if (args == null || args.length != 1) {
-            LOGGER.info("Usage: java ... TPCCServer <replica id>");
+            LOGGER.info("Usage: java ... TPCCSequentialServer <replica id>");
             return;
         }
         Injector injector = Guice.createInjector(new ServerModule(Integer.valueOf(args[0])));
