@@ -1,12 +1,23 @@
 package bftsmart.microbenchmark.tpcc.server;
 
+import static java.lang.Runtime.getRuntime;
+import static parallelism.late.COSType.lockFreeGraph;
+
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.server.transaction.TransactionFactory;
 import bftsmart.tom.MessageContext;
+import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.SingleExecutable;
+import parallelism.late.CBASEServiceReplica;
+import parallelism.late.ConflictDefinition;
 
 public class TPCCServer implements SingleExecutable {
 
@@ -14,8 +25,18 @@ public class TPCCServer implements SingleExecutable {
 
     private final TransactionFactory transactionFactory;
 
-    public TPCCServer(TransactionFactory transactionFactory) {
+    @Inject
+    public TPCCServer(TransactionFactory transactionFactory, ConflictDefinition definition,
+            WorkloadConfig workloadConfig, @Named("replicaId") Integer replicaId) {
         this.transactionFactory = transactionFactory;
+        if (BooleanUtils.isTrue(workloadConfig.getParallelExecution())) {
+            LOGGER.info("Starting CBASEServiceReplica. Parallel execution? {}", workloadConfig.getParallelExecution());
+            int availableProcessors = getRuntime().availableProcessors();
+            new CBASEServiceReplica(replicaId, this, null, availableProcessors, definition, lockFreeGraph);
+        } else {
+            LOGGER.info("Starting ServiceReplica. Parallel execution? {}", workloadConfig.getParallelExecution());
+            new ServiceReplica(replicaId, this, null);
+        }
     }
 
     @Override

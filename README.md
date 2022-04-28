@@ -24,20 +24,12 @@ Initial database load:
 ./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCGeneratorApplication
 ```
 
-You can run the TPCC Sequential Server by executing the following commands, from within the main directory across three different consoles (3 replicas, to tolerate 1 fault):
+You can run the TPCC Server by executing the following commands, from inside the main directory across three different consoles (3 replicas, to tolerate 1 fault):
 
 ```
-./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCSequentialServerApplication 0
-./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCSequentialServerApplication 1
-./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCSequentialServerApplication 2
-```
-
-Or you can run the TPCC Parallel Server by executing the following commands
-
-```
-./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCParallelServerApplication 0
-./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCParallelServerApplication 1
-./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCParallelServerApplication 2
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 0
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 1
+./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCServerApplication 2
 ```
 
 The TPCC workload must be specified in the properties file (see `config/workload.properties`). You can run the TPCC Client by executing the following command, from inside the main directory:

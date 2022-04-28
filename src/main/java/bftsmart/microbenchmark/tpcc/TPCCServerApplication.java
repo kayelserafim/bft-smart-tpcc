@@ -7,19 +7,19 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import bftsmart.microbenchmark.tpcc.config.module.ServerModule;
-import bftsmart.microbenchmark.tpcc.server.TPCCSequentialServer;
+import bftsmart.microbenchmark.tpcc.server.TPCCServer;
 
-public class TPCCSequentialServerApplication {
+public class TPCCServerApplication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCSequentialServerApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCServerApplication.class);
 
     public static void main(String[] args) {
         if (args == null || args.length != 1) {
-            LOGGER.info("Usage: java ... TPCCSequentialServer <replica id>");
+            LOGGER.info("Usage: java ... TPCCServer <replica id>");
             return;
         }
         Injector injector = Guice.createInjector(new ServerModule(Integer.valueOf(args[0])));
-        injector.getInstance(TPCCSequentialServer.class);
+        injector.getInstance(TPCCServer.class);
     }
 
 }
