@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +28,9 @@ public class MetricCollector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricCollector.class);
 
-    private final String hostname;
+    private final WorkloadConfig workload;
     private final int numTerminals;
-
-    private WorkloadConfig workload;
+    private final String hostname;
 
     @Inject
     public MetricCollector(WorkloadConfig workload) {
@@ -54,7 +54,7 @@ public class MetricCollector {
         return CompletableFuture.runAsync(() -> {
             LOGGER.info("Writing Raw Result list");
 
-            RawResultSpreadsheetBuilder.builder("Metric_Raw_Terminal_Number_" + numTerminals + "_" + hostname)
+            RawResultSpreadsheetBuilder.builder(getSheetName("Metric_Raw_Terminal_Number"))
                     .addLine("Warehouses", workload.getWarehouses())
                     .addLine("Terminals", numTerminals)
                     .addLine("New Order Weight", workload.getNewOrderWeight())
@@ -87,7 +87,7 @@ public class MetricCollector {
                     })
                     .collect(Collectors.toList());
 
-            BenchResultSpreadsheetBuilder.builder("Metric_Terminal_Number_" + numTerminals + "_" + hostname)
+            BenchResultSpreadsheetBuilder.builder(getSheetName("Metric_Terminal_Number"))
                     .addRow("Warehouses", workload.getWarehouses())
                     .addRow("Terminals", numTerminals)
                     .addRow("New Order Weight", workload.getNewOrderWeight())
@@ -101,6 +101,11 @@ public class MetricCollector {
 
             LOGGER.info("Result list size per transaction: {}", benchResult.size());
         });
+    }
+
+    private String getSheetName(String prefix) {
+        String executionType = BooleanUtils.isTrue(workload.getParallelExecution()) ? "Parallel" : "Sequential";
+        return prefix + "_" + executionType + "_" + numTerminals + "_" + hostname;
     }
 
 }
