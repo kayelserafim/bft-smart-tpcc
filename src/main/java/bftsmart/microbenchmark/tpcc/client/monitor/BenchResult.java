@@ -1,4 +1,4 @@
-package bftsmart.microbenchmark.tpcc.monitor;
+package bftsmart.microbenchmark.tpcc.client.monitor;
 
 import java.time.Duration;
 import java.util.StringJoiner;

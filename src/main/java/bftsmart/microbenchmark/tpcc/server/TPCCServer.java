@@ -1,22 +1,20 @@
 package bftsmart.microbenchmark.tpcc.server;
 
-import static java.lang.Runtime.getRuntime;
-import static parallelism.late.COSType.lockFreeGraph;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
+import bftsmart.microbenchmark.tpcc.server.config.ServerConfig;
 import bftsmart.microbenchmark.tpcc.server.transaction.TransactionFactory;
 import bftsmart.tom.MessageContext;
-import bftsmart.tom.ServiceReplica;
 import bftsmart.tom.server.SingleExecutable;
+import parallelism.SequentialServiceReplica;
 import parallelism.late.CBASEServiceReplica;
+import parallelism.late.COSType;
 import parallelism.late.ConflictDefinition;
 
 public class TPCCServer implements SingleExecutable {
@@ -26,16 +24,17 @@ public class TPCCServer implements SingleExecutable {
     private final TransactionFactory transactionFactory;
 
     @Inject
-    public TPCCServer(TransactionFactory transactionFactory, ConflictDefinition definition,
-            WorkloadConfig workloadConfig, @Named("replicaId") Integer replicaId) {
+    TPCCServer(TransactionFactory transactionFactory, ConflictDefinition definition, WorkloadConfig workloadConfig,
+            ServerConfig serverConfig) {
         this.transactionFactory = transactionFactory;
-        if (BooleanUtils.isTrue(workloadConfig.getParallelExecution())) {
-            LOGGER.info("Starting CBASEServiceReplica. Parallel execution? {}", workloadConfig.getParallelExecution());
-            int availableProcessors = getRuntime().availableProcessors();
-            new CBASEServiceReplica(replicaId, this, null, availableProcessors, definition, lockFreeGraph);
+        Integer replicaId = serverConfig.getReplicaId();
+        Integer numOfThreads = serverConfig.getNumOfThreads();
+        if (BooleanUtils.isTrue(serverConfig.getParallelSmr()) && numOfThreads > 1) {
+            LOGGER.info("Starting CBASEServiceReplica.");
+            new CBASEServiceReplica(replicaId, this, null, numOfThreads, definition, COSType.lockFreeGraph);
         } else {
-            LOGGER.info("Starting ServiceReplica. Parallel execution? {}", workloadConfig.getParallelExecution());
-            new ServiceReplica(replicaId, this, null);
+            LOGGER.info("Starting SequentialServiceReplica.");
+            new SequentialServiceReplica(replicaId, this, null);
         }
     }
 

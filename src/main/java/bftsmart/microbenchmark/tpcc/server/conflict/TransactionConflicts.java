@@ -73,7 +73,7 @@ public class TransactionConflicts {
     }
 
     /**
-     * The pessimistic locking model to prevent simultaneous updates to records.
+     * Transactions with the pessimistic locking model to avoid concurrent updates to the records.
      * 
      * @param t1
      *            The first transaction type

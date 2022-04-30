@@ -11,7 +11,7 @@ ssh -T -o ServerAliveInterval=7200 $1 << EOF
     #run deploy script
     echo "Running deploy script"
 
-    ./smartrun.sh bftsmart.microbenchmark.tpcc.TPCCClientApplication $2
+    ./smartrun.sh -D-Dtpcc.terminal-id=$2 -Dbft.num-of-threads=$3 -Dbft.parallel-smr=$4 bftsmart.microbenchmark.tpcc.TPCCClientApplication
 
     bash -l
 EOF

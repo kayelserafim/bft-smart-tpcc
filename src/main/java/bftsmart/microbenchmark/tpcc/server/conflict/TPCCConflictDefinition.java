@@ -33,12 +33,12 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         if (TransactionConflicts.isPessimistic(command1.getTransactionType(), command2.getTransactionType())) {
             return true;
         }
-        Integer customer1 = getCustomerIds(command1);
-        Integer customer2 = getCustomerIds(command2);
+        Integer customer1 = getCustomerId(command1);
+        Integer customer2 = getCustomerId(command2);
         return customer1 != null && customer1.equals(customer2);
     }
 
-    private Integer getCustomerIds(TPCCCommand command) {
+    private Integer getCustomerId(TPCCCommand command) {
         switch (command.getTransactionType()) {
         case NEW_ORDER:
             NewOrderInput newOrder = (NewOrderInput) command.getRequest();
@@ -47,7 +47,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             PaymentInput payment = (PaymentInput) command.getRequest();
             return Optional.of(payment)
                     .map(PaymentInput::getCustomerId)
-                    .filter(customerId -> Numbers.gt(customerId, 0))
+                    .filter(Numbers::isNotNullOrZero)
                     .orElseGet(() -> {
                         String lastName = payment.getCustomerLastName();
                         Integer districtId = payment.getCustomerDistrictId();
@@ -58,7 +58,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             OrderStatusInput orderStatus = (OrderStatusInput) command.getRequest();
             return Optional.of(orderStatus)
                     .map(OrderStatusInput::getCustomerId)
-                    .filter(customerId -> Numbers.gt(customerId, 0))
+                    .filter(Numbers::isNotNullOrZero)
                     .orElseGet(() -> {
                         String lastName = orderStatus.getCustomerLastName();
                         Integer districtId = orderStatus.getDistrictId();
@@ -72,7 +72,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         }
     }
 
-    public Integer getCustomerId(String customerLastName, Integer districtId, Integer warehouseId) {
+    private Integer getCustomerId(String customerLastName, Integer districtId, Integer warehouseId) {
         // clause 2.6.2.2 (dot 3, Case 2)
         Customer customer = customerRepository.find(customerLastName, districtId, warehouseId);
         if (customer == null) {

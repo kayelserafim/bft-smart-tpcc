@@ -1,6 +1,5 @@
-package bftsmart.microbenchmark.tpcc.monitor;
+package bftsmart.microbenchmark.tpcc.client.monitor;
 
-import static java.lang.Runtime.getRuntime;
 import static java.time.Duration.ZERO;
 
 import java.time.Duration;
@@ -16,10 +15,11 @@ import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import bftsmart.microbenchmark.tpcc.client.config.ClientConfig;
+import bftsmart.microbenchmark.tpcc.client.monitor.spreadsheet.BenchResultSpreadsheetBuilder;
+import bftsmart.microbenchmark.tpcc.client.monitor.spreadsheet.RawResultSpreadsheetBuilder;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
-import bftsmart.microbenchmark.tpcc.monitor.spreadsheet.BenchResultSpreadsheetBuilder;
-import bftsmart.microbenchmark.tpcc.monitor.spreadsheet.RawResultSpreadsheetBuilder;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.InetAddresses;
 
@@ -29,13 +29,13 @@ public class MetricCollector {
     private static final Logger LOGGER = LoggerFactory.getLogger(MetricCollector.class);
 
     private final WorkloadConfig workload;
-    private final int numTerminals;
+    private final ClientConfig clientConfig;
     private final String hostname;
 
     @Inject
-    public MetricCollector(WorkloadConfig workload) {
+    public MetricCollector(WorkloadConfig workload, ClientConfig clientConfig) {
         this.workload = workload;
-        this.numTerminals = getRuntime().availableProcessors();
+        this.clientConfig = clientConfig;
         this.hostname = InetAddresses.getHostName();
     }
 
@@ -56,7 +56,7 @@ public class MetricCollector {
 
             RawResultSpreadsheetBuilder.builder(getSheetName("Metric_Raw_Terminal_Number"))
                     .addLine("Warehouses", workload.getWarehouses())
-                    .addLine("Terminals", numTerminals)
+                    .addLine("Terminals", clientConfig.getNumOfThreads())
                     .addLine("New Order Weight", workload.getNewOrderWeight())
                     .addLine("Payment Weight", workload.getPaymentWeight())
                     .addLine("Order Status Weight", workload.getOrderStatusWeight())
@@ -89,7 +89,7 @@ public class MetricCollector {
 
             BenchResultSpreadsheetBuilder.builder(getSheetName("Metric_Terminal_Number"))
                     .addRow("Warehouses", workload.getWarehouses())
-                    .addRow("Terminals", numTerminals)
+                    .addRow("Terminals", clientConfig.getNumOfThreads())
                     .addRow("New Order Weight", workload.getNewOrderWeight())
                     .addRow("Payment Weight", workload.getPaymentWeight())
                     .addRow("Order Status Weight", workload.getOrderStatusWeight())
@@ -104,8 +104,8 @@ public class MetricCollector {
     }
 
     private String getSheetName(String prefix) {
-        String executionType = BooleanUtils.isTrue(workload.getParallelExecution()) ? "Parallel" : "Sequential";
-        return prefix + "_" + executionType + "_" + numTerminals + "_" + hostname;
+        String executionType = BooleanUtils.isTrue(clientConfig.getParallelSmr()) ? "Parallel" : "Sequential";
+        return prefix + "_" + executionType + "_" + clientConfig.getNumOfThreads() + "_" + hostname;
     }
 
 }

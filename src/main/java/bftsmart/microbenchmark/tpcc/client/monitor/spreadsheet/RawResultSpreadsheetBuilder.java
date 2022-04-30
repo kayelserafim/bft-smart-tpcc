@@ -1,8 +1,9 @@
-package bftsmart.microbenchmark.tpcc.monitor.spreadsheet;
+package bftsmart.microbenchmark.tpcc.client.monitor.spreadsheet;
 
 import java.util.Collection;
 
-import bftsmart.microbenchmark.tpcc.monitor.RawResult;
+import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
+import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
 
 public class RawResultSpreadsheetBuilder {
 

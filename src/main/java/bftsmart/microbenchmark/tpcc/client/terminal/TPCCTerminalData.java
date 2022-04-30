@@ -232,8 +232,7 @@ public class TPCCTerminalData {
                     .newOrderWeight(workload.getNewOrderWeight())
                     .limitPerTerminal(workload.getTxnsPerTerminal())
                     .warmupIterations(workload.getWarmupIterations())
-                    .runMins(workload.getRunMins())
-                    .parallelExecution(workload.getParallelExecution());
+                    .runMins(workload.getRunMins());
         }
 
         public TPCCTerminalData build() {

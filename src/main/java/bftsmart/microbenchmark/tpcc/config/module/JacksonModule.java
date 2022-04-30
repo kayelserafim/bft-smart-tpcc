@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -28,12 +27,6 @@ public class JacksonModule extends AbstractModule {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         return mapper;
-    }
-
-    @Provides
-    @Singleton
-    public JavaPropsMapper propsMapper() {
-        return new JavaPropsMapper();
     }
 
 }

@@ -1,37 +1,39 @@
 package bftsmart.microbenchmark.tpcc.config.module;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.google.common.base.Stopwatch;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.io.TPCCData;
 import io.vavr.control.Try;
 
-public class DataFileModule extends AbstractModule {
+public class DataModule extends AbstractModule {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataFileModule.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataModule.class);
 
-    @Provides
-    @Singleton
-    public WorkloadConfig workloadConfig(JavaPropsMapper propsMapper) {
-        try {
-            File file = TPCCConfig.getWorkloadConfigFile();
-            return propsMapper.readValue(file, WorkloadConfig.class);
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
+    @Override
+    protected void configure() {
+        Properties properties = new Properties(System.getProperties());
+        try (InputStream inStream = new FileInputStream(TPCCConfig.getWorkloadConfigFile())) {
+            properties.load(inStream);
+        } catch (IOException e) {
+            LOGGER.error("Could not load WorkloadConfig.", e);
         }
+        Names.bindProperties(binder(), properties);
     }
 
     @Provides

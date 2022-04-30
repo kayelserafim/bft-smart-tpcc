@@ -9,8 +9,8 @@ import org.apache.commons.lang3.concurrent.TimedSemaphore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.service.TPCCService;
-import bftsmart.microbenchmark.tpcc.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 

@@ -10,7 +10,7 @@
 	</appender>
 
 	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
-		<file>logs/application.log</file>
+		<file>${java.io.tmpdir}/logs/bft-smart-tpcc.log</file>
 		<append>true</append>
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -29,7 +29,7 @@
 		<neverBlock>true</neverBlock>
 	</appender>
 
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="STDOUT-ASYNC" />
 		<appender-ref ref="FILE-ASYNC" />
 	</root>

@@ -1,4 +1,4 @@
-package bftsmart.microbenchmark.tpcc.monitor.spreadsheet;
+package bftsmart.microbenchmark.tpcc.spreadsheet;
 
 import java.io.File;
 import java.io.FileOutputStream;

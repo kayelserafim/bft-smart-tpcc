@@ -44,11 +44,26 @@ public class Numbers {
         return number.doubleValue();
     }
 
-    public static boolean gt(Number number1, Number number2) {
-        if (number1 == null || number2 == null) {
-            return false;
-        }
-        return number1.doubleValue() > number2.doubleValue();
+    /**
+     * Checks if the specified number is null or zero.
+     * 
+     * @param number
+     *            to be checked
+     * @return true if the number is null or zero, false otherwise
+     */
+    public static boolean isNullOrZero(Number number) {
+        return number == null || number.doubleValue() == 0;
+    }
+
+    /**
+     * checks that the specified number is not zero or not null.
+     * 
+     * @param number
+     *            to be checked
+     * @return false if the number is null or zero, true otherwise
+     */
+    public static boolean isNotNullOrZero(Number number) {
+        return !isNullOrZero(number);
     }
 
 }

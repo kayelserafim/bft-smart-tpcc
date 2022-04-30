@@ -1,42 +1,47 @@
 package bftsmart.microbenchmark.tpcc.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
+@Singleton
 public class WorkloadConfig {
 
     public static final String RESOURCE_PATH = "workload.properties";
 
-    @JsonProperty("warehousesCnt")
+    @Inject
+    @Named("warehousesCnt")
     private Integer warehouses;
-    @JsonProperty("maximumTerminalsPerNode")
-    private Integer maximumTerminalsPerNode;
-    @JsonProperty("terminalTxnsPerTerminal")
+    @Inject
+    @Named("terminalTxnsPerTerminal")
     private Integer txnsPerTerminal;
-    @JsonProperty("terminalRunMins")
+    @Inject
+    @Named("terminalRunMins")
     private Integer runMins;
-    @JsonProperty("limitTxnsPerMin")
+    @Inject
+    @Named("limitTxnsPerMin")
     private Integer limitTxnsPerMin;
-    @JsonProperty("warmupIterations")
+    @Inject
+    @Named("warmupIterations")
     private Integer warmupIterations;
-    @JsonProperty("parallelExecution")
-    private Boolean parallelExecution;
-    @JsonProperty("newOrderWeight")
+    @Inject
+    @Named("newOrderWeight")
     private Integer newOrderWeight;
-    @JsonProperty("paymentWeight")
+    @Inject
+    @Named("paymentWeight")
     private Integer paymentWeight;
-    @JsonProperty("orderStatusWeight")
+    @Inject
+    @Named("orderStatusWeight")
     private Integer orderStatusWeight;
-    @JsonProperty("deliveryWeight")
+    @Inject
+    @Named("deliveryWeight")
     private Integer deliveryWeight;
-    @JsonProperty("stockLevelWeight")
+    @Inject
+    @Named("stockLevelWeight")
     private Integer stockLevelWeight;
 
     public Integer getWarehouses() {
         return warehouses;
-    }
-
-    public Integer getMaximumTerminalsPerNode() {
-        return maximumTerminalsPerNode;
     }
 
     public Integer getTxnsPerTerminal() {
@@ -53,10 +58,6 @@ public class WorkloadConfig {
 
     public Integer getWarmupIterations() {
         return warmupIterations;
-    }
-
-    public Boolean getParallelExecution() {
-        return parallelExecution;
     }
 
     public Integer getNewOrderWeight() {
@@ -93,8 +94,6 @@ public class WorkloadConfig {
         StringBuilder builder = new StringBuilder();
         builder.append("WorkloadConfig [warehouses=")
                 .append(warehouses)
-                .append(", maximumTerminalsPerNode=")
-                .append(maximumTerminalsPerNode)
                 .append(", txnsPerTerminal=")
                 .append(txnsPerTerminal)
                 .append(", runMins=")
@@ -103,8 +102,6 @@ public class WorkloadConfig {
                 .append(limitTxnsPerMin)
                 .append(", warmupIterations=")
                 .append(warmupIterations)
-                .append(", parallelExecution=")
-                .append(parallelExecution)
                 .append(", newOrderWeight=")
                 .append(newOrderWeight)
                 .append(", paymentWeight=")

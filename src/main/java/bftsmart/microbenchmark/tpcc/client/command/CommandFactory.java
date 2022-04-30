@@ -16,8 +16,12 @@ public class CommandFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandFactory.class);
 
+    private final Set<Command> commands;
+
     @Inject
-    private Set<Command> commands;
+    CommandFactory(Set<Command> commands) {
+        this.commands = commands;
+    }
 
     public Command getFactory(TransactionType transactionType) {
         LOGGER.debug("Starting txn: {}, thread name: {}", transactionType, Thread.currentThread().getName());
