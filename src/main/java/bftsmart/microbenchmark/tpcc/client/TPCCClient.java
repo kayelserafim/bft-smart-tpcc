@@ -17,11 +17,11 @@ import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.Futures;
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.client.config.ClientConfig;
 import bftsmart.microbenchmark.tpcc.client.monitor.MetricCollector;
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalFactory;
+import bftsmart.microbenchmark.tpcc.config.ParamConfig;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.io.TPCCData;
@@ -40,17 +40,17 @@ public class TPCCClient {
     private final TPCCTerminalFactory terminalFactory;
     private final MetricCollector metricCollector;
     private final WorkloadConfig workload;
-    private final ClientConfig clientConfig;
+    private final ParamConfig paramConfig;
 
     @Inject
     TPCCClient(TPCCTerminalFactory terminalFactory, MetricCollector metricCollector, TPCCData tpccData,
-            WorkloadConfig workload, ClientConfig clientConfig) {
+            WorkloadConfig workload, ParamConfig paramConfig) {
         this.terminalFactory = terminalFactory;
         this.metricCollector = metricCollector;
         this.workload = workload;
-        this.clientConfig = clientConfig;
+        this.paramConfig = paramConfig;
         this.random = new TPCCRandom(tpccData.getcLoad());
-        this.executorService = Executors.newFixedThreadPool(clientConfig.getNumOfThreads());
+        this.executorService = Executors.newFixedThreadPool(paramConfig.getNumOfThreads());
         this.sem = new TimedSemaphore(1, TimeUnit.MINUTES, workload.getLimitTxnsPerMin());
 
         LOGGER.info("TPCCClient Initiated.");
@@ -59,12 +59,12 @@ public class TPCCClient {
     public void start() {
         List<Future<List<RawResult>>> tasks = new ArrayList<>();
         Stopwatch stopwatch = Stopwatch.createStarted();
-        for (int i = 0; i < clientConfig.getNumOfThreads(); i++) {
+        for (int i = 0; i < paramConfig.getNumOfThreads(); i++) {
             TPCCTerminalData terminalData = TPCCTerminalData.builder()
-                    .terminalId(clientConfig.getTerminalId() * MAX_TERMINALS_PER_CLIENT + i)
+                    .terminalId(paramConfig.getId() * MAX_TERMINALS_PER_CLIENT + i)
                     .warehouseId(random.nextInt(1, workload.getWarehouses()))
                     .districtId(random.nextInt(1, TPCCConfig.DIST_PER_WHSE))
-                    .parallelExecution(clientConfig.getParallelSmr())
+                    .parallelExecution(paramConfig.getParallelSmr())
                     .workload(workload)
                     .build();
 

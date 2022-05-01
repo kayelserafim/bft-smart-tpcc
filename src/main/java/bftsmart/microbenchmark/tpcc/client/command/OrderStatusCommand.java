@@ -37,7 +37,7 @@ public class OrderStatusCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withCustomerLastName(customerLastName);
 
-        return new TPCCCommand(transactionType(), input);
+        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
     }
 
 }

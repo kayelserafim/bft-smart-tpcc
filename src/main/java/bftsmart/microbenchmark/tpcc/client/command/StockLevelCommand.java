@@ -21,7 +21,7 @@ public class StockLevelCommand implements Command {
                 .withDistrictId(terminalData.getDistrictId())
                 .withThreshold(threshold);
 
-        return new TPCCCommand(transactionType(), input);
+        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
     }
 
 }

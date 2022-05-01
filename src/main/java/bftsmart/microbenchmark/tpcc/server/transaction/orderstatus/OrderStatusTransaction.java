@@ -50,7 +50,7 @@ public class OrderStatusTransaction implements Transaction {
             if (customer == null) {
                 String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
                 String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
-                return TPCCCommand.newErrorMessage(command, msg);
+                return TPCCCommand.from(command).status(-1).response(msg).build();
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
@@ -83,7 +83,7 @@ public class OrderStatusTransaction implements Transaction {
             }
         }
 
-        return TPCCCommand.newSuccessMessage(command, outputScreen(orderBuilder.build()));
+        return TPCCCommand.from(command).status(0).response(outputScreen(orderBuilder.build())).build();
     }
 
     private String outputScreen(OrderStatusOutput orderStatus) {

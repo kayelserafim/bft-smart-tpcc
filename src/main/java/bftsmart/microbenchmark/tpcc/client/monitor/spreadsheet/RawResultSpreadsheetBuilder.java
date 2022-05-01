@@ -9,8 +9,8 @@ public class RawResultSpreadsheetBuilder {
 
     private final Spreadsheet spreadsheet;
 
-    private static final String[] HEADER =
-            { "Transaction Type", "Terminal Id", "Terminal Name", "Latency (ms)", "Status", "Message" };
+    private static final String[] HEADER = { "ID", "Transaction Type", "Terminal Id", "Terminal Name", "Has Conflict",
+            "Latency (ms)", "Status", "Message" };
 
     private RawResultSpreadsheetBuilder(String sheetName) {
         this.spreadsheet = new Spreadsheet(sheetName);
@@ -34,9 +34,11 @@ public class RawResultSpreadsheetBuilder {
         spreadsheet.addHeader(HEADER);
         for (RawResult result : results) {
             int position = 0;
+            spreadsheet.addColumn(position++, result.getCommandId());
             spreadsheet.addColumn(position++, String.valueOf(result.getTransactionType()));
             spreadsheet.addColumn(position++, result.getTerminalId());
             spreadsheet.addColumn(position++, result.getTerminalName());
+            spreadsheet.addColumn(position++, String.valueOf(result.getConflict()));
             spreadsheet.addColumn(position++, result.getElapsed().toMillis());
             spreadsheet.addColumn(position++, result.getStatus());
             spreadsheet.addColumn(position, result.getMessage());

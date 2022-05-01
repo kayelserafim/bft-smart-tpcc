@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.probject;
 
 import java.io.Serializable;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -12,18 +13,24 @@ public class TPCCCommand implements Serializable {
 
     private static final long serialVersionUID = 6569180706287210660L;
 
-    private TransactionType transactionType;
-    private Serializable request;
-    private String response;
-    private Integer status = -1;
+    private final String commandId;
+    private final TransactionType transactionType;
+    private final Serializable request;
+    private final Integer status;
+    private final Boolean conflict;
+    private final String response;
 
-    private TPCCCommand() {
-        super();
+    public TPCCCommand(Builder builder) {
+        this.commandId = builder.commandId == null ? UUID.randomUUID().toString() : builder.commandId;
+        this.transactionType = builder.transactionType;
+        this.request = builder.request;
+        this.response = builder.response;
+        this.conflict = builder.conflict;
+        this.status = builder.status;
     }
 
-    public TPCCCommand(TransactionType transactionType, Serializable request) {
-        this.transactionType = transactionType;
-        this.request = request;
+    public String getCommandId() {
+        return commandId;
     }
 
     public TransactionType getTransactionType() {
@@ -34,45 +41,81 @@ public class TPCCCommand implements Serializable {
         return request;
     }
 
-    public String getResponse() {
-        return response;
-    }
-
     public Integer getStatus() {
         return status;
     }
 
-    public static TPCCCommand from(TPCCCommand command) {
-        TPCCCommand tpccMessage = new TPCCCommand();
-        if (command != null) {
-            tpccMessage.transactionType = command.getTransactionType();
-            tpccMessage.request = command.getRequest();
-            tpccMessage.response = command.getResponse();
-            tpccMessage.status = command.getStatus();
-        }
-        return tpccMessage;
+    public Boolean getConflict() {
+        return conflict;
     }
 
-    public static TPCCCommand newSuccessMessage(TPCCCommand command, String successMessage) {
-        TPCCCommand tpccMessage = new TPCCCommand();
-        if (command != null) {
-            tpccMessage.transactionType = command.getTransactionType();
-            tpccMessage.request = command.getRequest();
-            tpccMessage.response = successMessage;
-            tpccMessage.status = 0;
-        }
-        return tpccMessage;
+    public String getResponse() {
+        return response;
     }
 
-    public static TPCCCommand newErrorMessage(TPCCCommand command, String errorMessage) {
-        TPCCCommand tpccMessage = new TPCCCommand();
-        if (command != null) {
-            tpccMessage.transactionType = command.getTransactionType();
-            tpccMessage.request = command.getRequest();
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static Builder from(TPCCCommand command) {
+        return new Builder(command);
+    }
+
+    public static class Builder {
+        private String commandId;
+        private TransactionType transactionType;
+        private Serializable request;
+        private Integer status;
+        private Boolean conflict;
+        private String response;
+
+        public Builder() {
+            super();
         }
-        tpccMessage.response = errorMessage;
-        tpccMessage.status = -1;
-        return tpccMessage;
+
+        public Builder(TPCCCommand command) {
+            this.commandId = command.commandId;
+            this.transactionType = command.transactionType;
+            this.request = command.request;
+            this.status = command.status;
+            this.conflict = command.conflict;
+            this.response = command.response;
+        }
+
+        public Builder commandId(String commandId) {
+            this.commandId = commandId;
+            return this;
+        }
+
+        public Builder transactionType(TransactionType transactionType) {
+            this.transactionType = transactionType;
+            return this;
+        }
+
+        public Builder request(Serializable request) {
+            this.request = request;
+            return this;
+        }
+
+        public Builder status(Integer status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder conflict(Boolean conflict) {
+            this.conflict = conflict;
+            return this;
+        }
+
+        public Builder response(String response) {
+            this.response = response;
+            return this;
+        }
+
+        public TPCCCommand build() {
+            return new TPCCCommand(this);
+        }
+
     }
 
     public byte[] serialize() {
@@ -105,4 +148,5 @@ public class TPCCCommand implements Serializable {
                 .add("status=" + status)
                 .toString();
     }
+
 }

@@ -35,15 +35,15 @@ public class TPCCService {
 
         try {
             if (BooleanUtils.isTrue(terminalData.getParallelExecution())) {
-                byte[] response = serviceProxy.invokeParallel(command.serialize(new MultiOperationRequest(1)), SYNC_ALL);
-                return TPCCCommand.deserialize(new MultiOperationResponse(response));
+                byte[] resp = serviceProxy.invokeParallel(command.serialize(new MultiOperationRequest(1)), SYNC_ALL);
+                return TPCCCommand.deserialize(new MultiOperationResponse(resp));
             } else {
-                byte[] response = serviceProxy.invokeOrdered(command.serialize());
-                return TPCCCommand.deserialize(response);
+                byte[] resp = serviceProxy.invokeOrdered(command.serialize());
+                return TPCCCommand.deserialize(resp);
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return TPCCCommand.newErrorMessage(command, e.getMessage());
+            return TPCCCommand.from(command).status(-1).response(e.getMessage()).build();
         }
     }
 

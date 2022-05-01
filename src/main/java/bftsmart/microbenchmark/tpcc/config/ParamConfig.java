@@ -1,21 +1,25 @@
-package bftsmart.microbenchmark.tpcc.server.config;
+package bftsmart.microbenchmark.tpcc.config;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 @Singleton
-public class ServerConfig {
+public class ParamConfig {
 
+    @Inject
+    @Named("bft.id")
+    private Integer id;
     @Inject
     @Named("bft.num-of-threads")
     private Integer numOfThreads;
     @Inject
     @Named("bft.parallel-smr")
     private Boolean parallelSmr;
-    @Inject
-    @Named("bft.replica-id")
-    private Integer replicaId;
+
+    public Integer getId() {
+        return id;
+    }
 
     public Integer getNumOfThreads() {
         return numOfThreads;
@@ -25,19 +29,15 @@ public class ServerConfig {
         return parallelSmr;
     }
 
-    public Integer getReplicaId() {
-        return replicaId;
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ServerConfig [numOfThreads=")
+        builder.append("ParamConfig [id=")
+                .append(id)
+                .append(", numOfThreads=")
                 .append(numOfThreads)
                 .append(", parallelSmr=")
                 .append(parallelSmr)
-                .append(", replicaId=")
-                .append(replicaId)
                 .append(']');
         return builder.toString();
     }

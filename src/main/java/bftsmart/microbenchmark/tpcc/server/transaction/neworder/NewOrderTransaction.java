@@ -75,7 +75,7 @@ public class NewOrderTransaction implements Transaction {
             // data...
             // we throw an illegal access exception and the transaction gets
             // rolled back later on
-            return TPCCCommand.newErrorMessage(command, TRANSACTION_ABORTED);
+            return TPCCCommand.from(command).status(-1).response(TRANSACTION_ABORTED).build();
         }
 
         // The row in the WAREHOUSE table with matching W_ID is selected and
@@ -191,7 +191,7 @@ public class NewOrderTransaction implements Transaction {
         stocks.forEach(stockRepository::save);
         orderLines.forEach(orderLineRepository::save);
 
-        return TPCCCommand.newSuccessMessage(command, outputScreen(orderBuilder.build()));
+        return TPCCCommand.from(command).status(0).response(outputScreen(orderBuilder.build())).build();
     }
 
     private String getDistrictInfo(District district, Stock stock) {

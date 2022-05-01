@@ -61,7 +61,7 @@ public class PaymentCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withPaymentAmount(paymentAmount);
 
-        return new TPCCCommand(transactionType(), input);
+        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
     }
 
 }

@@ -63,7 +63,7 @@ public class DeliveryTransaction implements Transaction {
                 Order order = orderRepository.findByOrderId(orderId, districtId, warehouseId);
                 if (order == null) {
                     String message = String.format("Order [%s] not found", orderId);
-                    return TPCCCommand.newErrorMessage(command, message);
+                    return TPCCCommand.from(command).status(-1).response(message).build();
                 }
                 Customer customer = customerRepository.find(order.getCustomerId(), districtId, warehouseId);
 
@@ -94,7 +94,7 @@ public class DeliveryTransaction implements Transaction {
                 .forEach(customerRepository::save);
         orderLines.forEach(orderLineRepository::save);
 
-        return TPCCCommand.newSuccessMessage(command, outputScreen(deliveryBuilder.build()));
+        return TPCCCommand.from(command).status(0).response(outputScreen(deliveryBuilder.build())).build();
     }
 
     private String outputScreen(DeliveryOutput delivery) {

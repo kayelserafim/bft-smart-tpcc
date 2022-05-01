@@ -86,7 +86,9 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
 
         TPCCCommand tpccCommand = transaction.process(terminalData, random);
         rawResult.stop();
+        rawResult.setCommandId(tpccCommand.getCommandId());
         rawResult.setTransactionType(tpccCommand.getTransactionType());
+        rawResult.setConflict(tpccCommand.getConflict());
         rawResult.setStatus(tpccCommand.getStatus());
         rawResult.setMessage("Response received: " + tpccCommand.getResponse());
 

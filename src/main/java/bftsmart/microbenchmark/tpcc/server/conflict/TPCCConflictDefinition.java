@@ -1,6 +1,8 @@
 package bftsmart.microbenchmark.tpcc.server.conflict;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,6 +21,8 @@ import parallelism.late.ConflictDefinition;
 @Singleton
 public class TPCCConflictDefinition extends ConflictDefinition {
 
+    private Map<String, Boolean> conflictMap = new ConcurrentHashMap<>();
+
     @Inject
     private CustomerRepository customerRepository;
 
@@ -28,14 +32,27 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         TPCCCommand command2 = TPCCCommand.deserialize(new MultiOperationRequest(arg1.request.getContent()));
 
         if (TransactionConflicts.hasNotConflict(command1.getTransactionType(), command2.getTransactionType())) {
+            conflictMap.put(command1.getCommandId(), Boolean.FALSE);
+            conflictMap.put(command2.getCommandId(), Boolean.FALSE);
             return false;
         }
         if (TransactionConflicts.isPessimistic(command1.getTransactionType(), command2.getTransactionType())) {
+            conflictMap.put(command1.getCommandId(), Boolean.TRUE);
+            conflictMap.put(command2.getCommandId(), Boolean.TRUE);
             return true;
         }
         Integer customer1 = getCustomerId(command1);
         Integer customer2 = getCustomerId(command2);
-        return customer1 != null && customer1.equals(customer2);
+
+        boolean isDependent = customer1 != null && customer1.equals(customer2);
+        conflictMap.put(command1.getCommandId(), isDependent);
+        conflictMap.put(command2.getCommandId(), isDependent);
+
+        return isDependent;
+    }
+
+    public Boolean isDependent(String commandId) {
+        return conflictMap.get(commandId);
     }
 
     private Integer getCustomerId(TPCCCommand command) {

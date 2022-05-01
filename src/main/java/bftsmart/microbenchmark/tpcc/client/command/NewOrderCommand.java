@@ -60,7 +60,7 @@ public class NewOrderCommand implements Command {
                 .withSupplierWarehouseIds(Arrays.asList(supplierWarehouses))
                 .withOrderQuantities(Arrays.asList(orderQuantities));
 
-        return new TPCCCommand(transactionType(), input);
+        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
     }
 
 }

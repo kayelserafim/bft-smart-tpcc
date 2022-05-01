@@ -20,7 +20,7 @@ public class DeliveryCommand implements Command {
         final DeliveryInput input =
                 new DeliveryInput().withWarehouseId(terminalData.getWarehouseId()).withOrderCarrierId(orderCarrierId);
 
-        return new TPCCCommand(transactionType(), input);
+        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
     }
 
 }

@@ -54,7 +54,7 @@ public class PaymentTransaction implements Transaction {
             if (customer == null) {
                 String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
                 String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
-                return TPCCCommand.newErrorMessage(command, msg);
+                return TPCCCommand.from(command).status(-1).response(msg).build();
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
@@ -126,7 +126,7 @@ public class PaymentTransaction implements Transaction {
 
         paymentBuilder.warehouse(warehouse).district(district).customer(customer).amountPaid(input.getPaymentAmount());
 
-        return TPCCCommand.newSuccessMessage(command, outputScreen(paymentBuilder.build()));
+        return TPCCCommand.from(command).status(0).response(outputScreen(paymentBuilder.build())).build();
     }
 
     private String outputScreen(PaymentOutput paymentOutput) {

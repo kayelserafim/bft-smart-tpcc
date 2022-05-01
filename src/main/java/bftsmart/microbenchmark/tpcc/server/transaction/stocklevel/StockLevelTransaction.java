@@ -49,7 +49,7 @@ public class StockLevelTransaction implements Transaction {
 
         stockBuilder.warehouseId(warehouseId).districtId(districtId).threshold(threshold).stockCount(stockCount);
 
-        return TPCCCommand.newSuccessMessage(command, outputScreen(stockBuilder.build()));
+        return TPCCCommand.from(command).status(0).response(outputScreen(stockBuilder.build())).build();
     }
 
     private String outputScreen(StockLevelOutput stockLevel) {
