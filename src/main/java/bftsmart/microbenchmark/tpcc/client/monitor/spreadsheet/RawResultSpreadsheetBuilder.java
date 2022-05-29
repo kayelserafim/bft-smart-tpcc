@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.client.monitor.spreadsheet;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
@@ -38,7 +39,7 @@ public class RawResultSpreadsheetBuilder {
             spreadsheet.addColumn(position++, String.valueOf(result.getTransactionType()));
             spreadsheet.addColumn(position++, result.getTerminalId());
             spreadsheet.addColumn(position++, result.getTerminalName());
-            spreadsheet.addColumn(position++, String.valueOf(result.getConflict()));
+            spreadsheet.addColumn(position++, Objects.toString(result.getConflict(), ""));
             spreadsheet.addColumn(position++, result.getElapsed().toMillis());
             spreadsheet.addColumn(position++, result.getStatus());
             spreadsheet.addColumn(position, result.getMessage());

@@ -2,6 +2,7 @@ package bftsmart.microbenchmark.tpcc.client.command;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
@@ -61,7 +62,11 @@ public class PaymentCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withPaymentAmount(paymentAmount);
 
-        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
+        return TPCCCommand.builder()
+                .commandId(UUID.randomUUID().toString())
+                .transactionType(transactionType())
+                .request(input)
+                .build();
     }
 
 }

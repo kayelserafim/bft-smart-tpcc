@@ -78,7 +78,7 @@ public class TransactionConflicts {
      * @param t1
      *            The first transaction type
      * @param t2
-     *            The first transaction type
+     *            The second transaction type
      * @return true if it is, false otherwise
      */
     public static boolean isPessimistic(TransactionType t1, TransactionType t2) {

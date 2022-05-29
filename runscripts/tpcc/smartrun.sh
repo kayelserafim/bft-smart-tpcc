@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-java -Dlogback.configurationFile="./config/logback.xml" -Dlogback.configurationFile="./config/logback.xml" -Dbft.id=$2 -Dbft.num-of-threads=$3 -Dbft.parallel-smr=$4 -cp "lib/*" $1
+java -Dlogback.configurationFile="./config/logback.xml" -Dbft.id=$2 -Dbft.num-of-threads=$3 -Dbft.parallel-smr=$4 -cp "lib/*" $1

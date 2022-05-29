@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.client.command;
 
+import java.util.UUID;
+
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
@@ -37,7 +39,11 @@ public class OrderStatusCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withCustomerLastName(customerLastName);
 
-        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
+        return TPCCCommand.builder()
+                .commandId(UUID.randomUUID().toString())
+                .transactionType(transactionType())
+                .request(input)
+                .build();
     }
 
 }

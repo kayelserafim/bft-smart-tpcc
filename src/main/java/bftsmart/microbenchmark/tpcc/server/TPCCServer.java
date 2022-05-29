@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.server;
 
+import static parallelism.late.COSType.lockFreeGraph;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,6 @@ import bftsmart.tom.MessageContext;
 import bftsmart.tom.server.SingleExecutable;
 import parallelism.SequentialServiceReplica;
 import parallelism.late.CBASEServiceReplica;
-import parallelism.late.COSType;
 
 public class TPCCServer implements SingleExecutable {
 
@@ -26,14 +27,14 @@ public class TPCCServer implements SingleExecutable {
 
     @Inject
     TPCCServer(TransactionFactory transactionFactory, TPCCConflictDefinition conflictDefinition,
-            WorkloadConfig workloadConfig, ParamConfig serverConfig) {
+            WorkloadConfig workloadConfig, ParamConfig paramConfig) {
         this.transactionFactory = transactionFactory;
         this.conflictDefinition = conflictDefinition;
-        Integer replicaId = serverConfig.getId();
-        Integer numOfThreads = serverConfig.getNumOfThreads();
-        if (BooleanUtils.isTrue(serverConfig.getParallelSmr()) && numOfThreads > 1) {
+        Integer replicaId = paramConfig.getId();
+        Integer numOfThreads = paramConfig.getNumOfThreads();
+        if (BooleanUtils.isTrue(paramConfig.getParallelSmr()) && numOfThreads > 1) {
             LOGGER.info("Starting CBASEServiceReplica.");
-            new CBASEServiceReplica(replicaId, this, null, numOfThreads, conflictDefinition, COSType.lockFreeGraph);
+            new CBASEServiceReplica(replicaId, this, null, numOfThreads, conflictDefinition, lockFreeGraph);
         } else {
             LOGGER.info("Starting SequentialServiceReplica.");
             new SequentialServiceReplica(replicaId, this, null);
@@ -45,13 +46,10 @@ public class TPCCServer implements SingleExecutable {
         TPCCCommand aRequest = TPCCCommand.deserialize(theCommand);
         LOGGER.debug("Processing an ordered request of type [{}]", aRequest.getTransactionType());
 
-        TPCCCommand reply = execute(aRequest);
+        byte[] reply = execute(aRequest);
 
         LOGGER.debug("Ordered reply received");
-        return TPCCCommand.from(reply)
-                .conflict(conflictDefinition.isDependent(reply.getCommandId()))
-                .build()
-                .serialize();
+        return reply;
     }
 
     @Override
@@ -59,17 +57,18 @@ public class TPCCServer implements SingleExecutable {
         TPCCCommand aRequest = TPCCCommand.deserialize(theCommand);
         LOGGER.debug("Processing an unordered request of type [{}]", aRequest.getTransactionType());
 
-        TPCCCommand reply = execute(aRequest);
+        byte[] reply = execute(aRequest);
 
         LOGGER.debug("Unordered reply received");
+        return reply;
+    }
+
+    private byte[] execute(TPCCCommand aRequest) {
+        TPCCCommand reply = transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
         return TPCCCommand.from(reply)
                 .conflict(conflictDefinition.isDependent(reply.getCommandId()))
                 .build()
                 .serialize();
-    }
-
-    private TPCCCommand execute(TPCCCommand aRequest) {
-        return transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
     }
 
 }

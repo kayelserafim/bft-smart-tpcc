@@ -2,7 +2,6 @@ package bftsmart.microbenchmark.tpcc.probject;
 
 import java.io.Serializable;
 import java.util.StringJoiner;
-import java.util.UUID;
 
 import org.apache.commons.lang3.SerializationUtils;
 
@@ -21,7 +20,7 @@ public class TPCCCommand implements Serializable {
     private final String response;
 
     public TPCCCommand(Builder builder) {
-        this.commandId = builder.commandId == null ? UUID.randomUUID().toString() : builder.commandId;
+        this.commandId = builder.commandId;
         this.transactionType = builder.transactionType;
         this.request = builder.request;
         this.response = builder.response;

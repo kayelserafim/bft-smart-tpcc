@@ -15,7 +15,6 @@
  */
 package bftsmart.microbenchmark.ycsb;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,6 +23,6 @@ import java.util.TreeMap;
  * @author Marcel Santos
  *
  */
-public class YCSBTable extends TreeMap<String, Map<String, byte[]>> implements Serializable {
+public class YCSBTable extends TreeMap<String, Map<String, byte[]>> {
     private static final long serialVersionUID = 3786544460082473686L;
 }

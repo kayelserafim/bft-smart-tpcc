@@ -1,19 +1,21 @@
-ext['jackson_version'] = '2.13.1'
-ext['commonsLang_version'] = '3.12.0'
-ext['commonsCodec_version'] = '1.11'
-ext['commonsMath_version'] = '3.2'
-ext['commonsIo_version'] = '2.4'
-ext['guice_version'] = '5.0.1'
-ext['poi_version'] = '4.1.2'
-ext['vavr_version'] = '0.10.4'
-ext['javatuples_version'] = '1.2'
-ext['slf4j_version'] = '1.7.32'
-ext['logback_version'] = '1.2.10'
-ext['netty_version'] = '4.1.67.Final'
-ext['crypto_version'] = '1.69'
-ext['junitJupiter_version'] = '5.8.2'
-ext['junitPlatform_version'] = '1.8.2'
-ext['assertj_version'] = '3.22.0'
+ext {
+    set('jackson_version', "2.13.1")
+	set('commonsLang_version', "3.12.0")
+	set('commonsCodec_version', "1.11")
+	set('commonsMath_version', "3.2")
+	set('commonsIo_version', "2.4")
+	set('guice_version', "5.0.1")
+	set('poi_version', "4.1.2")
+	set('vavr_version', "0.10.4")
+	set('javatuples_version', "1.2")
+	set('slf4j_version', "1.7.32")
+	set('logback_version', "1.2.10")
+	set('netty_version', "4.1.67.Final")
+	set('crypto_version', "1.69")
+	set('junitJupiter_version', "5.8.2")
+	set('junitPlatform_version', "1.8.2")
+	set('assertj_version', "3.22.0")
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

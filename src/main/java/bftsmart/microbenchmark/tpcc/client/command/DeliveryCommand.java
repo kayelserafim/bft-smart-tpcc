@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.client.command;
 
+import java.util.UUID;
+
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
@@ -20,7 +22,11 @@ public class DeliveryCommand implements Command {
         final DeliveryInput input =
                 new DeliveryInput().withWarehouseId(terminalData.getWarehouseId()).withOrderCarrierId(orderCarrierId);
 
-        return TPCCCommand.builder().transactionType(transactionType()).request(input).build();
+        return TPCCCommand.builder()
+                .commandId(UUID.randomUUID().toString())
+                .transactionType(transactionType())
+                .request(input)
+                .build();
     }
 
 }
