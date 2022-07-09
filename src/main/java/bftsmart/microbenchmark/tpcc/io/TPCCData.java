@@ -3,8 +3,6 @@ package bftsmart.microbenchmark.tpcc.io;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
@@ -101,24 +99,19 @@ public class TPCCData {
         return histories;
     }
 
-    @Override
     public String toString() {
-        return ToStringBuilder.reflectionToString(this);
-    }
+        StringBuilder sb = new StringBuilder();
 
-    public String info() {
-        StringBuilder sb = new StringBuilder(12);
-
-        sb.append("CLoad ").append(getcLoad()).append(".\n");
-        sb.append("Total of Warehouses ").append(getWarehouses().size()).append(".\n");
-        sb.append("Total of Districts ").append(getDistricts().size()).append(".\n");
-        sb.append("Total of Customer ").append(getCustomers().size()).append(".\n");
-        sb.append("Total of Stocks ").append(getStocks().size()).append(".\n");
-        sb.append("Total of Histories ").append(getHistories().size()).append(".\n");
-        sb.append("Total of Items ").append(getItems().size()).append(".\n");
-        sb.append("Total of NewOrders ").append(getNewOrders().size()).append(".\n");
-        sb.append("Total of OrderLines ").append(getOrderLines().size()).append(".\n");
-        sb.append("Total of Orders ").append(getOrders().size()).append(".\n");
+        sb.append("CLoad ").append(getcLoad()).append(System.lineSeparator());
+        sb.append("Total of Warehouses ").append(getWarehouses().size()).append(System.lineSeparator());
+        sb.append("Total of Districts ").append(getDistricts().size()).append(System.lineSeparator());
+        sb.append("Total of Customer ").append(getCustomers().size()).append(System.lineSeparator());
+        sb.append("Total of Stocks ").append(getStocks().size()).append(System.lineSeparator());
+        sb.append("Total of Histories ").append(getHistories().size()).append(System.lineSeparator());
+        sb.append("Total of Items ").append(getItems().size()).append(System.lineSeparator());
+        sb.append("Total of NewOrders ").append(getNewOrders().size()).append(System.lineSeparator());
+        sb.append("Total of OrderLines ").append(getOrderLines().size()).append(System.lineSeparator());
+        sb.append("Total of Orders ").append(getOrders().size()).append(System.lineSeparator());
 
         return sb.toString();
     }

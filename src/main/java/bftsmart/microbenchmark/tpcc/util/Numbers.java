@@ -22,7 +22,7 @@ public class Numbers {
      *            value by which this Long is to be divided.
      * @return number / divisor
      */
-    public static Double divide(Number number, Number divisor) {
+    public static double divide(Number number, Number divisor) {
         if (number == null || divisor == null) {
             return 0D;
         }
@@ -45,25 +45,14 @@ public class Numbers {
     }
 
     /**
-     * Checks if the specified number is null or zero.
-     * 
-     * @param number
-     *            to be checked
-     * @return true if the number is null or zero, false otherwise
-     */
-    public static boolean isNullOrZero(Number number) {
-        return number == null || number.doubleValue() == 0;
-    }
-
-    /**
      * checks that the specified number is not zero or not null.
      * 
      * @param number
      *            to be checked
      * @return false if the number is null or zero, true otherwise
      */
-    public static boolean isNotNullOrZero(Number number) {
-        return !isNullOrZero(number);
+    public static boolean isGreaterThanZero(Number number) {
+        return number != null && number.longValue() > 0;
     }
 
 }

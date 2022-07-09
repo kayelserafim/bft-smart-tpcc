@@ -9,6 +9,7 @@ public final class ClientModule extends AbstractModule {
         install(new JacksonModule());
         install(new CommandModule());
         install(new DataModule());
+        install(new SpreadsheetModule());
     }
 
 }

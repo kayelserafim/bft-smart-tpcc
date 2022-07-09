@@ -7,9 +7,9 @@ set -e
 set -x
 
 # experiments
-target_nodes=(node1 node2 node3 node4 node5)
-threads=4
-parallel=false
+target_nodes=(node1 node2 node3 node4 node5 node6 node7 node8 node9 node10 node11 node12 node13 node14 node15 node16 node17 node18 node19 node20 node21 node22 node23 node24 node25 node26 node27 node28 node29 node30)
+threads=8
+parallel=true
 
 tpcc_path="./build/install/bft-smart-tpcc"
 JAVA="java -Dlogback.configurationFile=$tpcc_path/config/logback.xml -cp '$tpcc_path/lib/*'"
@@ -20,8 +20,8 @@ start_experiment() {
 
 	for ((i = 0; i < ${#target_nodes[@]}; i++)); do
 		tmux split -h -t bft-tpcc-clients
+		tmux select-layout -t bft-tpcc-clients tiled
 	done
-	tmux select-layout -t bft-tpcc-clients tiled
 }
 
 stop_all() {

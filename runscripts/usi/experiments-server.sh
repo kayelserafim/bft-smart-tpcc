@@ -9,7 +9,7 @@ set -x
 # experiments
 target_nodes=(node90 node91 node92)
 threads=64
-parallel=false
+parallel=true
 
 tpcc_path="./build/install/bft-smart-tpcc"
 JAVA="java -Dlogback.configurationFile=$tpcc_path/config/logback.xml -cp '$tpcc_path/lib/*'"

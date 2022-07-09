@@ -1,10 +1,5 @@
 package bftsmart.microbenchmark.tpcc.spreadsheet;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -12,24 +7,19 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 
 public class Spreadsheet {
 
-    private static final String XLSX_SUFFIX = ".xlsx";
-    private final String sheetName;
-    private final Workbook workbook;
-    private final Sheet sheet;
+    public static final String EXTENSION = ".xlsx";
+
     private final Font font;
     private final CellStyle cellStyle;
+    private Sheet sheet;
     private int currentRow = 0;
 
-    public Spreadsheet(String sheetName) {
-        this.sheetName = sheetName;
-        this.workbook = new SXSSFWorkbook();
+    public Spreadsheet(Workbook workbook, String sheetName) {
         this.sheet = workbook.createSheet(sheetName);
 
         font = workbook.createFont();
@@ -77,22 +67,6 @@ public class Spreadsheet {
             row = sheet.createRow(currentRow++);
         }
         row.createCell(column).setCellValue(Numbers.toDouble(value));
-    }
-
-    /**
-     * Save spreadsheet to defined directory.
-     * 
-     * @param location
-     *            The folder location
-     */
-    public void write(String location) {
-        File file = new File(location + File.separator + sheetName + XLSX_SUFFIX);
-        try (FileOutputStream fileOut = new FileOutputStream(file)) {
-            workbook.write(fileOut);
-            IOUtils.closeQuietly(workbook);
-        } catch (IOException ioe) {
-            throw new UncheckedIOException(ioe);
-        }
     }
 
 }

@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.server.conflict;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,7 +45,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         Integer customer1 = getCustomerId(command1);
         Integer customer2 = getCustomerId(command2);
 
-        boolean isDependent = customer1 != null && customer1.equals(customer2);
+        boolean isDependent = Objects.equals(customer1, customer2);
         conflictMap.put(command1.getCommandId(), isDependent);
         conflictMap.put(command2.getCommandId(), isDependent);
 
@@ -64,7 +65,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             PaymentInput payment = (PaymentInput) command.getRequest();
             return Optional.of(payment)
                     .map(PaymentInput::getCustomerId)
-                    .filter(Numbers::isNotNullOrZero)
+                    .filter(Numbers::isGreaterThanZero)
                     .orElseGet(() -> {
                         String lastName = payment.getCustomerLastName();
                         Integer districtId = payment.getCustomerDistrictId();
@@ -75,7 +76,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             OrderStatusInput orderStatus = (OrderStatusInput) command.getRequest();
             return Optional.of(orderStatus)
                     .map(OrderStatusInput::getCustomerId)
-                    .filter(Numbers::isNotNullOrZero)
+                    .filter(Numbers::isGreaterThanZero)
                     .orElseGet(() -> {
                         String lastName = orderStatus.getCustomerLastName();
                         Integer districtId = orderStatus.getDistrictId();

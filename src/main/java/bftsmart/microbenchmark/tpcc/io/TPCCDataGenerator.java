@@ -46,7 +46,7 @@ public class TPCCDataGenerator {
     }
 
     public void writeFile() {
-        String info = tpccData.info();
+        String info = tpccData.toString();
         LOGGER.info("saving data to file. ");
         jsonWriter.writeToJsonFile(tpccData);
         LOGGER.info("data saved in file: {}", info);

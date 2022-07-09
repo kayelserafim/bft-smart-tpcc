@@ -5,6 +5,9 @@ import java.nio.file.FileSystems;
 
 import org.apache.commons.lang3.StringUtils;
 
+import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
+import bftsmart.microbenchmark.tpcc.util.InetAddresses;
+
 public class TPCCConfig {
 
     public static final String CONFIG_FOLDER = "config";
@@ -41,9 +44,12 @@ public class TPCCConfig {
     }
 
     public static File getWorkloadConfigFile() {
-        return FileSystems.getDefault()
-                .getPath(CONFIG_FOLDER + File.separator + WorkloadConfig.RESOURCE_PATH)
-                .toFile();
+        return FileSystems.getDefault().getPath(CONFIG_FOLDER + File.separator + WorkloadConfig.RESOURCE_PATH).toFile();
+    }
+
+    public static File getResultFile(String fileName) {
+        String name = StringUtils.appendIfMissing(fileName, Spreadsheet.EXTENSION);
+        return FileSystems.getDefault().getPath(InetAddresses.getHostName() + '_' + name).toFile();
     }
 
     public static File getTPCCDataFile(String fileName) {

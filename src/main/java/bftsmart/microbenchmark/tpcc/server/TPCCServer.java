@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.config.ParamConfig;
+import bftsmart.microbenchmark.tpcc.config.BFTParams;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.server.conflict.TPCCConflictDefinition;
@@ -27,12 +27,12 @@ public class TPCCServer implements SingleExecutable {
 
     @Inject
     TPCCServer(TransactionFactory transactionFactory, TPCCConflictDefinition conflictDefinition,
-            WorkloadConfig workloadConfig, ParamConfig paramConfig) {
+            WorkloadConfig workloadConfig, BFTParams bftParams) {
         this.transactionFactory = transactionFactory;
         this.conflictDefinition = conflictDefinition;
-        Integer replicaId = paramConfig.getId();
-        Integer numOfThreads = paramConfig.getNumOfThreads();
-        if (BooleanUtils.isTrue(paramConfig.getParallelSmr()) && numOfThreads > 1) {
+        Integer replicaId = bftParams.getId();
+        Integer numOfThreads = bftParams.getNumOfThreads();
+        if (BooleanUtils.isTrue(bftParams.getParallel()) && numOfThreads > 1) {
             LOGGER.info("Starting CBASEServiceReplica.");
             new CBASEServiceReplica(replicaId, this, null, numOfThreads, conflictDefinition, lockFreeGraph);
         } else {
