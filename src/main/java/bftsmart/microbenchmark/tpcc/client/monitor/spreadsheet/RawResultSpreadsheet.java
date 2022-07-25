@@ -15,6 +15,7 @@ import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
+import bftsmart.microbenchmark.tpcc.util.Numbers;
 
 public class RawResultSpreadsheet implements ResultSpreadsheet {
 
@@ -72,7 +73,8 @@ public class RawResultSpreadsheet implements ResultSpreadsheet {
                 .toArray();
 
         final DescriptiveStatistics stats = new DescriptiveStatistics(times);
-        spreadsheet.addRow("Vazão", stats.getMean());
+        spreadsheet.addRow("Average Latency (ms)", stats.getMean());
+        spreadsheet.addRow("Throughput", Numbers.divide(results.size(), workload.getRunMins().getSeconds()));
         spreadsheet.addRow("Desvio padrão", stats.getStandardDeviation());
     }
 

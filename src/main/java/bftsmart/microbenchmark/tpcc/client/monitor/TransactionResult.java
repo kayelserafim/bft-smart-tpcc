@@ -36,8 +36,12 @@ public class TransactionResult {
         return totalErrors;
     }
 
-    public Double getThroughput() {
+    public Double getAverageLatency() {
         return Numbers.divide(getElapsed().toMillis(), getSize());
+    }
+
+    public Double getThroughput() {
+        return Numbers.divide(getSize(), getElapsed().getSeconds());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.config;
 
+import java.time.Duration;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
@@ -13,14 +15,8 @@ public class WorkloadConfig {
     @Named("warehousesCnt")
     private Integer warehouses;
     @Inject
-    @Named("terminalTxnsPerTerminal")
-    private Integer txnsPerTerminal;
-    @Inject
     @Named("terminalRunMins")
     private Integer runMins;
-    @Inject
-    @Named("limitTxnsPerMin")
-    private Integer limitTxnsPerMin;
     @Inject
     @Named("warmupIterations")
     private Integer warmupIterations;
@@ -44,16 +40,8 @@ public class WorkloadConfig {
         return warehouses;
     }
 
-    public Integer getTxnsPerTerminal() {
-        return txnsPerTerminal;
-    }
-
-    public Integer getRunMins() {
-        return runMins;
-    }
-
-    public Integer getLimitTxnsPerMin() {
-        return limitTxnsPerMin;
+    public Duration getRunMins() {
+        return Duration.ofMinutes(runMins);
     }
 
     public Integer getWarmupIterations() {
@@ -94,12 +82,8 @@ public class WorkloadConfig {
         StringBuilder builder = new StringBuilder();
         builder.append("WorkloadConfig [warehouses=")
                 .append(warehouses)
-                .append(", txnsPerTerminal=")
-                .append(txnsPerTerminal)
                 .append(", runMins=")
                 .append(runMins)
-                .append(", limitTxnsPerMin=")
-                .append(limitTxnsPerMin)
                 .append(", warmupIterations=")
                 .append(warmupIterations)
                 .append(", newOrderWeight=")

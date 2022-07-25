@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.concurrent.TimedSemaphore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +33,6 @@ public class TPCCClient {
 
     private final TPCCRandom random;
     private final ExecutorService executorService;
-    private final TimedSemaphore sem;
 
     private final TPCCTerminalFactory terminalFactory;
     private final MetricCollector metricCollector;
@@ -51,7 +48,6 @@ public class TPCCClient {
         this.bftParams = bftParams;
         this.random = new TPCCRandom(tpccData.getcLoad());
         this.executorService = Executors.newFixedThreadPool(bftParams.getNumOfThreads());
-        this.sem = new TimedSemaphore(1, TimeUnit.MINUTES, workload.getLimitTxnsPerMin());
 
         LOGGER.info("TPCCClient Initiated.");
     }
@@ -69,7 +65,7 @@ public class TPCCClient {
                     .build();
 
             LOGGER.info("Client {} starting terminal for warehouse ", terminalData.getTerminalName());
-            tasks.add(executorService.submit(terminalFactory.create(terminalData, random, sem)));
+            tasks.add(executorService.submit(terminalFactory.create(terminalData, random)));
         }
         executorService.shutdown();
 

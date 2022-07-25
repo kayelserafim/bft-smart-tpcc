@@ -1,7 +1,7 @@
 package bftsmart.microbenchmark.tpcc.client.terminal;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.Range;
 
@@ -21,9 +21,8 @@ public class TPCCTerminalData {
     private final Integer orderStatusWeight;
     private final Integer stockLevelWeight;
     private final Integer warehouseCount;
-    private final Integer limitPerTerminal;
     private final Integer warmupIterations;
-    private final Integer runMins;
+    private final Duration runMins;
     private final Boolean parallelExecution;
 
     public Integer getTerminalId() {
@@ -46,15 +45,11 @@ public class TPCCTerminalData {
         return warehouseCount;
     }
 
-    public Integer getLimitPerTerminal() {
-        return limitPerTerminal;
-    }
-
     public Integer getWarmupIterations() {
         return warmupIterations;
     }
 
-    public Integer getRunMins() {
+    public Duration getRunMins() {
         return runMins;
     }
 
@@ -62,12 +57,8 @@ public class TPCCTerminalData {
         return parallelExecution;
     }
 
-    public long getRunMins(TimeUnit unit) {
-        return unit.convert(getRunMins(), TimeUnit.MINUTES);
-    }
-
     public Instant instantToWait() {
-        return Instant.now().plusSeconds(getRunMins(TimeUnit.SECONDS));
+        return Instant.now().plusSeconds(getRunMins().getSeconds());
     }
 
     public Range<Integer> getNewOrderWeight() {
@@ -135,7 +126,6 @@ public class TPCCTerminalData {
         orderStatusWeight = builder.orderStatusWeight;
         stockLevelWeight = builder.stockLevelWeight;
         warehouseCount = builder.warehouseCount;
-        limitPerTerminal = builder.limitPerTerminal;
         warmupIterations = builder.warmupIterations;
         runMins = builder.runMins;
         parallelExecution = builder.parallelExecution;
@@ -153,9 +143,8 @@ public class TPCCTerminalData {
         private Integer orderStatusWeight;
         private Integer stockLevelWeight;
         private Integer warehouseCount;
-        private Integer limitPerTerminal;
         private Integer warmupIterations;
-        private Integer runMins;
+        private Duration runMins;
         private Boolean parallelExecution;
 
         public Builder warehouseCount(Integer warehouseCount) {
@@ -204,17 +193,12 @@ public class TPCCTerminalData {
             return this;
         }
 
-        public Builder limitPerTerminal(Integer limitPerTerminal) {
-            this.limitPerTerminal = limitPerTerminal;
-            return this;
-        }
-
         public Builder warmupIterations(Integer warmupIterations) {
             this.warmupIterations = warmupIterations;
             return this;
         }
 
-        public Builder runMins(Integer runMins) {
+        public Builder runMins(Duration runMins) {
             this.runMins = runMins;
             return this;
         }
@@ -230,7 +214,6 @@ public class TPCCTerminalData {
                     .deliveryWeight(workload.getDeliveryWeight())
                     .paymentWeight(workload.getPaymentWeight())
                     .newOrderWeight(workload.getNewOrderWeight())
-                    .limitPerTerminal(workload.getTxnsPerTerminal())
                     .warmupIterations(workload.getWarmupIterations())
                     .runMins(workload.getRunMins());
         }

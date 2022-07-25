@@ -1,7 +1,5 @@
 package bftsmart.microbenchmark.tpcc.client.terminal;
 
-import org.apache.commons.lang3.concurrent.TimedSemaphore;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -18,8 +16,8 @@ public class TPCCTerminalFactory {
         this.transaction = transaction;
     }
 
-    public TPCCTerminal create(TPCCTerminalData terminalData, TPCCRandom random, TimedSemaphore timedSemaphore) {
-        return new TPCCTerminal(transaction, terminalData, random, timedSemaphore);
+    public TPCCTerminal create(TPCCTerminalData terminalData, TPCCRandom random) {
+        return new TPCCTerminal(transaction, terminalData, random);
     }
 
 }

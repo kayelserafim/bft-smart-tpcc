@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.apache.commons.lang3.concurrent.TimedSemaphore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +20,13 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
     private final TPCCTerminalData terminalData;
     private final TPCCRandom random;
     private final List<RawResult> results;
-    private final TimedSemaphore timedSemaphore;
 
     private final TPCCService transaction;
 
-    public TPCCTerminal(TPCCService transaction, TPCCTerminalData terminalData, TPCCRandom random,
-            TimedSemaphore timedSemaphore) {
+    public TPCCTerminal(TPCCService transaction, TPCCTerminalData terminalData, TPCCRandom random) {
         this.transaction = transaction;
         this.terminalData = terminalData;
         this.random = random;
-        this.timedSemaphore = timedSemaphore;
         this.results = new ArrayList<>();
     }
 
@@ -49,36 +45,23 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
             int warmupIterations = terminalData.getWarmupIterations();
             LOGGER.debug("Executing {} warmup iterations...", warmupIterations);
             while (warmupIterations > 0) {
-                if (timedSemaphore.tryAcquire()) {
-                    executeTransaction();
-                    warmupIterations--;
-                }
+                executeTransaction();
+                warmupIterations--;
             }
             LOGGER.debug("Warmup iterations executed");
         }
     }
 
     private void executeTransactions() {
-        if (terminalData.getLimitPerTerminal() > 0) {
-            int numTransactions = terminalData.getLimitPerTerminal();
-            LOGGER.debug("Executing {} transactions...", numTransactions);
-            while (numTransactions > 0) {
-                if (timedSemaphore.tryAcquire()) {
-                    results.add(executeTransaction());
-                    numTransactions--;
-                }
+        Instant instantToWait = terminalData.instantToWait();
+        LOGGER.debug("Executing for a limited time...");
+        while (instantToWait.isAfter(Instant.now())) {
+            RawResult rawResult = executeTransaction();
+            if (instantToWait.isAfter(Instant.now())) {
+                results.add(rawResult);
             }
-            LOGGER.debug("transactions executed");
-        } else {
-            Instant instantToWait = terminalData.instantToWait();
-            LOGGER.debug("Executing for a limited time...");
-            while (instantToWait.isAfter(Instant.now())) {
-                if (timedSemaphore.tryAcquire()) {
-                    results.add(executeTransaction());
-                }
-            }
-            LOGGER.debug("Limited time execution is over...");
         }
+        LOGGER.debug("Limited time execution is over...");
     }
 
     private RawResult executeTransaction() {
