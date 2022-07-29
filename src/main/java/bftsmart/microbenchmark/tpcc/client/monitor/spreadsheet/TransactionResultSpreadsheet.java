@@ -19,8 +19,8 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
 
     private static final String SHEET_NAME = "Transaction_Result";
 
-    private static final String[] HEADER = { "Transaction", "Number of requests", "Number of errors",
-            "Total Latency (ms)", "Average Latency (ms)", "Throughput" };
+    private static final String[] HEADER =
+            { "Transaction", "Number of requests", "Number of errors", "Average Latency (ms)", "Throughput" };
 
     private final WorkloadConfig workload;
     private final BFTParams bftParams;
@@ -39,10 +39,9 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
         spreadsheet.addHeader(HEADER);
         for (TransactionResult result : transactionResults) {
             int position = 0;
-            spreadsheet.addColumn(position++, result.getTransactionType().name());
+            spreadsheet.addColumn(position++, result.getType().name());
             spreadsheet.addColumn(position++, result.getSize());
             spreadsheet.addColumn(position++, result.getTotalErrors());
-            spreadsheet.addColumn(position++, result.getElapsed().toMillis());
             spreadsheet.addColumn(position++, result.getAverageLatency());
             spreadsheet.addColumn(position, result.getThroughput());
         }

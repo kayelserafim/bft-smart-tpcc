@@ -53,13 +53,10 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
     }
 
     private void executeTransactions() {
-        Instant instantToWait = terminalData.instantToWait();
         LOGGER.debug("Executing for a limited time...");
+        Instant instantToWait = terminalData.instantToWait();
         while (instantToWait.isAfter(Instant.now())) {
-            RawResult rawResult = executeTransaction();
-            if (instantToWait.isAfter(Instant.now())) {
-                results.add(rawResult);
-            }
+            results.add(executeTransaction());
         }
         LOGGER.debug("Limited time execution is over...");
     }

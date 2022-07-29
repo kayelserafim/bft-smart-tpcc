@@ -53,7 +53,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
     }
 
     public Boolean isDependent(String commandId) {
-        return conflictMap.get(commandId);
+        return conflictMap.getOrDefault(commandId, Boolean.FALSE);
     }
 
     private Integer getCustomerId(TPCCCommand command) {

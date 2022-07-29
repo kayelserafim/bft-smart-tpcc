@@ -1,31 +1,30 @@
 package bftsmart.microbenchmark.tpcc.client.monitor;
 
 import java.time.Duration;
-import java.util.StringJoiner;
 
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 
 public class TransactionResult {
 
-    private final TransactionType transactionType;
-    private final Duration elapsed;
+    private final TransactionType type;
+    private final Duration runtime;
     private final Integer size;
     private final Long totalErrors;
 
-    public TransactionResult(TransactionType transactionType, Duration elapsed, Integer size, Long totalErrors) {
-        this.transactionType = transactionType;
-        this.elapsed = elapsed;
+    public TransactionResult(TransactionType type, Duration runtime, Integer size, Long totalErrors) {
+        this.type = type;
+        this.runtime = runtime;
         this.size = size;
         this.totalErrors = totalErrors;
     }
 
-    public TransactionType getTransactionType() {
-        return transactionType;
+    public TransactionType getType() {
+        return type;
     }
 
-    public Duration getElapsed() {
-        return elapsed;
+    public Duration getRuntime() {
+        return runtime;
     }
 
     public Integer getSize() {
@@ -37,21 +36,11 @@ public class TransactionResult {
     }
 
     public Double getAverageLatency() {
-        return Numbers.divide(getElapsed().toMillis(), getSize());
+        return Numbers.divide(getRuntime().toMillis(), getSize());
     }
 
     public Double getThroughput() {
-        return Numbers.divide(getSize(), getElapsed().getSeconds());
-    }
-
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", TransactionResult.class.getSimpleName() + "[", "]")
-                .add("transactionType=" + transactionType)
-                .add("elapsed=" + elapsed)
-                .add("size=" + size)
-                .add("totalErrors=" + totalErrors)
-                .toString();
+        return Numbers.divide(getSize(), getRuntime().getSeconds());
     }
 
 }
