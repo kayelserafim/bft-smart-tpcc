@@ -8,13 +8,13 @@ import bftsmart.microbenchmark.tpcc.util.Numbers;
 public class TransactionResult {
 
     private final TransactionType type;
-    private final Duration runtime;
+    private final Duration elapsed;
     private final Integer size;
     private final Long totalErrors;
 
-    public TransactionResult(TransactionType type, Duration runtime, Integer size, Long totalErrors) {
+    public TransactionResult(TransactionType type, Duration elapsed, Integer size, Long totalErrors) {
         this.type = type;
-        this.runtime = runtime;
+        this.elapsed = elapsed;
         this.size = size;
         this.totalErrors = totalErrors;
     }
@@ -23,8 +23,8 @@ public class TransactionResult {
         return type;
     }
 
-    public Duration getRuntime() {
-        return runtime;
+    public Duration getElapsed() {
+        return elapsed;
     }
 
     public Integer getSize() {
@@ -36,11 +36,11 @@ public class TransactionResult {
     }
 
     public Double getAverageLatency() {
-        return Numbers.divide(getRuntime().toMillis(), getSize());
+        return Numbers.divide(getElapsed().toMillis(), getSize());
     }
 
     public Double getThroughput() {
-        return Numbers.divide(getSize(), getRuntime().getSeconds());
+        return Numbers.divide(getSize(), getElapsed().getSeconds());
     }
 
 }

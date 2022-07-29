@@ -5,15 +5,12 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
-import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 import bftsmart.util.MultiOperationRequest;
 import parallelism.MessageContextPair;
@@ -23,9 +20,6 @@ import parallelism.late.ConflictDefinition;
 public class TPCCConflictDefinition extends ConflictDefinition {
 
     private Map<String, Boolean> conflictMap = new ConcurrentHashMap<>();
-
-    @Inject
-    private CustomerRepository customerRepository;
 
     @Override
     public boolean isDependent(MessageContextPair arg0, MessageContextPair arg1) {
@@ -66,37 +60,18 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             return Optional.of(payment)
                     .map(PaymentInput::getCustomerId)
                     .filter(Numbers::isGreaterThanZero)
-                    .orElseGet(() -> {
-                        String lastName = payment.getCustomerLastName();
-                        Integer districtId = payment.getCustomerDistrictId();
-                        Integer warehouseId = payment.getCustomerWarehouseId();
-                        return getCustomerId(lastName, districtId, warehouseId);
-                    });
+                    .orElse(null);
         case ORDER_STATUS:
             OrderStatusInput orderStatus = (OrderStatusInput) command.getRequest();
             return Optional.of(orderStatus)
                     .map(OrderStatusInput::getCustomerId)
                     .filter(Numbers::isGreaterThanZero)
-                    .orElseGet(() -> {
-                        String lastName = orderStatus.getCustomerLastName();
-                        Integer districtId = orderStatus.getDistrictId();
-                        Integer warehouseId = orderStatus.getWarehouseId();
-                        return getCustomerId(lastName, districtId, warehouseId);
-                    });
+                    .orElse(null);
         case DELIVERY:
         case STOCK_LEVEL:
         default:
             throw new IllegalStateException("Stock level and delivery must be resolved at transaction level");
         }
-    }
-
-    private Integer getCustomerId(String customerLastName, Integer districtId, Integer warehouseId) {
-        // clause 2.6.2.2 (dot 3, Case 2)
-        Customer customer = customerRepository.find(customerLastName, districtId, warehouseId);
-        if (customer == null) {
-            return null;
-        }
-        return customer.getCustomerId();
     }
 
 }

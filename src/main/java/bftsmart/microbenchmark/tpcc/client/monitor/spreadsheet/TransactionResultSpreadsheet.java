@@ -1,5 +1,6 @@
 package bftsmart.microbenchmark.tpcc.client.monitor.spreadsheet;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -70,8 +71,9 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
     private TransactionResult convert(final Entry<TransactionType, List<RawResult>> entry) {
         final TransactionType key = entry.getKey();
         final List<RawResult> data = entry.getValue();
+        final Duration elapsed = data.stream().map(RawResult::getElapsed).reduce(Duration.ZERO, Duration::plus);
         final long errors = data.stream().map(RawResult::getStatus).filter(status -> status < 0).count();
-        return new TransactionResult(key, workload.getRunMins(), data.size(), errors);
+        return new TransactionResult(key, elapsed, data.size(), errors);
     }
 
 }
