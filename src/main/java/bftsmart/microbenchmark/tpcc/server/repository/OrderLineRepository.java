@@ -28,11 +28,21 @@ public class OrderLineRepository {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Examining the level of stock for items on the last 20 orders is done in one or more database transactions
+     * 
+     * @param district
+     *            The district table
+     * @param warehouseId
+     *            The warehouse id
+     * @see clause 2.8.2.1
+     * @return all instances of the type {@link OrderLine}.
+     */
     public List<OrderLine> find(District district, Integer warehouseId) {
-        return orderLineDao.findAll(OrderLine.districtKey(warehouseId, warehouseId))
-                .parallelStream()
-                .filter(ol -> ol.getOrderId() < district.getNextOrderId())
+        return orderLineDao.findAll(OrderLine.districtKey(warehouseId, district.getDistrictId()))
+                .stream()
                 .filter(ol -> ol.getOrderId() >= district.getNextOrderId() - 20)
+                .filter(ol -> ol.getOrderId() < district.getNextOrderId())
                 .collect(Collectors.toList());
     }
 

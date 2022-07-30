@@ -38,7 +38,7 @@ public class StockRepository {
     }
 
     public long count(List<Integer> orderLineIds, int warehouseId, int threshold) {
-        return find(orderLineIds, warehouseId, threshold).parallelStream().map(Stock::getItemId).distinct().count();
+        return find(orderLineIds, warehouseId, threshold).stream().map(Stock::getItemId).distinct().count();
     }
 
 }

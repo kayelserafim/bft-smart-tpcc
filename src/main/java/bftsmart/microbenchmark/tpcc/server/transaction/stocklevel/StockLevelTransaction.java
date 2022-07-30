@@ -41,7 +41,7 @@ public class StockLevelTransaction implements Transaction {
 
         District district = districtRepository.find(districtId, warehouseId);
         List<Integer> orderLines = orderLineRepository.find(district, warehouseId)
-                .parallelStream()
+                .stream()
                 .map(OrderLine::getItemId)
                 .collect(Collectors.toList());
 

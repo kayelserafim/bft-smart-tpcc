@@ -20,8 +20,8 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
 
     private static final String SHEET_NAME = "Transaction_Result";
 
-    private static final String[] HEADER =
-            { "Transaction", "Number of requests", "Number of errors", "Average Latency (ms)", "Throughput" };
+    private static final String[] HEADER = { "Transaction", "Number of requests", "Number of errors",
+            "Elapsed Time (sec)", "Average Latency (ms)", "Throughput" };
 
     private final WorkloadConfig workload;
     private final BFTParams bftParams;
@@ -43,6 +43,7 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
             spreadsheet.addColumn(position++, result.getType().name());
             spreadsheet.addColumn(position++, result.getSize());
             spreadsheet.addColumn(position++, result.getTotalErrors());
+            spreadsheet.addColumn(position++, result.getElapsed().getSeconds());
             spreadsheet.addColumn(position++, result.getAverageLatency());
             spreadsheet.addColumn(position, result.getThroughput());
         }
@@ -52,7 +53,7 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
         return results.stream()
                 .collect(Collectors.groupingBy(RawResult::getTransactionType))
                 .entrySet()
-                .parallelStream()
+                .stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
     }
@@ -73,7 +74,7 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
         final List<RawResult> data = entry.getValue();
         final Duration elapsed = data.stream().map(RawResult::getElapsed).reduce(Duration.ZERO, Duration::plus);
         final long errors = data.stream().map(RawResult::getStatus).filter(status -> status < 0).count();
-        return new TransactionResult(key, elapsed, data.size(), errors);
+        return new TransactionResult(key, elapsed.dividedBy(bftParams.getNumOfThreads()), data.size(), errors);
     }
 
 }

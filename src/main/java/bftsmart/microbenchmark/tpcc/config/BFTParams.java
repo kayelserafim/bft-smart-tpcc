@@ -36,16 +36,11 @@ public class BFTParams {
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BFTParams [id=");
-        builder.append(id);
-        builder.append(", numOfThreads=");
-        builder.append(numOfThreads);
-        builder.append(", parallel=");
-        builder.append(parallel);
-        builder.append("]");
-        return builder.toString();
+    public java.lang.String toString() {
+        return new java.util.StringJoiner(", ", BFTParams.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("numOfThreads=" + numOfThreads)
+                .add("parallel=" + parallel)
+                .toString();
     }
-
 }

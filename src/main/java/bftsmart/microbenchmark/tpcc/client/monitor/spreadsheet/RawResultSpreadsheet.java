@@ -75,12 +75,12 @@ public class RawResultSpreadsheet implements ResultSpreadsheet {
         final DescriptiveStatistics stats = new DescriptiveStatistics(times);
         spreadsheet.addRow("Average Latency (ms)", stats.getMean());
         spreadsheet.addRow("Throughput", Numbers.divide(results.size(), workload.getRunMins().getSeconds()));
-        spreadsheet.addRow("Desvio padrão", stats.getStandardDeviation());
+        spreadsheet.addRow("Standard Deviation", stats.getStandardDeviation());
     }
 
     private void addConflicts(final Spreadsheet spreadsheet, final List<RawResult> results) {
         final long count = results.stream().filter(result -> isTrue(result.getConflict())).count();
-        spreadsheet.addRow("Percentage of conflicts", count * 1.0 / results.size() * 100);
+        spreadsheet.addRow("Percentage of conflicts", Numbers.divide(count, results.size()) * 100);
     }
 
 }

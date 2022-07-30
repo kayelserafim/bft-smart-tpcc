@@ -1,6 +1,7 @@
 package bftsmart.microbenchmark.tpcc.util;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
@@ -26,7 +27,7 @@ public class TPCCRandom {
      * database.
      */
     public TPCCRandom() {
-        this.random = new Random(System.nanoTime());
+        this.random = new SecureRandom();
         this.nURandCCID = nextLong(0, TPCCConfig.C_ID);
         this.nURandCIID = nextLong(0, TPCCConfig.OL_I_ID);
         this.nURandCLast = nextLong(0, TPCCConfig.C_LAST);
@@ -46,7 +47,7 @@ public class TPCCRandom {
     public TPCCRandom(long cLoad) {
         long delta;
 
-        this.random = new Random(System.nanoTime());
+        this.random = new SecureRandom();
         this.nURandCCID = nextLong(0, TPCCConfig.C_ID);
         this.nURandCIID = nextLong(0, TPCCConfig.OL_I_ID);
 

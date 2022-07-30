@@ -68,13 +68,13 @@ public class DeliveryTransaction implements Transaction {
                 Customer customer = customerRepository.find(order.getCustomerId(), districtId, warehouseId);
 
                 List<OrderLine> orderLineList = orderLineRepository.find(orderId, districtId, warehouseId)
-                        .parallelStream()
+                        .stream()
                         .map(OrderLine::from)
                         .map(builder -> builder.deliveryDateTime(Times.now()))
                         .map(OrderLine.Builder::build)
                         .collect(Collectors.toList());
 
-                BigDecimal orderLineTotal = orderLineList.parallelStream()
+                BigDecimal orderLineTotal = orderLineList.stream()
                         .map(OrderLine::getAmount)
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -89,7 +89,7 @@ public class DeliveryTransaction implements Transaction {
             newOrderRepository.delete(order);
             deliveryBuilder.orderId(new OrderOutput(order.getDistrictId(), order.getOrderId()));
         });
-        customers.parallelStream()
+        customers.stream()
                 .map(builder -> builder.deliveryCntIncrement().build())
                 .forEach(customerRepository::save);
         orderLines.forEach(orderLineRepository::save);
