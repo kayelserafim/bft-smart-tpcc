@@ -1,12 +1,14 @@
 package bftsmart.microbenchmark.tpcc.client.terminal;
 
-import java.time.Instant;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Stopwatch;
 
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.service.TPCCService;
@@ -19,7 +21,6 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
 
     private final TPCCTerminalData terminalData;
     private final TPCCRandom random;
-    private final List<RawResult> results;
 
     private final TPCCService transaction;
 
@@ -27,16 +28,14 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
         this.transaction = transaction;
         this.terminalData = terminalData;
         this.random = random;
-        this.results = new ArrayList<>();
     }
 
     @Override
     public List<RawResult> call() {
-        String threadName = Thread.currentThread().getName();
-        LOGGER.info("Terminal {} started!", threadName);
+        List<RawResult> results = new ArrayList<>();
         executeWarmupTransactions();
-        executeTransactions();
-        LOGGER.info("Terminal {} finished!", threadName);
+        executeTransactions(results);
+        executeWarmupTransactions();
         return results;
     }
 
@@ -52,27 +51,35 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
         }
     }
 
-    private void executeTransactions() {
+    private void executeTransactions(List<RawResult> results) {
         LOGGER.debug("Executing for a limited time...");
-        Instant instantToWait = terminalData.instantToWait();
-        while (instantToWait.isAfter(Instant.now())) {
-            results.add(executeTransaction());
+        Duration minsToWait = terminalData.getRunMins();
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        while (true) {
+            RawResult rawResult = executeTransaction();
+            if (minsToWait.compareTo(stopwatch.elapsed()) >= 0) {
+                results.add(rawResult);
+            } else {
+                stopwatch.stop();
+                break;
+            }
         }
-        LOGGER.debug("Limited time execution is over...");
+        LOGGER.debug("Limited time execution is over. Elapsed time {}", stopwatch.elapsed().getSeconds());
     }
 
     private RawResult executeTransaction() {
-        RawResult rawResult = new RawResult(terminalData.getTerminalId(), terminalData.getTerminalName());
-
+        Stopwatch stopwatch = Stopwatch.createStarted();
         TPCCCommand tpccCommand = transaction.process(terminalData, random);
-        rawResult.stop();
-        rawResult.setCommandId(tpccCommand.getCommandId());
-        rawResult.setTransactionType(tpccCommand.getTransactionType());
-        rawResult.setConflict(tpccCommand.getConflict());
-        rawResult.setStatus(tpccCommand.getStatus());
-        rawResult.setMessage("Response received: " + tpccCommand.getResponse());
+        stopwatch.stop();
 
-        return rawResult;
+        return new RawResult().terminalId(terminalData.getTerminalId())
+                .terminalName(terminalData.getTerminalName())
+                .commandId(tpccCommand.getCommandId())
+                .transactionType(tpccCommand.getTransactionType())
+                .conflict(tpccCommand.getConflict())
+                .status(tpccCommand.getStatus())
+                .elapsed(stopwatch.elapsed())
+                .message("Response received: " + tpccCommand.getResponse());
     }
 
 }

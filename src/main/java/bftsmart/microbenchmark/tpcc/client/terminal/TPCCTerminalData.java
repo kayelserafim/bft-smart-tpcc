@@ -1,7 +1,6 @@
 package bftsmart.microbenchmark.tpcc.client.terminal;
 
 import java.time.Duration;
-import java.time.Instant;
 
 import org.apache.commons.lang3.Range;
 
@@ -55,10 +54,6 @@ public class TPCCTerminalData {
 
     public Boolean getParallelExecution() {
         return parallelExecution;
-    }
-
-    public Instant instantToWait() {
-        return Instant.now().plusSeconds(getRunMins().getSeconds());
     }
 
     public Range<Integer> getNewOrderWeight() {

@@ -2,15 +2,12 @@ package bftsmart.microbenchmark.tpcc.client.monitor;
 
 import java.time.Duration;
 
-import com.google.common.base.Stopwatch;
-
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class RawResult {
 
-    private final Stopwatch stopwatch;
-    private final int terminalId;
-    private final String terminalName;
+    private Integer terminalId;
+    private String terminalName;
     private String commandId;
     private TransactionType transactionType;
     private Boolean conflict;
@@ -18,16 +15,30 @@ public class RawResult {
     private Integer status;
     private String message;
 
-    public RawResult(int terminalId, String terminalName) {
-        this.stopwatch = Stopwatch.createStarted();
-        this.terminalId = terminalId;
-        this.terminalName = terminalName;
-        this.message = "Request Sent";
+    public Integer getTerminalId() {
+        return terminalId;
     }
 
-    public void stop() {
-        stopwatch.stop();
-        elapsed = stopwatch.elapsed();
+    public void setTerminalId(Integer terminalId) {
+        this.terminalId = terminalId;
+    }
+
+    public RawResult terminalId(Integer terminalId) {
+        setTerminalId(terminalId);
+        return this;
+    }
+
+    public String getTerminalName() {
+        return terminalName;
+    }
+
+    public void setTerminalName(String terminalName) {
+        this.terminalName = terminalName;
+    }
+
+    public RawResult terminalName(String terminalName) {
+        setTerminalName(terminalName);
+        return this;
     }
 
     public String getCommandId() {
@@ -38,12 +49,22 @@ public class RawResult {
         this.commandId = commandId;
     }
 
+    public RawResult commandId(String commandId) {
+        setCommandId(commandId);
+        return this;
+    }
+
     public TransactionType getTransactionType() {
         return transactionType;
     }
 
     public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType;
+    }
+
+    public RawResult transactionType(TransactionType transactionType) {
+        setTransactionType(transactionType);
+        return this;
     }
 
     public Boolean getConflict() {
@@ -54,12 +75,22 @@ public class RawResult {
         this.conflict = conflict;
     }
 
+    public RawResult conflict(Boolean conflict) {
+        setConflict(conflict);
+        return this;
+    }
+
     public Duration getElapsed() {
         return elapsed;
     }
 
     public void setElapsed(Duration elapsed) {
         this.elapsed = elapsed;
+    }
+
+    public RawResult elapsed(Duration elapsed) {
+        setElapsed(elapsed);
+        return this;
     }
 
     public Integer getStatus() {
@@ -70,6 +101,11 @@ public class RawResult {
         this.status = status;
     }
 
+    public RawResult status(Integer status) {
+        setStatus(status);
+        return this;
+    }
+
     public String getMessage() {
         return message;
     }
@@ -78,41 +114,9 @@ public class RawResult {
         this.message = message;
     }
 
-    public Stopwatch getStopwatch() {
-        return stopwatch;
-    }
-
-    public int getTerminalId() {
-        return terminalId;
-    }
-
-    public String getTerminalName() {
-        return terminalName;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("RawResult [stopwatch=")
-                .append(stopwatch)
-                .append(", terminalId=")
-                .append(terminalId)
-                .append(", terminalName=")
-                .append(terminalName)
-                .append(", commandId=")
-                .append(commandId)
-                .append(", transactionType=")
-                .append(transactionType)
-                .append(", conflict=")
-                .append(conflict)
-                .append(", elapsed=")
-                .append(elapsed)
-                .append(", status=")
-                .append(status)
-                .append(", message=")
-                .append(message)
-                .append(']');
-        return builder.toString();
+    public RawResult message(String message) {
+        setMessage(message);
+        return this;
     }
 
 }
