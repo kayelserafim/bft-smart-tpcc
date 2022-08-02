@@ -1,7 +1,9 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.stocklevel;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.javatuples.Tuple;
 
 import com.google.inject.Inject;
 
@@ -15,6 +17,7 @@ import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.input.StockLev
 import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.output.StockLevelOutput;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
+import bftsmart.microbenchmark.tpcc.table.Stock;
 
 public class StockLevelTransaction implements Transaction {
 
@@ -40,12 +43,13 @@ public class StockLevelTransaction implements Transaction {
         Integer threshold = input.getThreshold();
 
         District district = districtRepository.find(districtId, warehouseId);
-        List<Integer> orderLines = orderLineRepository.find(district, warehouseId)
+        Set<Tuple> stockIds = orderLineRepository.find(district, warehouseId)
                 .stream()
                 .map(OrderLine::getItemId)
-                .collect(Collectors.toList());
+                .map(itemId -> Stock.key(warehouseId, itemId))
+                .collect(Collectors.toSet());
 
-        long stockCount = stockRepository.count(orderLines, warehouseId, threshold);
+        long stockCount = stockRepository.count(stockIds, threshold);
 
         stockBuilder.warehouseId(warehouseId).districtId(districtId).threshold(threshold).stockCount(stockCount);
 

@@ -1,8 +1,6 @@
 package bftsmart.microbenchmark.tpcc.server.repository;
 
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.javatuples.Tuple;
 
@@ -28,17 +26,8 @@ public class StockRepository {
         return stockDao.save(stock);
     }
 
-    public List<Stock> find(List<Integer> orderLineIds, int warehouseId, int threshold) {
-        return orderLineIds.stream()
-                .map(itemId -> Stock.key(warehouseId, itemId))
-                .map(stockDao::findAll)
-                .flatMap(Set::stream)
-                .filter(stock -> stock.getQuantity() < threshold)
-                .collect(Collectors.toList());
-    }
-
-    public long count(List<Integer> orderLineIds, int warehouseId, int threshold) {
-        return find(orderLineIds, warehouseId, threshold).stream().map(Stock::getItemId).distinct().count();
+    public long count(Set<Tuple> stockIds, int threshold) {
+        return stockDao.findAllIn(stockIds).stream().filter(stock -> stock.getQuantity() < threshold).count();
     }
 
 }
