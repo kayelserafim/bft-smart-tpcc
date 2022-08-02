@@ -2,8 +2,6 @@ package bftsmart.microbenchmark.tpcc.client.terminal;
 
 import java.time.Duration;
 
-import org.apache.commons.lang3.Range;
-
 import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
@@ -56,50 +54,18 @@ public class TPCCTerminalData {
         return parallelExecution;
     }
 
-    public Range<Integer> getNewOrderWeight() {
-        return Range.between(1, newOrderWeight);
-    }
-
-    public Range<Integer> getPaymentWeight() {
-        Integer baseWeight = getNewOrderWeight().getMaximum();
-        Integer fromInclusive = baseWeight + 1;
-        Integer toInclusive = baseWeight + paymentWeight;
-        return Range.between(fromInclusive, toInclusive);
-    }
-
-    public Range<Integer> getStockLevelWeight() {
-        Integer baseWeight = getPaymentWeight().getMaximum();
-        Integer fromInclusive = baseWeight + 1;
-        Integer toInclusive = baseWeight + stockLevelWeight;
-        return Range.between(fromInclusive, toInclusive);
-    }
-
-    public Range<Integer> getOrderStatusWeight() {
-        Integer baseWeight = getStockLevelWeight().getMaximum();
-        Integer fromInclusive = baseWeight + 1;
-        Integer toInclusive = baseWeight + orderStatusWeight;
-        return Range.between(fromInclusive, toInclusive);
-    }
-
-    public Range<Integer> getDeliveryWeight() {
-        Integer baseWeight = getOrderStatusWeight().getMaximum();
-        Integer fromInclusive = baseWeight + 1;
-        Integer toInclusive = baseWeight + deliveryWeight;
-        return Range.between(fromInclusive, toInclusive);
-    }
-
-    public TransactionType getTransactionType(Integer transactionTypeNumber) {
+    public TransactionType getTransactionType(Integer weight) {
         TransactionType transactionType;
-        if (getNewOrderWeight().contains(transactionTypeNumber)) {
-            transactionType = TransactionType.NEW_ORDER;
-        } else if (getPaymentWeight().contains(transactionTypeNumber)) {
+        if (weight <= paymentWeight) {
             transactionType = TransactionType.PAYMENT;
-        } else if (getStockLevelWeight().contains(transactionTypeNumber)) {
+        } else if (weight <= paymentWeight + stockLevelWeight) {
             transactionType = TransactionType.STOCK_LEVEL;
-        } else if (getOrderStatusWeight().contains(transactionTypeNumber)) {
+        } else if (weight <= paymentWeight + stockLevelWeight + orderStatusWeight) {
             transactionType = TransactionType.ORDER_STATUS;
-        } else if (getDeliveryWeight().contains(transactionTypeNumber)) {
+        } else if (weight <= paymentWeight + stockLevelWeight + orderStatusWeight + deliveryWeight) {
             transactionType = TransactionType.DELIVERY;
+        } else if (weight <= paymentWeight + stockLevelWeight + orderStatusWeight + deliveryWeight + newOrderWeight) {
+            transactionType = TransactionType.NEW_ORDER;
         } else {
             throw new ConfigurationException("The sum of transaction percentage parameters exceeds 100%!");
         }

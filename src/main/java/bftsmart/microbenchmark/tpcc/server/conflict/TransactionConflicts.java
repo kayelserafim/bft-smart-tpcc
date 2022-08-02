@@ -13,7 +13,6 @@ import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 /**
  * Contains static utility methods belonging to transactions and their conflicting types.
- *
  */
 public class TransactionConflicts {
 
