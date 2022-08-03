@@ -1,7 +1,9 @@
 package bftsmart.microbenchmark.tpcc.server.repository;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.javatuples.Tuple;
 
@@ -39,10 +41,11 @@ public class OrderLineRepository {
      * @return all instances of the type {@link OrderLine}.
      */
     public List<OrderLine> find(District district, Integer warehouseId) {
-        return orderLineDao.findAll(OrderLine.districtKey(warehouseId, district.getDistrictId()))
-                .stream()
-                .filter(ol -> ol.getOrderId() >= district.getNextOrderId() - 20)
-                .filter(ol -> ol.getOrderId() < district.getNextOrderId())
+        return IntStream.rangeClosed(district.getNextOrderId() - 20, district.getNextOrderId())
+                .boxed()
+                .map(orderId -> OrderLine.orderKey(warehouseId, district.getDistrictId(), orderId))
+                .map(orderLineDao::findAll)
+                .flatMap(Set<OrderLine>::stream)
                 .collect(Collectors.toList());
     }
 
