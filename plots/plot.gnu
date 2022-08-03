@@ -17,11 +17,14 @@ set grid back ls 12
 # color definitions
 set style line 1 lc rgb '#8b1a0e' pt 1 ps 1 lt 1 lw 2 # --- red
 set style line 2 lc rgb '#5e9c36' pt 2 ps 1 lt 1 lw 2 # --- green
-set style line 3 lc rgb '#0000FF' pt 4 ps 1 lt 1 lw 2 # --- blue
-set style line 4 lc rgb '#FFFF00' pt 6 ps 1 lt 1 lw 2 # --- yellow
-set style line 5 lc rgb '#800080' pt 8 ps 1 lt 1 lw 2 # --- purple
+set style line 3 lc rgb '#0000FF' pt 3 ps 1 lt 1 lw 2 # --- blue
+set style line 4 lc rgb '#FFFF00' pt 4 ps 1 lt 1 lw 2 # --- yellow
+set style line 5 lc rgb '#800080' pt 5 ps 1 lt 1 lw 2 # --- purple
+set style line 6 lc rgb '#FF00FF' pt 6 ps 1 lt 1 lw 2 # --- Magenta
+set style line 7 lc rgb '#008080' pt 7 ps 1 lt 1 lw 2 # --- Teal
+set style line 8 lc rgb '#00FFFF' pt 8 ps 1 lt 1 lw 2 # --- Aqua
 
-set key right top font "Helvetica, 14"
+set key left top font "Helvetica, 14"
 
 set xlabel 'Throughput'
 set ylabel 'Latency (ms)'
@@ -31,7 +34,10 @@ set yrange [17:330]
 set output 'lat_thr_M12.pdf'
 
 plot 'sequential_plot.dat' u 1:2 t 'Sequential' w lp ls 1, \
-     'parallel_w16.dat'   u 1:2 t 'Parallel, 16 workers'   w lp ls 2, \
-     'parallel_w32.dat'   u 1:2 t 'Parallel, 32 workers'   w lp ls 3, \
-     'parallel_w48.dat'   u 1:2 t 'Parallel, 48 workers'   w lp ls 4, \
-     'parallel_w64.dat'   u 1:2 t 'Parallel, 64 workers'   w lp ls 5
+     'parallel_w02.dat'   u 1:2 t 'Parallel, 02 workers'   w lp ls 2, \
+     'parallel_w04.dat'   u 1:2 t 'Parallel, 04 workers'   w lp ls 3, \
+     'parallel_w08.dat'   u 1:2 t 'Parallel, 08 workers'   w lp ls 4, \
+     'parallel_w16.dat'   u 1:2 t 'Parallel, 16 workers'   w lp ls 5, \
+     'parallel_w32.dat'   u 1:2 t 'Parallel, 32 workers'   w lp ls 6, \
+     'parallel_w48.dat'   u 1:2 t 'Parallel, 48 workers'   w lp ls 7, \
+     'parallel_w64.dat'   u 1:2 t 'Parallel, 64 workers'   w lp ls 8
