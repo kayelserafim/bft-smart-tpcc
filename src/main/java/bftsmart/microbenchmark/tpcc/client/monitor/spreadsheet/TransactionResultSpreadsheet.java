@@ -21,7 +21,7 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
     private static final String SHEET_NAME = "Transaction_Result";
 
     private static final String[] HEADER = { "Transaction", "Number of requests", "Number of errors",
-            "Elapsed Time (sec)", "Average Latency (ms)", "Throughput" };
+            "Elapsed Time (sec)", "Average Latency (ms)", "Throughput (op/s)" };
 
     private final WorkloadConfig workload;
     private final BFTParams bftParams;
