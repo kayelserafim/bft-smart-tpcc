@@ -1,133 +1,117 @@
 package bftsmart.microbenchmark.tpcc.probject;
 
-import java.io.Serializable;
-import java.util.StringJoiner;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-import org.apache.commons.lang3.SerializationUtils;
-
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.util.MultiOperationRequest;
 import bftsmart.util.MultiOperationResponse;
 
-public class TPCCCommand implements Serializable {
+public class TPCCCommand implements KryoSerializable {
 
-    private static final long serialVersionUID = 6569180706287210660L;
-
-    private final String commandId;
-    private final TransactionType transactionType;
-    private final Serializable request;
-    private final Integer status;
-    private final Boolean conflict;
-    private final String response;
-
-    public TPCCCommand(Builder builder) {
-        this.commandId = builder.commandId;
-        this.transactionType = builder.transactionType;
-        this.request = builder.request;
-        this.response = builder.response;
-        this.conflict = builder.conflict;
-        this.status = builder.status;
-    }
+    private String commandId;
+    private int transactionType;
+    private byte[] request;
+    private boolean conflict;
+    private int status;
+    private String response;
 
     public String getCommandId() {
         return commandId;
     }
 
-    public TransactionType getTransactionType() {
+    public void setCommandId(String commandId) {
+        this.commandId = commandId;
+    }
+
+    public TPCCCommand withCommandId(String commandId) {
+        setCommandId(commandId);
+        return this;
+    }
+
+    public int getTransactionType() {
         return transactionType;
     }
 
-    public Serializable getRequest() {
+    public void setTransactionType(int transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public TPCCCommand withTransactionType(int transactionType) {
+        setTransactionType(transactionType);
+        return this;
+    }
+
+    public byte[] getRequest() {
         return request;
     }
 
-    public Integer getStatus() {
+    public void setRequest(byte[] request) {
+        this.request = request;
+    }
+
+    public TPCCCommand withRequest(byte[] request) {
+        setRequest(request);
+        return this;
+    }
+
+    public boolean isConflict() {
+        return conflict;
+    }
+
+    public void setConflict(boolean conflict) {
+        this.conflict = conflict;
+    }
+
+    public TPCCCommand withConflict(boolean conflict) {
+        setConflict(conflict);
+        return this;
+    }
+
+    public int getStatus() {
         return status;
     }
 
-    public Boolean getConflict() {
-        return conflict;
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public TPCCCommand withStatus(int status) {
+        setStatus(status);
+        return this;
     }
 
     public String getResponse() {
         return response;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setResponse(String response) {
+        this.response = response;
     }
 
-    public static Builder from(TPCCCommand command) {
-        return new Builder(command);
-    }
-
-    public static class Builder {
-        private String commandId;
-        private TransactionType transactionType;
-        private Serializable request;
-        private Integer status;
-        private Boolean conflict;
-        private String response;
-
-        public Builder() {
-            super();
-        }
-
-        public Builder(TPCCCommand command) {
-            this.commandId = command.commandId;
-            this.transactionType = command.transactionType;
-            this.request = command.request;
-            this.status = command.status;
-            this.conflict = command.conflict;
-            this.response = command.response;
-        }
-
-        public Builder commandId(String commandId) {
-            this.commandId = commandId;
-            return this;
-        }
-
-        public Builder transactionType(TransactionType transactionType) {
-            this.transactionType = transactionType;
-            return this;
-        }
-
-        public Builder request(Serializable request) {
-            this.request = request;
-            return this;
-        }
-
-        public Builder status(Integer status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder conflict(Boolean conflict) {
-            this.conflict = conflict;
-            return this;
-        }
-
-        public Builder response(String response) {
-            this.response = response;
-            return this;
-        }
-
-        public TPCCCommand build() {
-            return new TPCCCommand(this);
-        }
-
+    public TPCCCommand withResponse(String response) {
+        setResponse(response);
+        return this;
     }
 
     public byte[] serialize() {
-        return SerializationUtils.serialize(this);
+        return KryoHelper.getInstance().toBytes(this);
     }
 
     public byte[] serialize(MultiOperationRequest request) {
-        request.add(0, serialize(), transactionType.getClassId());
+        request.add(0, serialize(), transactionType);
         return request.serialize();
+    }
+    
+    public byte[] serialize(MultiOperationResponse response) {
+        response.add(0, serialize());
+        return response.serialize();
     }
 
     public static TPCCCommand deserialize(byte[] bytes) {
-        return SerializationUtils.deserialize(bytes);
+        return (TPCCCommand) KryoHelper.getInstance().fromBytes(bytes);
     }
 
     public static TPCCCommand deserialize(MultiOperationRequest request) {
@@ -139,13 +123,25 @@ public class TPCCCommand implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(", ", TPCCCommand.class.getSimpleName() + "[", "]")
-                .add("transactionType=" + transactionType)
-                .add("request=" + request)
-                .add("response='" + response + "'")
-                .add("status=" + status)
-                .toString();
+    public void write(Kryo kryo, Output output) {
+        output.writeAscii(commandId);
+        output.writeInt(transactionType, true);
+        output.writeInt(request.length, true);
+        output.writeBytes(request);
+        output.writeBoolean(conflict);
+        output.writeInt(status, true);
+        output.writeAscii(response);
+    }
+
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setCommandId(input.readString());
+        setTransactionType(input.readInt(true));
+        int length = input.readInt(true);
+        setRequest(input.readBytes(length));
+        setConflict(input.readBoolean());
+        setStatus(input.readInt(true));
+        setResponse(input.readString());
     }
 
 }

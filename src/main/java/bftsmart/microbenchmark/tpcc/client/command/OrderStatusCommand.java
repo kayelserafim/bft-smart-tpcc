@@ -7,6 +7,7 @@ import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class OrderStatusCommand implements Command {
@@ -39,11 +40,9 @@ public class OrderStatusCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withCustomerLastName(customerLastName);
 
-        return TPCCCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .transactionType(transactionType())
-                .request(input)
-                .build();
+        return new TPCCCommand().withCommandId(UUID.randomUUID().toString())
+                .withTransactionType(transactionType().getClassId())
+                .withRequest(KryoHelper.getInstance().toBytes(input));
     }
 
 }

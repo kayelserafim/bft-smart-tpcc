@@ -1,76 +1,100 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.delivery.output;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.ZoneOffset;
 
-public class DeliveryOutput {
+import org.apache.commons.lang3.ArrayUtils;
 
-    private final LocalDateTime dateTime;
-    private final Integer warehouseId;
-    private final Integer orderCarrierId;
-    private final List<OrderOutput> orderIds;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-    private DeliveryOutput(Builder builder) {
-        this.dateTime = builder.dateTime;
-        this.warehouseId = builder.warehouseId;
-        this.orderCarrierId = builder.orderCarrierId;
-        this.orderIds = builder.orderIds;
-    }
+public class DeliveryOutput implements KryoSerializable {
 
-    public LocalDateTime getDateTime() {
+    private long dateTime;
+    private int warehouseId;
+    private int orderCarrierId;
+    private OrderOutput[] orderIds;
+
+    public long getDateTime() {
         return dateTime;
     }
 
-    public Integer getWarehouseId() {
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public DeliveryOutput withDateTime(long dateTime) {
+        setDateTime(dateTime);
+        return this;
+    }
+
+    public DeliveryOutput withDateTime(LocalDateTime dateTime) {
+        return withDateTime(dateTime.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli());
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public Integer getOrderCarrierId() {
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public DeliveryOutput withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public int getOrderCarrierId() {
         return orderCarrierId;
     }
 
-    public List<OrderOutput> getOrderIds() {
+    public void setOrderCarrierId(int orderCarrierId) {
+        this.orderCarrierId = orderCarrierId;
+    }
+
+    public DeliveryOutput withOrderCarrierId(int orderCarrierId) {
+        setOrderCarrierId(orderCarrierId);
+        return this;
+    }
+
+    public OrderOutput[] getOrderIds() {
         return orderIds;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setOrderIds(OrderOutput[] orderIds) {
+        this.orderIds = orderIds;
     }
 
-    public static class Builder {
-        private LocalDateTime dateTime;
-        private Integer warehouseId;
-        private Integer orderCarrierId;
-        private List<OrderOutput> orderIds;
-
-        public Builder dateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
-            return this;
+    public DeliveryOutput withOrderIds(OrderOutput[] orderIds) {
+        setOrderIds(orderIds);
+        return this;
+    }
+    
+    public DeliveryOutput orderId(OrderOutput orderId) {
+        if (orderIds == null) {
+            orderIds = new OrderOutput[15];
         }
+        ArrayUtils.add(orderIds, orderId);
+        return this;
+    }
 
-        public Builder warehouseId(Integer warehouseId) {
-            this.warehouseId = warehouseId;
-            return this;
-        }
+    @Override
+    public void write(Kryo kryo, Output output) {
+        output.writeVarLong(dateTime, true);
+        output.writeVarInt(warehouseId, true);
+        output.writeVarInt(orderCarrierId, true);
+        kryo.writeObject(output, orderIds);
+    }
 
-        public Builder orderCarrierId(Integer orderCarrierId) {
-            this.orderCarrierId = orderCarrierId;
-            return this;
-        }
-
-        public Builder orderId(OrderOutput orderId) {
-            if (orderIds == null) {
-                orderIds = new ArrayList<>();
-            }
-            orderIds.add(orderId);
-            return this;
-        }
-
-        public DeliveryOutput build() {
-            return new DeliveryOutput(this);
-        }
-
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setDateTime(input.readVarLong(true));
+        setWarehouseId(input.readVarInt(true));
+        setOrderCarrierId(input.readVarInt(true));
+        setOrderIds(kryo.readObject(input, OrderOutput[].class));
     }
 
 }

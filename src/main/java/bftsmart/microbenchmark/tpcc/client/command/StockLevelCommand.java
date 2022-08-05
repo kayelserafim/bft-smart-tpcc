@@ -6,6 +6,7 @@ import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.input.StockLevelInput;
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class StockLevelCommand implements Command {
@@ -23,11 +24,9 @@ public class StockLevelCommand implements Command {
                 .withDistrictId(terminalData.getDistrictId())
                 .withThreshold(threshold);
 
-        return TPCCCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .transactionType(transactionType())
-                .request(input)
-                .build();
+        return new TPCCCommand().withCommandId(UUID.randomUUID().toString())
+                .withTransactionType(transactionType().getClassId())
+                .withRequest(KryoHelper.getInstance().toBytes(input));
     }
 
 }

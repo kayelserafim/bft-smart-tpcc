@@ -22,7 +22,7 @@ import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
-import bftsmart.microbenchmark.tpcc.util.Times;
+import bftsmart.microbenchmark.tpcc.util.Dates;
 
 @Singleton
 public class TPCCDataGenerator {
@@ -123,7 +123,7 @@ public class TPCCDataGenerator {
                             .state(random.getAString(2))
                             .zip(random.getAZip())
                             .phone(random.getNString(16))
-                            .since(Times.now())
+                            .since(Dates.now())
                             .credit(random.nextInt(1, 10) == 1 ? "BC" : "GC")
                             .creditLimit(BigDecimal.valueOf(50000))
                             .discount(BigDecimal.valueOf(random.getAPercent(0, 0.5)))
@@ -192,7 +192,7 @@ public class TPCCDataGenerator {
                             .warehouseId(w)
                             .customerDistrictId(customer.getDistrictId())
                             .customerWarehouseId(customer.getWarehouseId())
-                            .date(Times.now())
+                            .date(Dates.now())
                             .amount(BigDecimal.TEN)
                             .data(random.getAString(12, 24))
                             .build();
@@ -219,7 +219,7 @@ public class TPCCDataGenerator {
                             .districtId(d)
                             .warehouseId(w)
                             .customerId(c)
-                            .entryDate(Times.now())
+                            .entryDate(Dates.now())
                             .carrierId(o < TPCCConfig.LIMIT_ORDER ? random.nextInt(1, 10) : null)
                             .orderLineCounter(random.nextInt(5, 15))
                             .allLocal(1)

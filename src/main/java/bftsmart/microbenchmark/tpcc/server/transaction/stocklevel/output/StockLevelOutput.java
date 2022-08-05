@@ -1,69 +1,83 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.output;
 
-public class StockLevelOutput {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-    private final Integer warehouseId;
-    private final Integer districtId;
-    private final Integer threshold;
-    private final Long stockCount;
+public class StockLevelOutput implements KryoSerializable {
 
-    public StockLevelOutput(Builder builder) {
-        this.warehouseId = builder.warehouseId;
-        this.districtId = builder.districtId;
-        this.threshold = builder.threshold;
-        this.stockCount = builder.stockCount;
-    }
+    private int warehouseId;
+    private int districtId;
+    private int threshold;
+    private long stockCount;
 
-    public Integer getWarehouseId() {
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public Integer getDistrictId() {
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public StockLevelOutput withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public int getDistrictId() {
         return districtId;
     }
 
-    public Integer getThreshold() {
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public StockLevelOutput withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public int getThreshold() {
         return threshold;
     }
 
-    public Long getStockCount() {
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+    }
+
+    public StockLevelOutput withThreshold(int threshold) {
+        setThreshold(threshold);
+        return this;
+    }
+
+    public long getStockCount() {
         return stockCount;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setStockCount(long stockCount) {
+        this.stockCount = stockCount;
     }
 
-    public static class Builder {
-        private Integer warehouseId;
-        private Integer districtId;
-        private Integer threshold;
-        private Long stockCount;
+    public StockLevelOutput withStockCount(long stockCount) {
+        setStockCount(stockCount);
+        return this;
+    }
 
-        public Builder warehouseId(Integer warehouseId) {
-            this.warehouseId = warehouseId;
-            return this;
-        }
+    @Override
+    public void write(Kryo kryo, Output output) {
+        output.writeVarInt(warehouseId, true);
+        output.writeVarInt(districtId, true);
+        output.writeVarInt(threshold, true);
+        output.writeVarLong(stockCount, true);
+    }
 
-        public Builder districtId(Integer districtId) {
-            this.districtId = districtId;
-            return this;
-        }
-
-        public Builder threshold(Integer threshold) {
-            this.threshold = threshold;
-            return this;
-        }
-
-        public Builder stockCount(Long stockCount) {
-            this.stockCount = stockCount;
-            return this;
-        }
-
-        public StockLevelOutput build() {
-            return new StockLevelOutput(this);
-        }
-
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setWarehouseId(input.readInt(true));
+        setDistrictId(input.readInt(true));
+        setThreshold(input.readInt(true));
+        setStockCount(input.readLong(true));
     }
 
 }

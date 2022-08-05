@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
@@ -20,7 +22,7 @@ import bftsmart.microbenchmark.tpcc.server.repository.WarehouseRepository;
 import bftsmart.microbenchmark.tpcc.server.transaction.Transaction;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.OrderLineOutput;
+import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderLineOutput;
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.Item;
@@ -29,7 +31,8 @@ import bftsmart.microbenchmark.tpcc.table.Order;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
-import bftsmart.microbenchmark.tpcc.util.Times;
+import bftsmart.microbenchmark.tpcc.util.Dates;
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 
 public class NewOrderTransaction implements Transaction {
 
@@ -59,29 +62,29 @@ public class NewOrderTransaction implements Transaction {
 
     @Override
     public TPCCCommand process(final TPCCCommand command) {
-        NewOrderInput input = (NewOrderInput) command.getRequest();
-        NewOrderOutput.Builder orderBuilder = NewOrderOutput.builder().dateTime(LocalDateTime.now());
+        NewOrderInput input = (NewOrderInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+        NewOrderOutput orderOutput = new NewOrderOutput().withDateTime(LocalDateTime.now());
 
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
         Integer customerId = input.getCustomerId();
-        List<Integer> itemIds = input.getItemIds();
+        int[] itemIds = input.getItemIds();
 
         // If I_ID has an unused value (see Clause 2.4.1.5), a "not-found"
         // condition is signaled, resulting in a rollback of the database
         // transaction (see Clause 2.4.2.3).
-        if (itemIds.contains(-12345)) {
+        if (ArrayUtils.contains(itemIds, -12345)) {
             // an expected condition generated 1% of the time in the test
             // data...
             // we throw an illegal access exception and the transaction gets
             // rolled back later on
-            return TPCCCommand.from(command).status(-1).response(TRANSACTION_ABORTED).build();
+            return command.withStatus(-1).withResponse(TRANSACTION_ABORTED);
         }
 
         // The row in the WAREHOUSE table with matching W_ID is selected and
         // W_TAX, the warehouse tax rate, is retrieved.
         Warehouse warehouse = warehouseRepository.find(warehouseId);
-        orderBuilder.warehouseId(warehouse.getWarehouseId()).warehouseTax(warehouse.getTax());
+        orderOutput.withWarehouseId(warehouse.getWarehouseId()).withWarehouseTax(warehouse.getTax());
 
         // The row in the DISTRICT table with matching D_W_ID and D_ ID is
         // selected, D_TAX, the district tax rate, is retrieved, and
@@ -89,18 +92,18 @@ public class NewOrderTransaction implements Transaction {
         // the district, is retrieved and incremented by one.
         District district = districtRepository.find(districtId, warehouseId);
         Integer nextOrderId = district.getNextOrderId();
-        orderBuilder.districtId(district.getDistrictId()).districtTax(district.getTax());
+        orderOutput.withDistrictId(district.getDistrictId()).withDistrictTax(district.getTax());
 
         // The row in the CUSTOMER table with matching C_W_ID, C_D_ID, and C_ID
         // is selected and C_DISCOUNT, the customer's discount rate, C_LAST, the
         // customer's last name, and C_CREDIT, the customer's credit status, are
         // retrieved.
         Customer customer = customerRepository.find(customerId, districtId, warehouseId);
-        orderBuilder.customerId(customer.getCustomerId())
-                .customerLast(customer.getLast())
-                .customerCredit(customer.getCredit())
-                .discount(customer.getDiscount())
-                .orderId(nextOrderId);
+        orderOutput.withCustomerId(customer.getCustomerId())
+                .withCustomerLast(customer.getLast())
+                .withCustomerCredit(customer.getCredit())
+                .withDiscount(customer.getDiscount())
+                .withOrderId(nextOrderId);
 
         // A new row is inserted into both the NEW-ORDER table and the ORDER
         // table to reflect the creation of the new order. O_CARRIER_ID is set
@@ -115,7 +118,7 @@ public class NewOrderTransaction implements Transaction {
                 .districtId(input.getDistrictId())
                 .warehouseId(input.getWarehouseId())
                 .customerId(input.getCustomerId())
-                .entryDate(Times.now())
+                .entryDate(Dates.now())
                 .orderLineCounter(input.getOrderLineCnt())
                 .allLocal(input.getOrderAllLocal())
                 .build();
@@ -123,23 +126,24 @@ public class NewOrderTransaction implements Transaction {
         // For each O_OL_CNT item on the order: see clause 2.4.2.2 (dot 8)
         List<Stock> stocks = new ArrayList<>();
         List<OrderLine> orderLines = new ArrayList<>();
+        NewOrderLineOutput[] orderLineOutputs = new NewOrderLineOutput[order.getOrderLineCounter()];
         for (int index = 1; index <= order.getOrderLineCounter(); index++) {
-            OrderLineOutput.Builder orderLineOutput = OrderLineOutput.builder();
-            int supplyWarehouseId = input.getSupplierWarehouseIds().get(index - 1);
-            int itemId = itemIds.get(index - 1);
-            int quantity = input.getOrderQuantities().get(index - 1);
+            NewOrderLineOutput orderLineOutput = new NewOrderLineOutput();
+            int supplyWarehouseId = input.getSupplierWarehouseIds()[index - 1];
+            int itemId = itemIds[index - 1];
+            int quantity = input.getOrderQuantities()[index - 1];
 
-            orderLineOutput.supplierWarehouseId(supplyWarehouseId).itemId(itemId).orderQuantities(quantity);
+            orderLineOutput.withSupplierWarehouseId(supplyWarehouseId).withItemId(itemId).withOrderQuantities(quantity);
 
             // The row in the ITEM table with matching I_ID (equals OL_I_ID) is
             // selected and I_PRICE, the price of the item, I_NAME, the name of
             // the item, and I_DATA are retrieved.
             Item item = itemRepository.find(itemId);
-            orderLineOutput.itemId(item.getItemId()).itemName(item.getName()).itemPrice(item.getPrice());
+            orderLineOutput.withItemId(item.getItemId()).withItemName(item.getName()).withItemPrice(item.getPrice());
 
             // clause 2.4.2.2 (dot 8.2)
             Stock stock = stockRepository.find(itemId, supplyWarehouseId);
-            orderLineOutput.stockQuantities(stock.getQuantity());
+            orderLineOutput.withStockQuantities(stock.getQuantity());
 
             stock = Stock.from(stock)
                     .addQuantity(quantity)
@@ -160,12 +164,11 @@ public class NewOrderTransaction implements Transaction {
                 brandGeneric = 'G';
             }
 
-            orderLineOutput.orderLineAmounts(amount).brandGeneric(brandGeneric);
-
-            orderBuilder.orderLines(orderLineOutput.build());
+            orderLineOutput.withOrderLineAmounts(amount).withBrandGeneric(brandGeneric);
+            orderLineOutputs[index - 1] = orderLineOutput;
 
             // clause 2.4.2.2 (dot 9)
-            orderBuilder.totalAmount(amount.multiply(BigDecimal.ONE.subtract(customer.getDiscount())
+            orderOutput.withTotalAmount(amount.multiply(BigDecimal.ONE.subtract(customer.getDiscount())
                     .multiply(BigDecimal.ONE.add(warehouse.getTax()).add(district.getTax()))));
 
             String districtInfo = getDistrictInfo(district, stock);
@@ -185,13 +188,14 @@ public class NewOrderTransaction implements Transaction {
             orderLines.add(orderLine);
         }
 
+        orderOutput.withOrderLines(orderLineOutputs);
         newOrderRepository.save(newOrder);
         districtRepository.save(District.from(district).nextOrderIdIncrement().build());
         orderRepository.save(order);
         stocks.forEach(stockRepository::save);
         orderLines.forEach(orderLineRepository::save);
 
-        return TPCCCommand.from(command).status(0).response(outputScreen(orderBuilder.build())).build();
+        return command.withStatus(0).withResponse(outputScreen(orderOutput));
     }
 
     private String getDistrictInfo(District district, Stock stock) {
@@ -236,7 +240,7 @@ public class NewOrderTransaction implements Transaction {
         StringBuilder message = new StringBuilder();
         message.append("\n+--------------------------- NEW-ORDER ---------------------------+\n");
         message.append(" Date: ");
-        message.append(newOrder.getDateTime().format(Times.DATE_TIME_FORMAT));
+        message.append(Dates.format(newOrder.getDateTime(), Dates.DATE_TIME_FORMAT));
         message.append("\n\n Warehouse: ");
         message.append(newOrder.getWarehouseId());
         message.append("\n   Tax:     ");
@@ -248,7 +252,7 @@ public class NewOrderTransaction implements Transaction {
         message.append("\n Order:     ");
         message.append(newOrder.getOrderId());
         message.append("\n   Lines:   ");
-        message.append(newOrder.getOrderLines().size());
+        message.append(newOrder.getOrderLines().length);
         message.append("\n\n Customer:  ");
         message.append(newOrder.getCustomerId());
         message.append("\n   Name:    ");
@@ -258,7 +262,7 @@ public class NewOrderTransaction implements Transaction {
         message.append("\n   %Disc:   ");
         message.append(newOrder.getDiscount());
         message.append("\n\n Order-Line List [Supp_W - Item_ID - Item Name - Qty - Stock - B/G - Price - Amount]\n");
-        for (OrderLineOutput orderLine : newOrder.getOrderLines()) {
+        for (NewOrderLineOutput orderLine : newOrder.getOrderLines()) {
             message.append("                 [");
             message.append(orderLine.getSupplierWarehouseId());
             message.append(" - ");

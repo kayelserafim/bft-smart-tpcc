@@ -34,16 +34,17 @@ public class TPCCService {
         ParallelServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalData.getTerminalId());
 
         try {
+            byte[] req = command.serialize(new MultiOperationRequest(1));
             byte[] resp;
             if (BooleanUtils.isTrue(terminalData.getParallelExecution())) {
-                resp = serviceProxy.invokeParallel(command.serialize(new MultiOperationRequest(1)), SYNC_ALL);
+                resp = serviceProxy.invokeParallel(req, SYNC_ALL);
             } else {
-                resp = serviceProxy.invokeOrdered(command.serialize(new MultiOperationRequest(1)));
+                resp = serviceProxy.invokeOrdered(req);
             }
             return TPCCCommand.deserialize(new MultiOperationResponse(resp));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return TPCCCommand.from(command).status(-1).response(e.getMessage()).build();
+            return command.withStatus(-1).withResponse(e.getMessage());
         }
     }
 

@@ -1,73 +1,72 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input;
 
-import java.io.Serializable;
-import java.util.StringJoiner;
-
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class OrderStatusInput implements Serializable {
-
-    private static final long serialVersionUID = -236960185789250291L;
+public class OrderStatusInput implements KryoSerializable {
 
     @JsonProperty("w_id")
-    private Integer warehouseId;
+    private int warehouseId;
     @JsonProperty("d_id")
-    private Integer districtId;
+    private int districtId;
     @JsonProperty("c_id")
-    private Integer customerId;
+    private int customerId;
     @JsonProperty("c_by_name")
-    private Boolean customerByName;
+    private boolean customerByName;
     @JsonProperty("c_name")
     private String customerLastName;
 
-    public Integer getWarehouseId() {
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Integer warehouseId) {
+    public void setWarehouseId(int warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public OrderStatusInput withWarehouseId(Integer warehouseId) {
+    public OrderStatusInput withWarehouseId(int warehouseId) {
         setWarehouseId(warehouseId);
         return this;
     }
 
-    public Integer getDistrictId() {
+    public int getDistrictId() {
         return districtId;
     }
 
-    public void setDistrictId(Integer districtId) {
+    public void setDistrictId(int districtId) {
         this.districtId = districtId;
     }
 
-    public OrderStatusInput withDistrictId(Integer districtId) {
+    public OrderStatusInput withDistrictId(int districtId) {
         setDistrictId(districtId);
         return this;
     }
 
-    public Integer getCustomerId() {
+    public int getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
 
-    public OrderStatusInput withCustomerId(Integer customerId) {
+    public OrderStatusInput withCustomerId(int customerId) {
         setCustomerId(customerId);
         return this;
     }
 
-    public Boolean getCustomerByName() {
+    public boolean getCustomerByName() {
         return customerByName;
     }
 
-    public void setCustomerByName(Boolean customerByName) {
+    public void setCustomerByName(boolean customerByName) {
         this.customerByName = customerByName;
     }
 
-    public OrderStatusInput withCustomerByName(Boolean customerByName) {
+    public OrderStatusInput withCustomerByName(boolean customerByName) {
         setCustomerByName(customerByName);
         return this;
     }
@@ -86,13 +85,20 @@ public class OrderStatusInput implements Serializable {
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(", ", OrderStatusInput.class.getSimpleName() + "[", "]")
-                .add("warehouseId=" + warehouseId)
-                .add("districtId=" + districtId)
-                .add("customerId=" + customerId)
-                .add("customerByName=" + customerByName)
-                .add("customerLastName='" + customerLastName + "'")
-                .toString();
+    public void write(Kryo kryo, Output output) {
+        output.writeVarInt(warehouseId, true);
+        output.writeVarInt(districtId, true);
+        output.writeVarInt(customerId, true);
+        output.writeBoolean(customerByName);
+        output.writeAscii(customerLastName);
+    }
+
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setWarehouseId(input.readVarInt(true));
+        setDistrictId(input.readVarInt(true));
+        setCustomerId(input.readVarInt(true));
+        setCustomerByName(input.readBoolean());
+        setCustomerLastName(input.readString());
     }
 }

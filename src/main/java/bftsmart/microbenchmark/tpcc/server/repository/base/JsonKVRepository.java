@@ -2,11 +2,11 @@ package bftsmart.microbenchmark.tpcc.server.repository.base;
 
 import static java.util.concurrent.ConcurrentHashMap.newKeySet;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,8 +25,8 @@ public class JsonKVRepository implements KVRepository<Tuple, PRObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonKVRepository.class);
 
-    private final Map<Tuple, Set<PRObject>> records = new HashMap<>();
-    private final Map<Tuple, Set<Tuple>> indexes = new HashMap<>();
+    private final Map<Tuple, Set<PRObject>> records = new ConcurrentHashMap<>();
+    private final Map<Tuple, Set<Tuple>> indexes = new ConcurrentHashMap<>();
 
     @Inject
     JsonKVRepository(final TPCCData tpccData) {

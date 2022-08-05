@@ -1,7 +1,6 @@
 package bftsmart.microbenchmark.tpcc.server.conflict;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,6 +10,7 @@ import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 import bftsmart.util.MultiOperationRequest;
 import parallelism.MessageContextPair;
@@ -23,8 +23,8 @@ public class TPCCConflictDefinition extends ConflictDefinition {
 
     @Override
     public boolean isDependent(MessageContextPair arg0, MessageContextPair arg1) {
-        TPCCCommand command1 = TPCCCommand.deserialize(new MultiOperationRequest(arg0.request.getContent()));
-        TPCCCommand command2 = TPCCCommand.deserialize(new MultiOperationRequest(arg1.request.getContent()));
+        final TPCCCommand command1 = TPCCCommand.deserialize(new MultiOperationRequest(arg0.request.getContent()));
+        final TPCCCommand command2 = TPCCCommand.deserialize(new MultiOperationRequest(arg1.request.getContent()));
 
         if (TransactionConflicts.hasNotConflict(command1.getTransactionType(), command2.getTransactionType())) {
             conflictMap.put(command1.getCommandId(), Boolean.FALSE);
@@ -36,39 +36,38 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             conflictMap.put(command2.getCommandId(), Boolean.TRUE);
             return true;
         }
-        Integer customer1 = getCustomerId(command1);
-        Integer customer2 = getCustomerId(command2);
+        final int customer1 = getCustomerId(command1);
+        final int customer2 = getCustomerId(command2);
 
-        boolean isDependent = Objects.equals(customer1, customer2);
+        final boolean isDependent = customer1 == -1 && customer1 == customer2;
         conflictMap.put(command1.getCommandId(), isDependent);
         conflictMap.put(command2.getCommandId(), isDependent);
 
         return isDependent;
     }
 
-    public Boolean isDependent(String commandId) {
+    public boolean isDependent(String commandId) {
         return conflictMap.getOrDefault(commandId, Boolean.FALSE);
     }
 
-    private Integer getCustomerId(TPCCCommand command) {
-        switch (command.getTransactionType()) {
-        case NEW_ORDER:
-            NewOrderInput newOrder = (NewOrderInput) command.getRequest();
+    private int getCustomerId(TPCCCommand command) {
+        final int transactionType = command.getTransactionType();
+
+        switch (transactionType) {
+        case 1:
+            NewOrderInput newOrder = (NewOrderInput) KryoHelper.getInstance().fromBytes(command.getRequest());
             return newOrder.getCustomerId();
-        case PAYMENT:
-            PaymentInput payment = (PaymentInput) command.getRequest();
-            return Optional.of(payment)
-                    .map(PaymentInput::getCustomerId)
-                    .filter(Numbers::isGreaterThanZero)
-                    .orElse(null);
-        case ORDER_STATUS:
-            OrderStatusInput orderStatus = (OrderStatusInput) command.getRequest();
+        case 2:
+            PaymentInput payment = (PaymentInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+            return Optional.of(payment).map(PaymentInput::getCustomerId).filter(Numbers::isGreaterThanZero).orElse(-1);
+        case 3:
+            OrderStatusInput orderStatus = (OrderStatusInput) KryoHelper.getInstance().fromBytes(command.getRequest());
             return Optional.of(orderStatus)
                     .map(OrderStatusInput::getCustomerId)
                     .filter(Numbers::isGreaterThanZero)
-                    .orElse(null);
-        case DELIVERY:
-        case STOCK_LEVEL:
+                    .orElse(-1);
+        case 4:
+        case 5:
         default:
             throw new IllegalStateException("Stock level and delivery must be resolved at transaction level");
         }

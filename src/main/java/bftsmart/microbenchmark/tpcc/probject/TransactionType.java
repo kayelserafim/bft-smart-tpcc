@@ -1,5 +1,7 @@
 package bftsmart.microbenchmark.tpcc.probject;
 
+import java.util.stream.Stream;
+
 public enum TransactionType {
 
     NEW_ORDER(1),
@@ -16,6 +18,10 @@ public enum TransactionType {
 
     public int getClassId() {
         return classId;
+    }
+
+    public static TransactionType fromValue(int value) {
+        return Stream.of(values()).filter(type -> type.getClassId() == value).findFirst().orElse(null);
     }
 
 }

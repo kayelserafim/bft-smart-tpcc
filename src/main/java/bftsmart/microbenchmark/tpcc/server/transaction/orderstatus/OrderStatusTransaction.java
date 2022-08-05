@@ -3,7 +3,7 @@ package bftsmart.microbenchmark.tpcc.server.transaction.orderstatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 import com.google.inject.Inject;
@@ -20,7 +20,8 @@ import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.output.OrderS
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.Order;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
-import bftsmart.microbenchmark.tpcc.util.Times;
+import bftsmart.microbenchmark.tpcc.util.Dates;
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 
 public class OrderStatusTransaction implements Transaction {
 
@@ -38,8 +39,8 @@ public class OrderStatusTransaction implements Transaction {
 
     @Override
     public TPCCCommand process(final TPCCCommand command) {
-        OrderStatusInput input = (OrderStatusInput) command.getRequest();
-        OrderStatusOutput.Builder orderBuilder = OrderStatusOutput.builder().dateTime(LocalDateTime.now());
+        OrderStatusInput input = (OrderStatusInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+        OrderStatusOutput orderStatusOutput = new OrderStatusOutput().withDateTime(LocalDateTime.now());
 
         int warehouseId = input.getWarehouseId();
         int districtId = input.getDistrictId();
@@ -50,40 +51,43 @@ public class OrderStatusTransaction implements Transaction {
             if (customer == null) {
                 String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
                 String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
-                return TPCCCommand.from(command).status(-1).response(msg).build();
+                return command.withStatus(-1).withResponse(msg);
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
             customer = customerRepository.find(input.getCustomerId(), districtId, warehouseId);
         }
 
-        orderBuilder.warehouseId(warehouseId)
-                .districtId(districtId)
-                .customerId(customer.getCustomerId())
-                .customerFirst(customer.getFirst())
-                .customerMiddle(customer.getMiddle())
-                .customerLast(customer.getLast())
-                .customerBalance(customer.getBalance());
+        orderStatusOutput.withWarehouseId(warehouseId)
+                .withDistrictId(districtId)
+                .withCustomerId(customer.getCustomerId())
+                .withCustomerFirst(customer.getFirst())
+                .withCustomerMiddle(customer.getMiddle())
+                .withCustomerLast(customer.getLast())
+                .withCustomerBalance(customer.getBalance());
 
         Order order = orderRepository.findByCustomerId(customer.getCustomerId(), districtId, warehouseId);
         if (order != null) {
-            orderBuilder.orderId(order.getOrderId()).entryDate(order.getEntryDate()).carrierId(order.getCarrierId());
+            orderStatusOutput.withOrderId(order.getOrderId())
+                    .withEntryDate(order.getEntryDate())
+                    .withCarrierId(order.getCarrierId());
             // clause 2.6.2.2 (dot 5)
             List<OrderLine> orderLines = orderLineRepository.find(order.getOrderId(), districtId, warehouseId);
 
+            OrderLineOutput[] orderLineOutputs = new OrderLineOutput[orderLines.size()];
             for (OrderLine orderLine : orderLines) {
-                OrderLineOutput orderLineOutput = OrderLineOutput.builder()
-                        .supplierWarehouseId(orderLine.getSupplyWarehouseId())
-                        .itemId(orderLine.getItemId())
-                        .orderQuantities(orderLine.getQuantity())
-                        .amount(orderLine.getAmount())
-                        .deliveryDateTime(orderLine.getDeliveryDateTime())
-                        .build();
-                orderBuilder.orderLine(orderLineOutput);
+                int index = orderLines.indexOf(orderLine);
+                orderLineOutputs[index] =
+                        new OrderLineOutput().withSupplierWarehouseId(orderLine.getSupplyWarehouseId())
+                                .withItemId(orderLine.getItemId())
+                                .withOrderQuantities(orderLine.getQuantity())
+                                .withAmount(orderLine.getAmount())
+                                .withDeliveryDateTime(orderLine.getDeliveryDateTime());
             }
+            orderStatusOutput.withOrderLines(orderLineOutputs);
         }
 
-        return TPCCCommand.from(command).status(0).response(outputScreen(orderBuilder.build())).build();
+        return command.withStatus(0).withResponse(outputScreen(orderStatusOutput));
     }
 
     private String outputScreen(OrderStatusOutput orderStatus) {
@@ -91,7 +95,7 @@ public class OrderStatusTransaction implements Transaction {
         message.append("\n");
         message.append("+-------------------------- ORDER-STATUS -------------------------+\n");
         message.append(" Date: ");
-        message.append(orderStatus.getDateTime().format(Times.DATE_TIME_FORMAT));
+        message.append(Dates.format(orderStatus.getDateTime(), Dates.DATE_TIME_FORMAT));
         message.append("\n\n Warehouse: ");
         message.append(orderStatus.getWarehouseId());
         message.append("\n District:  ");
@@ -107,7 +111,7 @@ public class OrderStatusTransaction implements Transaction {
         message.append("\n   Balance: ");
         message.append(orderStatus.getCustomerBalance());
         message.append("\n\n");
-        if (orderStatus.getOrderId() == null) {
+        if (orderStatus.getOrderId() == 0) {
             message.append(" Customer has no orders placed.\n");
         } else {
             message.append(" Order-Number: ");
@@ -117,7 +121,7 @@ public class OrderStatusTransaction implements Transaction {
             message.append("\n    Carrier-Number: ");
             message.append(orderStatus.getCarrierId());
             message.append("\n\n");
-            if (CollectionUtils.isNotEmpty(orderStatus.getOrderLines())) {
+            if (ArrayUtils.isNotEmpty(orderStatus.getOrderLines())) {
                 message.append(" [Supply_W - Item_ID - Qty - Amount - Delivery-Date]\n");
 
                 for (OrderLineOutput oLine : orderStatus.getOrderLines()) {
@@ -131,7 +135,7 @@ public class OrderStatusTransaction implements Transaction {
                     message.append(oLine.getAmount());
                     message.append(" - ");
                     // 2.6.3.3 (case 2)
-                    message.append(oLine.getDeliveryDateTime() == null ? "99-99-9999" : oLine.getDeliveryDateTime());
+                    message.append(oLine.getDeliveryDateTime() == 0 ? "99-99-9999" : oLine.getDeliveryDateTime());
                     message.append("]");
                 }
 

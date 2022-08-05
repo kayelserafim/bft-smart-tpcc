@@ -9,6 +9,7 @@ import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class PaymentCommand implements Command {
@@ -62,11 +63,9 @@ public class PaymentCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withPaymentAmount(paymentAmount);
 
-        return TPCCCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .transactionType(transactionType())
-                .request(input)
-                .build();
+        return new TPCCCommand().withCommandId(UUID.randomUUID().toString())
+                .withTransactionType(transactionType().getClassId())
+                .withRequest(KryoHelper.getInstance().toBytes(input));
     }
 
 }

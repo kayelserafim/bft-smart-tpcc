@@ -1,31 +1,51 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.delivery.output;
 
-import java.util.StringJoiner;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-public class OrderOutput {
+public class OrderOutput implements KryoSerializable {
 
-    private final Integer districtId;
-    private final Integer orderId;
+    private int districtId;
+    private int orderId;
 
-    public OrderOutput(Integer districtId, Integer orderId) {
-        super();
-        this.districtId = districtId;
-        this.orderId = orderId;
-    }
-
-    public Integer getDistrictId() {
+    public int getDistrictId() {
         return districtId;
     }
 
-    public Integer getOrderId() {
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public OrderOutput withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public int getOrderId() {
         return orderId;
     }
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", OrderOutput.class.getSimpleName() + "[", "]")
-                .add("districtId=" + districtId)
-                .add("orderId=" + orderId)
-                .toString();
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
     }
+
+    public OrderOutput withOrderId(int orderId) {
+        setOrderId(orderId);
+        return this;
+    }
+
+    @Override
+    public void write(Kryo kryo, Output output) {
+        output.writeVarInt(districtId, true);
+        output.writeVarInt(orderId, true);
+    }
+
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setDistrictId(input.readVarInt(true));
+        setOrderId(input.readVarInt(true));
+    }
+
 }

@@ -21,4 +21,8 @@ public class TransactionFactory {
                 .orElseThrow(() -> new ConfigurationException("There is no transaction for " + transactionType));
     }
 
+    public Transaction getFactory(int transactionType) {
+        return getFactory(TransactionType.fromValue(transactionType));
+    }
+
 }

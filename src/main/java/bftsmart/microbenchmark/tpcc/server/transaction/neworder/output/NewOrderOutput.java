@@ -3,193 +3,237 @@ package bftsmart.microbenchmark.tpcc.server.transaction.neworder.output;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringJoiner;
+import java.time.ZoneOffset;
 
-public class NewOrderOutput {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-    private final LocalDateTime dateTime;
-    private final Integer warehouseId;
-    private final BigDecimal warehouseTax;
-    private final Integer districtId;
-    private final BigDecimal districtTax;
-    private final Integer orderId;
-    private final Integer customerId;
-    private final String customerLast;
-    private final String customerCredit;
-    private final BigDecimal discount;
-    private final BigDecimal totalAmount;
-    private final List<OrderLineOutput> orderLines;
+public class NewOrderOutput implements KryoSerializable {
 
-    public NewOrderOutput(Builder builder) {
-        this.dateTime = builder.dateTime;
-        this.warehouseId = builder.warehouseId;
-        this.warehouseTax = builder.warehouseTax.setScale(4, RoundingMode.HALF_UP);
-        this.districtId = builder.districtId;
-        this.districtTax = builder.districtTax.setScale(4, RoundingMode.HALF_UP);
-        this.orderId = builder.orderId;
-        this.customerId = builder.customerId;
-        this.customerLast = builder.customerLast;
-        this.customerCredit = builder.customerCredit;
-        this.discount = builder.discount.setScale(4, RoundingMode.HALF_UP);
-        this.totalAmount = builder.totalAmount.setScale(2, RoundingMode.HALF_UP);
-        this.orderLines = builder.orderLines;
-    }
+    private long dateTime;
+    private int warehouseId;
+    private double warehouseTax;
+    private int districtId;
+    private double districtTax;
+    private int orderId;
+    private int customerId;
+    private String customerLast;
+    private String customerCredit;
+    private double discount;
+    private double totalAmount;
+    private NewOrderLineOutput[] orderLines;
 
-    public LocalDateTime getDateTime() {
+    public long getDateTime() {
         return dateTime;
     }
 
-    public Integer getWarehouseId() {
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public NewOrderOutput withDateTime(long dateTime) {
+        setDateTime(dateTime);
+        return this;
+    }
+
+    public NewOrderOutput withDateTime(LocalDateTime dateTime) {
+        setDateTime(dateTime.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli());
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public BigDecimal getWarehouseTax() {
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public NewOrderOutput withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public double getWarehouseTax() {
         return warehouseTax;
     }
 
-    public Integer getDistrictId() {
+    public void setWarehouseTax(double warehouseTax) {
+        this.warehouseTax = warehouseTax;
+    }
+
+    public NewOrderOutput withWarehouseTax(double warehouseTax) {
+        setWarehouseTax(warehouseTax);
+        return this;
+    }
+
+    public NewOrderOutput withWarehouseTax(BigDecimal warehouseTax) {
+        setWarehouseTax(warehouseTax.setScale(4, RoundingMode.HALF_UP).doubleValue());
+        return this;
+    }
+
+    public int getDistrictId() {
         return districtId;
     }
 
-    public BigDecimal getDistrictTax() {
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public NewOrderOutput withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public double getDistrictTax() {
         return districtTax;
     }
 
-    public Integer getOrderId() {
+    public void setDistrictTax(double districtTax) {
+        this.districtTax = districtTax;
+    }
+
+    public NewOrderOutput withDistrictTax(double districtTax) {
+        setDistrictTax(districtTax);
+        return this;
+    }
+
+    public NewOrderOutput withDistrictTax(BigDecimal districtTax) {
+        setDistrictTax(districtTax.setScale(4, RoundingMode.HALF_UP).doubleValue());
+        return this;
+    }
+
+    public int getOrderId() {
         return orderId;
     }
 
-    public Integer getCustomerId() {
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public NewOrderOutput withOrderId(int orderId) {
+        setOrderId(orderId);
+        return this;
+    }
+
+    public int getCustomerId() {
         return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public NewOrderOutput withCustomerId(int customerId) {
+        setCustomerId(customerId);
+        return this;
     }
 
     public String getCustomerLast() {
         return customerLast;
     }
 
+    public void setCustomerLast(String customerLast) {
+        this.customerLast = customerLast;
+    }
+
+    public NewOrderOutput withCustomerLast(String customerLast) {
+        setCustomerLast(customerLast);
+        return this;
+    }
+
     public String getCustomerCredit() {
         return customerCredit;
     }
 
-    public BigDecimal getDiscount() {
+    public void setCustomerCredit(String customerCredit) {
+        this.customerCredit = customerCredit;
+    }
+
+    public NewOrderOutput withCustomerCredit(String customerCredit) {
+        setCustomerCredit(customerCredit);
+        return this;
+    }
+
+    public double getDiscount() {
         return discount;
     }
 
-    public BigDecimal getTotalAmount() {
+    public void setDiscount(double discount) {
+        this.discount = discount;
+    }
+
+    public NewOrderOutput withDiscount(double discount) {
+        setDiscount(discount);
+        return this;
+    }
+
+    public NewOrderOutput withDiscount(BigDecimal discount) {
+        setDiscount(discount.setScale(4, RoundingMode.HALF_UP).doubleValue());
+        return this;
+    }
+
+    public double getTotalAmount() {
         return totalAmount;
     }
 
-    public List<OrderLineOutput> getOrderLines() {
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public NewOrderOutput withTotalAmount(double totalAmount) {
+        setTotalAmount(totalAmount);
+        return this;
+    }
+
+    public NewOrderOutput withTotalAmount(BigDecimal totalAmount) {
+        setTotalAmount(totalAmount.setScale(2, RoundingMode.HALF_UP).doubleValue());
+        return this;
+    }
+
+    public NewOrderLineOutput[] getOrderLines() {
         return orderLines;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setOrderLines(NewOrderLineOutput[] orderLines) {
+        this.orderLines = orderLines;
     }
 
-    public static class Builder {
-
-        private LocalDateTime dateTime;
-        private Integer warehouseId;
-        private BigDecimal warehouseTax;
-        private Integer districtId;
-        private BigDecimal districtTax;
-        private Integer orderId;
-        private Integer customerId;
-        private String customerLast;
-        private String customerCredit;
-        private BigDecimal discount;
-        private BigDecimal totalAmount;
-        private List<OrderLineOutput> orderLines;
-
-        public Builder dateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
-            return this;
-        }
-
-        public Builder warehouseId(Integer warehouseId) {
-            this.warehouseId = warehouseId;
-            return this;
-        }
-
-        public Builder warehouseTax(BigDecimal warehouseTax) {
-            this.warehouseTax = warehouseTax;
-            return this;
-        }
-
-        public Builder districtId(Integer districtId) {
-            this.districtId = districtId;
-            return this;
-        }
-
-        public Builder districtTax(BigDecimal districtTax) {
-            this.districtTax = districtTax;
-            return this;
-        }
-
-        public Builder orderId(Integer orderId) {
-            this.orderId = orderId;
-            return this;
-        }
-
-        public Builder customerId(Integer customerId) {
-            this.customerId = customerId;
-            return this;
-        }
-
-        public Builder customerLast(String customerLast) {
-            this.customerLast = customerLast;
-            return this;
-        }
-
-        public Builder customerCredit(String customerCredit) {
-            this.customerCredit = customerCredit;
-            return this;
-        }
-
-        public Builder discount(BigDecimal discount) {
-            this.discount = discount;
-            return this;
-        }
-
-        public Builder totalAmount(BigDecimal totalAmount) {
-            this.totalAmount = totalAmount;
-            return this;
-        }
-
-        public Builder orderLines(OrderLineOutput orderLine) {
-            if (orderLines == null) {
-                orderLines = new ArrayList<>();
-            }
-            if (orderLine != null) {
-                orderLines.add(orderLine);
-            }
-            return this;
-        }
-
-        public NewOrderOutput build() {
-            return new NewOrderOutput(this);
-        }
-
+    public NewOrderOutput withOrderLines(NewOrderLineOutput[] orderLines) {
+        setOrderLines(orderLines);
+        return this;
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(", ", NewOrderOutput.class.getSimpleName() + "[", "]")
-                .add("dateTime=" + dateTime)
-                .add("warehouseId=" + warehouseId)
-                .add("warehouseTax=" + warehouseTax)
-                .add("districtId=" + districtId)
-                .add("districtTax=" + districtTax)
-                .add("orderId=" + orderId)
-                .add("customerId=" + customerId)
-                .add("customerLast='" + customerLast + "'")
-                .add("customerCredit='" + customerCredit + "'")
-                .add("discount=" + discount)
-                .add("totalAmount=" + totalAmount)
-                .add("orderLines=" + orderLines)
-                .toString();
+    public void write(Kryo kryo, Output output) {
+        output.writeVarLong(dateTime, true);
+        output.writeVarInt(warehouseId, true);
+        output.writeVarDouble(warehouseTax, 4, true);
+        output.writeVarInt(districtId, true);
+        output.writeVarDouble(districtTax, 4, true);
+        output.writeVarInt(orderId, true);
+        output.writeVarInt(customerId, true);
+        output.writeAscii(customerLast);
+        output.writeAscii(customerCredit);
+        output.writeVarDouble(discount, 4, true);
+        output.writeVarDouble(totalAmount, 2, true);
+        kryo.writeObject(output, orderLines);
+    }
+
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setDateTime(input.readVarLong(true));
+        setWarehouseId(input.readVarInt(true));
+        setWarehouseTax(input.readVarDouble(4, true));
+        setDistrictId(input.readVarInt(true));
+        setOrderId(input.readVarInt(true));
+        setCustomerId(input.readVarInt(true));
+        setCustomerLast(input.readString());
+        setCustomerCredit(input.readString());
+        setDiscount(input.readVarDouble(4, true));
+        setTotalAmount(input.readVarDouble(2, true));
+        setOrderLines(kryo.readObject(input, NewOrderLineOutput[].class));
     }
 }

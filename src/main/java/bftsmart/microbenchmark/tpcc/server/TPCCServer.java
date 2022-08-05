@@ -65,10 +65,7 @@ public class TPCCServer implements SingleExecutable {
 
     private byte[] execute(TPCCCommand aRequest) {
         TPCCCommand reply = transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
-        return TPCCCommand.from(reply)
-                .conflict(conflictDefinition.isDependent(reply.getCommandId()))
-                .build()
-                .serialize();
+        return reply.withConflict(conflictDefinition.isDependent(reply.getCommandId())).serialize();
     }
 
 }

@@ -18,6 +18,7 @@ import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.output.StockLe
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
+import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 
 public class StockLevelTransaction implements Transaction {
 
@@ -35,8 +36,8 @@ public class StockLevelTransaction implements Transaction {
 
     @Override
     public TPCCCommand process(final TPCCCommand command) {
-        StockLevelInput input = (StockLevelInput) command.getRequest();
-        StockLevelOutput.Builder stockBuilder = StockLevelOutput.builder();
+        StockLevelInput input = (StockLevelInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+        StockLevelOutput output = new StockLevelOutput();
 
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
@@ -51,9 +52,12 @@ public class StockLevelTransaction implements Transaction {
 
         long stockCount = stockRepository.count(stockIds, threshold);
 
-        stockBuilder.warehouseId(warehouseId).districtId(districtId).threshold(threshold).stockCount(stockCount);
+        output.withWarehouseId(warehouseId)
+                .withDistrictId(districtId)
+                .withThreshold(threshold)
+                .withStockCount(stockCount);
 
-        return TPCCCommand.from(command).status(0).response(outputScreen(stockBuilder.build())).build();
+        return command.withStatus(0).withResponse(outputScreen(output));
     }
 
     private String outputScreen(StockLevelOutput stockLevel) {
