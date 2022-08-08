@@ -104,7 +104,7 @@ public class TPCCCommand implements KryoSerializable {
         request.add(0, serialize(), transactionType);
         return request.serialize();
     }
-    
+
     public byte[] serialize(MultiOperationResponse response) {
         response.add(0, serialize());
         return response.serialize();
@@ -126,11 +126,12 @@ public class TPCCCommand implements KryoSerializable {
     public void write(Kryo kryo, Output output) {
         output.writeAscii(commandId);
         output.writeInt(transactionType, true);
-        output.writeInt(request.length, true);
-        output.writeBytes(request);
+        output.writeInt(request != null ? request.length : 0, true);
+        if (request != null) {
+            output.writeBytes(request);
+        }
         output.writeBoolean(conflict);
         output.writeInt(status, true);
-        output.writeAscii(response);
     }
 
     @Override
@@ -138,10 +139,11 @@ public class TPCCCommand implements KryoSerializable {
         setCommandId(input.readString());
         setTransactionType(input.readInt(true));
         int length = input.readInt(true);
-        setRequest(input.readBytes(length));
+        if (length > 0) {
+            setRequest(input.readBytes(length));
+        }
         setConflict(input.readBoolean());
         setStatus(input.readInt(true));
-        setResponse(input.readString());
     }
 
 }

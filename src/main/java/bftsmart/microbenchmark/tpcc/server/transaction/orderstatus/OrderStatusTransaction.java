@@ -22,6 +22,7 @@ import bftsmart.microbenchmark.tpcc.table.Order;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.util.Dates;
 import bftsmart.microbenchmark.tpcc.util.KryoHelper;
+import bftsmart.microbenchmark.tpcc.util.Numbers;
 
 public class OrderStatusTransaction implements Transaction {
 
@@ -70,7 +71,7 @@ public class OrderStatusTransaction implements Transaction {
         if (order != null) {
             orderStatusOutput.withOrderId(order.getOrderId())
                     .withEntryDate(order.getEntryDate())
-                    .withCarrierId(order.getCarrierId());
+                    .withCarrierId(Numbers.toInt(order.getCarrierId()));
             // clause 2.6.2.2 (dot 5)
             List<OrderLine> orderLines = orderLineRepository.find(order.getOrderId(), districtId, warehouseId);
 
@@ -82,7 +83,7 @@ public class OrderStatusTransaction implements Transaction {
                                 .withItemId(orderLine.getItemId())
                                 .withOrderQuantities(orderLine.getQuantity())
                                 .withAmount(orderLine.getAmount())
-                                .withDeliveryDateTime(orderLine.getDeliveryDateTime());
+                                .withDeliveryDateTime(Numbers.toLong(orderLine.getDeliveryDateTime()));
             }
             orderStatusOutput.withOrderLines(orderLineOutputs);
         }

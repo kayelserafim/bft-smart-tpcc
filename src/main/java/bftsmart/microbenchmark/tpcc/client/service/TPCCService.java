@@ -41,7 +41,10 @@ public class TPCCService {
             } else {
                 resp = serviceProxy.invokeOrdered(req);
             }
-            return TPCCCommand.deserialize(new MultiOperationResponse(resp));
+            return TPCCCommand.deserialize(new MultiOperationResponse(resp))
+                    .withCommandId(command.getCommandId())
+                    .withRequest(command.getRequest())
+                    .withTransactionType(command.getTransactionType());
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
             return command.withStatus(-1).withResponse(e.getMessage());

@@ -173,10 +173,8 @@ public class OrderStatusOutput implements KryoSerializable {
         this.carrierId = carrierId;
     }
 
-    public OrderStatusOutput withCarrierId(Integer carrierId) {
-        if (carrierId != null) {
-            setCarrierId(carrierId);
-        }
+    public OrderStatusOutput withCarrierId(int carrierId) {
+        setCarrierId(carrierId);
         return this;
     }
 

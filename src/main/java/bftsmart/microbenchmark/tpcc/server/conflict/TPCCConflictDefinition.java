@@ -39,7 +39,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         final int customer1 = getCustomerId(command1);
         final int customer2 = getCustomerId(command2);
 
-        final boolean isDependent = customer1 == -1 && customer1 == customer2;
+        final boolean isDependent = customer1 > 0 && customer1 == customer2;
         conflictMap.put(command1.getCommandId(), isDependent);
         conflictMap.put(command2.getCommandId(), isDependent);
 
@@ -59,13 +59,13 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             return newOrder.getCustomerId();
         case 2:
             PaymentInput payment = (PaymentInput) KryoHelper.getInstance().fromBytes(command.getRequest());
-            return Optional.of(payment).map(PaymentInput::getCustomerId).filter(Numbers::isGreaterThanZero).orElse(-1);
+            return Optional.of(payment).map(PaymentInput::getCustomerId).filter(Numbers::isGreaterThanZero).orElse(0);
         case 3:
             OrderStatusInput orderStatus = (OrderStatusInput) KryoHelper.getInstance().fromBytes(command.getRequest());
             return Optional.of(orderStatus)
                     .map(OrderStatusInput::getCustomerId)
                     .filter(Numbers::isGreaterThanZero)
-                    .orElse(-1);
+                    .orElse(0);
         case 4:
         case 5:
         default:

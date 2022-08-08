@@ -279,7 +279,7 @@ public class OrderLine implements PRObject {
             return this;
         }
 
-        public Builder deliveryDateTime(Long deliveryDateTime) {
+        public Builder deliveryDateTime(long deliveryDateTime) {
             this.deliveryDateTime = deliveryDateTime;
             return this;
         }

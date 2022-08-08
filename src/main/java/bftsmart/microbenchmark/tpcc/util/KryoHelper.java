@@ -32,7 +32,7 @@ public final class KryoHelper {
     private final Pool<Kryo> kryoPool;
 
     private KryoHelper() {
-        kryoPool = new Pool<Kryo>(true, false) {
+        kryoPool = new Pool<Kryo>(true, true) {
             protected Kryo create() {
                 Kryo kryo = new Kryo();
                 kryo.setReferences(false);
