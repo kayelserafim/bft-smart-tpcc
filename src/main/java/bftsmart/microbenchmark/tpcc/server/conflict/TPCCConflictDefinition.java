@@ -39,7 +39,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         final int customer1 = getCustomerId(command1);
         final int customer2 = getCustomerId(command2);
 
-        final boolean isDependent = customer1 > 0 && customer1 == customer2;
+        final boolean isDependent = customer1 == 0 || customer2 == 0 || customer1 == customer2;
         conflictMap.put(command1.getCommandId(), isDependent);
         conflictMap.put(command2.getCommandId(), isDependent);
 
