@@ -3,7 +3,7 @@ A TPC-C like test tool for BFT-SMaRt.
 
 ### Compiling ###
 
-Type `./gradlew installDist` in the main directory. The required jar files and default configuration files will be available in the `build/install/bft-smart-tpcc` directory.
+Type `./gradlew clean installDist` in the main directory. The required jar files and default configuration files will be available in the `build/install/bft-smart-tpcc` directory.
 
 ### How do I get set up? ###
 
