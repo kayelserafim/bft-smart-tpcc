@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.KryoSerializable;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PaymentInput implements KryoSerializable {
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
 
+public class PaymentInput implements CommandRequest {
+
+    private String commandId;
+    private int transactionType;
     @JsonProperty("w_id")
     private int warehouseId;
     @JsonProperty("c_w_id")
@@ -27,6 +30,36 @@ public class PaymentInput implements KryoSerializable {
     private boolean customerByName;
     @JsonProperty("payment_amount")
     private double paymentAmount;
+
+    @Override
+    public String getCommandId() {
+        return commandId;
+    }
+
+    @Override
+    public void setCommandId(String commandId) {
+        this.commandId = commandId;
+    }
+
+    public PaymentInput withCommandId(String commandId) {
+        setCommandId(commandId);
+        return this;
+    }
+
+    @Override
+    public int getTransactionType() {
+        return transactionType;
+    }
+
+    @Override
+    public void setTransactionType(int transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public PaymentInput withTransactionType(int transactionType) {
+        setTransactionType(transactionType);
+        return this;
+    }
 
     public int getWarehouseId() {
         return warehouseId;
@@ -134,6 +167,8 @@ public class PaymentInput implements KryoSerializable {
 
     @Override
     public void write(Kryo kryo, Output output) {
+        output.writeAscii(commandId);
+        output.writeVarInt(transactionType, true);
         output.writeVarInt(warehouseId, true);
         output.writeVarInt(customerWarehouseId, true);
         output.writeVarInt(districtId, true);
@@ -146,6 +181,8 @@ public class PaymentInput implements KryoSerializable {
 
     @Override
     public void read(Kryo kryo, Input input) {
+        setCommandId(input.readString());
+        setTransactionType(input.readVarInt(true));
         setWarehouseId(input.readVarInt(true));
         setCustomerWarehouseId(input.readVarInt(true));
         setDistrictId(input.readVarInt(true));

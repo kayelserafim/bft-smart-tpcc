@@ -8,7 +8,8 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
 import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
@@ -21,7 +22,6 @@ import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.Order;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.util.Dates;
-import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 
 public class OrderStatusTransaction implements Transaction {
@@ -39,8 +39,8 @@ public class OrderStatusTransaction implements Transaction {
     }
 
     @Override
-    public Command process(final Command command) {
-        OrderStatusInput input = (OrderStatusInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+    public CommandResponse process(final CommandRequest command) {
+        OrderStatusInput input = (OrderStatusInput) command;
         OrderStatusOutput orderStatusOutput = new OrderStatusOutput().withDateTime(LocalDateTime.now());
 
         int warehouseId = input.getWarehouseId();
@@ -52,7 +52,7 @@ public class OrderStatusTransaction implements Transaction {
             if (customer == null) {
                 String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
                 String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
-                return command.withStatus(-1).withResponse(msg);
+                return new CommandResponse().withStatus(-1).withResponse(msg);
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
@@ -88,7 +88,7 @@ public class OrderStatusTransaction implements Transaction {
             orderStatusOutput.withOrderLines(orderLineOutputs);
         }
 
-        return command.withStatus(0).withResponse(outputScreen(orderStatusOutput));
+        return new CommandResponse().withStatus(0).withResponse(outputScreen(orderStatusOutput));
     }
 
     private String outputScreen(OrderStatusOutput orderStatus) {

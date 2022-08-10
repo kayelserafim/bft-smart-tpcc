@@ -60,7 +60,7 @@ public class TPCCClient {
                     .terminalId(bftParams.getId() * MAX_TERMINALS_PER_CLIENT + i)
                     .warehouseId(random.nextInt(1, tpccConfig.getWarehouses()))
                     .districtId(random.nextInt(1, TPCCConstants.DIST_PER_WHSE))
-                    .parallelExecution(bftParams.getParallel())
+                    .parallel(bftParams.getParallel())
                     .workload(tpccConfig)
                     .build();
 

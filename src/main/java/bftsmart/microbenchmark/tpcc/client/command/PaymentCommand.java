@@ -6,10 +6,9 @@ import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
-import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
 import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
-import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class PaymentCommand implements TPCCCommand {
@@ -22,7 +21,7 @@ public class PaymentCommand implements TPCCCommand {
     }
 
     @Override
-    public Command createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
+    public CommandRequest createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
         final int x = random.nextInt(1, 100);
         final int districtId = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
         int customerDistrictID;
@@ -54,7 +53,9 @@ public class PaymentCommand implements TPCCCommand {
         final BigDecimal paymentAmount =
                 random.nextBigDecimal(100, 500000).divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP);
 
-        final PaymentInput input = new PaymentInput().withWarehouseId(terminalData.getWarehouseId())
+        return new PaymentInput().withCommandId(UUID.randomUUID().toString())
+                .withTransactionType(transactionType().getClassId())
+                .withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)
                 .withCustomerWarehouseId(customerWarehouseID)
                 .withCustomerDistrictId(customerDistrictID)
@@ -62,10 +63,6 @@ public class PaymentCommand implements TPCCCommand {
                 .withCustomerLastName(customerLastName)
                 .withCustomerByName(customerByName)
                 .withPaymentAmount(paymentAmount);
-
-        return new Command().withCommandId(UUID.randomUUID().toString())
-                .withTransactionType(transactionType().getClassId())
-                .withRequest(KryoHelper.getInstance().toBytes(input));
     }
 
 }

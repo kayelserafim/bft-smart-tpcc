@@ -9,7 +9,8 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
 import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
@@ -21,8 +22,8 @@ import bftsmart.microbenchmark.tpcc.server.repository.StockRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.WarehouseRepository;
 import bftsmart.microbenchmark.tpcc.server.transaction.Transaction;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderOutput;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderLineOutput;
+import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderOutput;
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.Item;
@@ -32,7 +33,6 @@ import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
 import bftsmart.microbenchmark.tpcc.util.Dates;
-import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 
 public class NewOrderTransaction implements Transaction {
 
@@ -61,8 +61,8 @@ public class NewOrderTransaction implements Transaction {
     }
 
     @Override
-    public Command process(final Command command) {
-        NewOrderInput input = (NewOrderInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+    public CommandResponse process(final CommandRequest command) {
+        NewOrderInput input = (NewOrderInput) command;
         NewOrderOutput orderOutput = new NewOrderOutput().withDateTime(LocalDateTime.now());
 
         Integer warehouseId = input.getWarehouseId();
@@ -78,7 +78,7 @@ public class NewOrderTransaction implements Transaction {
             // data...
             // we throw an illegal access exception and the transaction gets
             // rolled back later on
-            return command.withStatus(-1).withResponse(TRANSACTION_ABORTED);
+            return new CommandResponse().withStatus(-1).withResponse(TRANSACTION_ABORTED);
         }
 
         // The row in the WAREHOUSE table with matching W_ID is selected and
@@ -195,7 +195,7 @@ public class NewOrderTransaction implements Transaction {
         stocks.forEach(stockRepository::save);
         orderLines.forEach(orderLineRepository::save);
 
-        return command.withStatus(0).withResponse(outputScreen(orderOutput));
+        return new CommandResponse().withStatus(0).withResponse(outputScreen(orderOutput));
     }
 
     private String getDistrictInfo(District district, Stock stock) {

@@ -3,8 +3,6 @@ package bftsmart.microbenchmark.tpcc.server.transaction.delivery.output;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;
 import com.esotericsoftware.kryo.io.Input;
@@ -70,14 +68,6 @@ public class DeliveryOutput implements KryoSerializable {
 
     public DeliveryOutput withOrderIds(OrderOutput[] orderIds) {
         setOrderIds(orderIds);
-        return this;
-    }
-    
-    public DeliveryOutput orderId(OrderOutput orderId) {
-        if (orderIds == null) {
-            orderIds = new OrderOutput[15];
-        }
-        ArrayUtils.add(orderIds, orderId);
         return this;
     }
 

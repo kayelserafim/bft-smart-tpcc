@@ -9,7 +9,8 @@ import java.util.stream.Collectors;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
-import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
 import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.NewOrderRepository;
@@ -24,7 +25,6 @@ import bftsmart.microbenchmark.tpcc.table.NewOrder;
 import bftsmart.microbenchmark.tpcc.table.Order;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.util.Dates;
-import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 
 public class DeliveryTransaction implements Transaction {
 
@@ -43,8 +43,8 @@ public class DeliveryTransaction implements Transaction {
     }
 
     @Override
-    public Command process(final Command command) {
-        DeliveryInput input = (DeliveryInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+    public CommandResponse process(final CommandRequest command) {
+        DeliveryInput input = (DeliveryInput) command;
         DeliveryOutput deliveryOutput = new DeliveryOutput().withDateTime(LocalDateTime.now())
                 .withWarehouseId(input.getWarehouseId())
                 .withOrderCarrierId(input.getOrderCarrierId());
@@ -63,7 +63,7 @@ public class DeliveryTransaction implements Transaction {
                 Order order = orderRepository.findByOrderId(orderId, districtId, warehouseId);
                 if (order == null) {
                     String message = String.format("Order [%s] not found", orderId);
-                    return command.withStatus(-1).withResponse(message);
+                    return new CommandResponse().withStatus(-1).withResponse(message);
                 }
                 Customer customer = customerRepository.find(order.getCustomerId(), districtId, warehouseId);
 
@@ -95,7 +95,7 @@ public class DeliveryTransaction implements Transaction {
         customers.stream().map(builder -> builder.deliveryCntIncrement().build()).forEach(customerRepository::save);
         orderLines.forEach(orderLineRepository::save);
 
-        return command.withStatus(0).withResponse(outputScreen(deliveryOutput));
+        return new CommandResponse().withStatus(0).withResponse(outputScreen(deliveryOutput));
     }
 
     private String outputScreen(DeliveryOutput delivery) {

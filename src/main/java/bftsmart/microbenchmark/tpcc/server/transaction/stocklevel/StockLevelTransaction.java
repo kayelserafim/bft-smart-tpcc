@@ -7,7 +7,8 @@ import org.javatuples.Tuple;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
 import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
@@ -18,7 +19,6 @@ import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.output.StockLe
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
-import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 
 public class StockLevelTransaction implements Transaction {
 
@@ -35,8 +35,8 @@ public class StockLevelTransaction implements Transaction {
     }
 
     @Override
-    public Command process(final Command command) {
-        StockLevelInput input = (StockLevelInput) KryoHelper.getInstance().fromBytes(command.getRequest());
+    public CommandResponse process(final CommandRequest command) {
+        StockLevelInput input = (StockLevelInput) command;
         StockLevelOutput output = new StockLevelOutput();
 
         Integer warehouseId = input.getWarehouseId();
@@ -57,7 +57,7 @@ public class StockLevelTransaction implements Transaction {
                 .withThreshold(threshold)
                 .withStockCount(stockCount);
 
-        return command.withStatus(0).withResponse(outputScreen(output));
+        return new CommandResponse().withStatus(0).withResponse(outputScreen(output));
     }
 
     private String outputScreen(StockLevelOutput stockLevel) {
