@@ -1,4 +1,4 @@
-package bftsmart.microbenchmark.tpcc.probject;
+package bftsmart.microbenchmark.tpcc.domain;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;
@@ -9,7 +9,7 @@ import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.util.MultiOperationRequest;
 import bftsmart.util.MultiOperationResponse;
 
-public class TPCCCommand implements KryoSerializable {
+public class Command implements KryoSerializable {
 
     private String commandId;
     private int transactionType;
@@ -26,7 +26,7 @@ public class TPCCCommand implements KryoSerializable {
         this.commandId = commandId;
     }
 
-    public TPCCCommand withCommandId(String commandId) {
+    public Command withCommandId(String commandId) {
         setCommandId(commandId);
         return this;
     }
@@ -39,7 +39,7 @@ public class TPCCCommand implements KryoSerializable {
         this.transactionType = transactionType;
     }
 
-    public TPCCCommand withTransactionType(int transactionType) {
+    public Command withTransactionType(int transactionType) {
         setTransactionType(transactionType);
         return this;
     }
@@ -52,7 +52,7 @@ public class TPCCCommand implements KryoSerializable {
         this.request = request;
     }
 
-    public TPCCCommand withRequest(byte[] request) {
+    public Command withRequest(byte[] request) {
         setRequest(request);
         return this;
     }
@@ -65,7 +65,7 @@ public class TPCCCommand implements KryoSerializable {
         this.conflict = conflict;
     }
 
-    public TPCCCommand withConflict(boolean conflict) {
+    public Command withConflict(boolean conflict) {
         setConflict(conflict);
         return this;
     }
@@ -78,7 +78,7 @@ public class TPCCCommand implements KryoSerializable {
         this.status = status;
     }
 
-    public TPCCCommand withStatus(int status) {
+    public Command withStatus(int status) {
         setStatus(status);
         return this;
     }
@@ -91,7 +91,7 @@ public class TPCCCommand implements KryoSerializable {
         this.response = response;
     }
 
-    public TPCCCommand withResponse(String response) {
+    public Command withResponse(String response) {
         setResponse(response);
         return this;
     }
@@ -110,15 +110,15 @@ public class TPCCCommand implements KryoSerializable {
         return response.serialize();
     }
 
-    public static TPCCCommand deserialize(byte[] bytes) {
-        return (TPCCCommand) KryoHelper.getInstance().fromBytes(bytes);
+    public static Command deserialize(byte[] bytes) {
+        return (Command) KryoHelper.getInstance().fromBytes(bytes);
     }
 
-    public static TPCCCommand deserialize(MultiOperationRequest request) {
+    public static Command deserialize(MultiOperationRequest request) {
         return deserialize(request.operations[0].data);
     }
 
-    public static TPCCCommand deserialize(MultiOperationResponse response) {
+    public static Command deserialize(MultiOperationResponse response) {
         return deserialize(response.operations[0].data);
     }
 

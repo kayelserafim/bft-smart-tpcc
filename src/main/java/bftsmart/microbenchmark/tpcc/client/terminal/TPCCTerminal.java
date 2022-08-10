@@ -12,8 +12,8 @@ import com.google.common.base.Stopwatch;
 
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.service.TPCCService;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class TPCCTerminal implements Callable<List<RawResult>> {
@@ -70,7 +70,7 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
 
     private RawResult executeTransaction() {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        TPCCCommand tpccCommand = transaction.process(terminalData, random);
+        Command tpccCommand = transaction.process(terminalData, random);
         stopwatch.stop();
 
         return new RawResult().terminalId(terminalData.getTerminalId())

@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.inject.Singleton;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
+import bftsmart.microbenchmark.tpcc.domain.Command;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
@@ -23,8 +23,8 @@ public class TPCCConflictDefinition extends ConflictDefinition {
 
     @Override
     public boolean isDependent(MessageContextPair arg0, MessageContextPair arg1) {
-        final TPCCCommand command1 = TPCCCommand.deserialize(new MultiOperationRequest(arg0.request.getContent()));
-        final TPCCCommand command2 = TPCCCommand.deserialize(new MultiOperationRequest(arg1.request.getContent()));
+        final Command command1 = Command.deserialize(new MultiOperationRequest(arg0.request.getContent()));
+        final Command command2 = Command.deserialize(new MultiOperationRequest(arg1.request.getContent()));
 
         if (TransactionConflicts.hasNotConflict(command1.getTransactionType(), command2.getTransactionType())) {
             conflictMap.put(command1.getCommandId(), Boolean.FALSE);
@@ -36,6 +36,10 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             conflictMap.put(command2.getCommandId(), Boolean.TRUE);
             return true;
         }
+        
+        // Não tem conflito entre last name diferentes
+        // Tem conflito entre last name e customer id
+        
         final int customer1 = getCustomerId(command1);
         final int customer2 = getCustomerId(command2);
 
@@ -50,7 +54,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         return conflictMap.getOrDefault(commandId, Boolean.FALSE);
     }
 
-    private int getCustomerId(TPCCCommand command) {
+    private int getCustomerId(Command command) {
         final int transactionType = command.getTransactionType();
 
         switch (transactionType) {

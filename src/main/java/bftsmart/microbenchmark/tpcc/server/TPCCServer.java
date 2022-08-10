@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
+import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
+import bftsmart.microbenchmark.tpcc.domain.Command;
 import bftsmart.microbenchmark.tpcc.server.conflict.TPCCConflictDefinition;
 import bftsmart.microbenchmark.tpcc.server.transaction.TransactionFactory;
 import bftsmart.tom.MessageContext;
@@ -27,7 +27,7 @@ public class TPCCServer implements SingleExecutable {
 
     @Inject
     TPCCServer(TransactionFactory transactionFactory, TPCCConflictDefinition conflictDefinition,
-            WorkloadConfig workloadConfig, BFTParams bftParams) {
+            TPCCConfig workloadConfig, BFTParams bftParams) {
         this.transactionFactory = transactionFactory;
         this.conflictDefinition = conflictDefinition;
         Integer replicaId = bftParams.getId();
@@ -43,7 +43,7 @@ public class TPCCServer implements SingleExecutable {
 
     @Override
     public byte[] executeOrdered(byte[] theCommand, MessageContext theContext) {
-        TPCCCommand aRequest = TPCCCommand.deserialize(theCommand);
+        Command aRequest = Command.deserialize(theCommand);
         LOGGER.debug("Processing an ordered request of type [{}]", aRequest.getTransactionType());
 
         byte[] reply = execute(aRequest);
@@ -54,7 +54,7 @@ public class TPCCServer implements SingleExecutable {
 
     @Override
     public byte[] executeUnordered(byte[] theCommand, MessageContext theContext) {
-        TPCCCommand aRequest = TPCCCommand.deserialize(theCommand);
+        Command aRequest = Command.deserialize(theCommand);
         LOGGER.debug("Processing an unordered request of type [{}]", aRequest.getTransactionType());
 
         byte[] reply = execute(aRequest);
@@ -63,10 +63,10 @@ public class TPCCServer implements SingleExecutable {
         return reply;
     }
 
-    private byte[] execute(TPCCCommand aRequest) {
-        TPCCCommand reply = transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
+    private byte[] execute(Command aRequest) {
+        Command reply = transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
 
-        return new TPCCCommand().withConflict(conflictDefinition.isDependent(reply.getCommandId()))
+        return new Command().withConflict(conflictDefinition.isDependent(reply.getCommandId()))
                 .withStatus(reply.getStatus())
                 .withResponse(reply.getResponse())
                 .serialize();

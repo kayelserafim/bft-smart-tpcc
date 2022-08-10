@@ -20,9 +20,9 @@ import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalFactory;
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
-import bftsmart.microbenchmark.tpcc.io.TPCCData;
+import bftsmart.microbenchmark.tpcc.io.Workload;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class TPCCClient {
@@ -36,17 +36,17 @@ public class TPCCClient {
 
     private final TPCCTerminalFactory terminalFactory;
     private final MetricCollector metricCollector;
-    private final WorkloadConfig workload;
+    private final TPCCConfig tpccConfig;
     private final BFTParams bftParams;
 
     @Inject
-    TPCCClient(TPCCTerminalFactory terminalFactory, MetricCollector metricCollector, TPCCData tpccData,
-            WorkloadConfig workload, BFTParams bftParams) {
+    TPCCClient(TPCCTerminalFactory terminalFactory, MetricCollector metricCollector, Workload workload,
+            TPCCConfig tpccConfig, BFTParams bftParams) {
         this.terminalFactory = terminalFactory;
         this.metricCollector = metricCollector;
-        this.workload = workload;
+        this.tpccConfig = tpccConfig;
         this.bftParams = bftParams;
-        this.random = new TPCCRandom(tpccData.getcLoad());
+        this.random = new TPCCRandom(workload.getcLoad());
         this.executorService = Executors.newFixedThreadPool(bftParams.getNumOfThreads());
 
         LOGGER.info("TPCCClient Initiated.");
@@ -58,10 +58,10 @@ public class TPCCClient {
         for (int i = 0; i < bftParams.getNumOfThreads(); i++) {
             TPCCTerminalData terminalData = TPCCTerminalData.builder()
                     .terminalId(bftParams.getId() * MAX_TERMINALS_PER_CLIENT + i)
-                    .warehouseId(random.nextInt(1, workload.getWarehouses()))
-                    .districtId(random.nextInt(1, TPCCConfig.DIST_PER_WHSE))
+                    .warehouseId(random.nextInt(1, tpccConfig.getWarehouses()))
+                    .districtId(random.nextInt(1, TPCCConstants.DIST_PER_WHSE))
                     .parallelExecution(bftParams.getParallel())
-                    .workload(workload)
+                    .workload(tpccConfig)
                     .build();
 
             LOGGER.info("Client {} starting terminal for warehouse ", terminalData.getTerminalName());

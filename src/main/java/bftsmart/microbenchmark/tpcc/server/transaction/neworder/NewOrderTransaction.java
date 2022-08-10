@@ -9,8 +9,8 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.ItemRepository;
@@ -61,7 +61,7 @@ public class NewOrderTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand command) {
+    public Command process(final Command command) {
         NewOrderInput input = (NewOrderInput) KryoHelper.getInstance().fromBytes(command.getRequest());
         NewOrderOutput orderOutput = new NewOrderOutput().withDateTime(LocalDateTime.now());
 

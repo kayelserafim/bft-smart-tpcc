@@ -8,8 +8,8 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.OrderRepository;
@@ -39,7 +39,7 @@ public class OrderStatusTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand command) {
+    public Command process(final Command command) {
         OrderStatusInput input = (OrderStatusInput) KryoHelper.getInstance().fromBytes(command.getRequest());
         OrderStatusOutput orderStatusOutput = new OrderStatusOutput().withDateTime(LocalDateTime.now());
 

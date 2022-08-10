@@ -11,8 +11,8 @@ import com.google.inject.Singleton;
 
 import bftsmart.microbenchmark.tpcc.client.command.CommandFactory;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 import bftsmart.tom.ParallelServiceProxy;
 import bftsmart.util.MultiOperationRequest;
@@ -28,9 +28,9 @@ public class TPCCService {
     @Inject
     private CommandFactory commandFactory;
 
-    public TPCCCommand process(TPCCTerminalData terminalData, TPCCRandom random) {
+    public Command process(TPCCTerminalData terminalData, TPCCRandom random) {
         TransactionType transactionType = terminalData.getTransactionType(random.nextInt(1, 100));
-        TPCCCommand command = commandFactory.getFactory(transactionType).createCommand(terminalData, random);
+        Command command = commandFactory.getFactory(transactionType).createCommand(terminalData, random);
         ParallelServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalData.getTerminalId());
 
         try {
@@ -41,7 +41,7 @@ public class TPCCService {
             } else {
                 resp = serviceProxy.invokeOrdered(req);
             }
-            return TPCCCommand.deserialize(new MultiOperationResponse(resp))
+            return Command.deserialize(new MultiOperationResponse(resp))
                     .withCommandId(command.getCommandId())
                     .withRequest(command.getRequest())
                     .withTransactionType(command.getTransactionType());

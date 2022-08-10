@@ -3,14 +3,14 @@ package bftsmart.microbenchmark.tpcc.client.command;
 import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
 import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
-public class OrderStatusCommand implements Command {
+public class OrderStatusCommand implements TPCCCommand {
 
     @Override
     public TransactionType transactionType() {
@@ -18,9 +18,9 @@ public class OrderStatusCommand implements Command {
     }
 
     @Override
-    public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
+    public Command createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
         final int y = random.nextInt(1, 100);
-        final int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+        final int districtId = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
         int customerId = -1;
         boolean customerByName;
         String customerLastName = null;
@@ -40,7 +40,7 @@ public class OrderStatusCommand implements Command {
                 .withCustomerByName(customerByName)
                 .withCustomerLastName(customerLastName);
 
-        return new TPCCCommand().withCommandId(UUID.randomUUID().toString())
+        return new Command().withCommandId(UUID.randomUUID().toString())
                 .withTransactionType(transactionType().getClassId())
                 .withRequest(KryoHelper.getInstance().toBytes(input));
     }

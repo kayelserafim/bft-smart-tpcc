@@ -13,7 +13,7 @@ import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
+import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
 import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 
@@ -24,11 +24,11 @@ public class RawResultSpreadsheet implements ResultSpreadsheet {
     private static final String[] HEADER = { "ID", "Transaction Type", "Terminal Id", "Terminal Name", "Has Conflict",
             "Total Latency (ms)", "Status", "Message" };
 
-    private final WorkloadConfig workload;
+    private final TPCCConfig workload;
     private final BFTParams bftParams;
 
     @Inject
-    public RawResultSpreadsheet(final WorkloadConfig workload, final BFTParams bftParams) {
+    public RawResultSpreadsheet(final TPCCConfig workload, final BFTParams bftParams) {
         this.workload = workload;
         this.bftParams = bftParams;
     }

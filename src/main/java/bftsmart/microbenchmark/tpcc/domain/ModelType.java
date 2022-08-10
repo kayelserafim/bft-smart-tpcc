@@ -1,4 +1,4 @@
-package bftsmart.microbenchmark.tpcc.probject;
+package bftsmart.microbenchmark.tpcc.domain;
 
 public enum ModelType {
 

@@ -10,7 +10,7 @@ import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import com.esotericsoftware.kryo.util.Pool;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
+import bftsmart.microbenchmark.tpcc.domain.Command;
 import bftsmart.microbenchmark.tpcc.server.transaction.delivery.input.DeliveryInput;
 import bftsmart.microbenchmark.tpcc.server.transaction.delivery.output.DeliveryOutput;
 import bftsmart.microbenchmark.tpcc.server.transaction.delivery.output.OrderOutput;
@@ -39,7 +39,7 @@ public final class KryoHelper {
                 kryo.setOptimizedGenerics(false);
                 kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 kryo.register(int[].class);
-                kryo.register(TPCCCommand.class);
+                kryo.register(Command.class);
                 kryo.register(DeliveryInput.class);
                 kryo.register(DeliveryOutput.class);
                 kryo.register(OrderOutput.class);

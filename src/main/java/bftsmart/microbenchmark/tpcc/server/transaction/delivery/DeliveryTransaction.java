@@ -8,9 +8,9 @@ import java.util.stream.Collectors;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.NewOrderRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
@@ -43,7 +43,7 @@ public class DeliveryTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand command) {
+    public Command process(final Command command) {
         DeliveryInput input = (DeliveryInput) KryoHelper.getInstance().fromBytes(command.getRequest());
         DeliveryOutput deliveryOutput = new DeliveryOutput().withDateTime(LocalDateTime.now())
                 .withWarehouseId(input.getWarehouseId())
@@ -53,7 +53,7 @@ public class DeliveryTransaction implements Transaction {
         List<Customer.Builder> customers = new ArrayList<>();
         List<Order> orders = new ArrayList<>();
         List<OrderLine> orderLines = new ArrayList<>();
-        for (int districtId = 1; districtId <= TPCCConfig.DIST_PER_WHSE; districtId++) {
+        for (int districtId = 1; districtId <= TPCCConstants.DIST_PER_WHSE; districtId++) {
             Integer warehouseId = input.getWarehouseId();
             // clause 2.7.4.2 (dot 3)
             Integer orderId =
@@ -111,7 +111,7 @@ public class DeliveryTransaction implements Transaction {
         for (OrderOutput order : delivery.getOrderIds()) {
             if (order.getDistrictId() >= 0) {
                 message.append("  District ");
-                message.append(order.getDistrictId() < TPCCConfig.DIST_PER_WHSE ? " " : "");
+                message.append(order.getDistrictId() < TPCCConstants.DIST_PER_WHSE ? " " : "");
                 message.append(order.getDistrictId());
                 message.append(": Order number ");
                 message.append(order.getOrderId());
@@ -119,7 +119,7 @@ public class DeliveryTransaction implements Transaction {
             } else {
                 // clause 2.7.4.2 (dot 3) : delivery skipped
                 message.append("  District ");
-                message.append(order.getDistrictId() < TPCCConfig.DIST_PER_WHSE ? " " : "");
+                message.append(order.getDistrictId() < TPCCConstants.DIST_PER_WHSE ? " " : "");
                 message.append(order.getDistrictId());
                 message.append(": No orders to be delivered.\n");
             }

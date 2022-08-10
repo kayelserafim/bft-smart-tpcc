@@ -7,8 +7,8 @@ import org.javatuples.Tuple;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.StockRepository;
@@ -35,7 +35,7 @@ public class StockLevelTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand command) {
+    public Command process(final Command command) {
         StockLevelInput input = (StockLevelInput) KryoHelper.getInstance().fromBytes(command.getRequest());
         StockLevelOutput output = new StockLevelOutput();
 

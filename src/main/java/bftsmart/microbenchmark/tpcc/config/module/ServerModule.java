@@ -12,7 +12,7 @@ public final class ServerModule extends AbstractModule {
         bind(ConflictDefinition.class).to(TPCCConflictDefinition.class);
         install(new JacksonModule());
         install(new TransactionModule());
-        install(new DataModule());
+        install(new WorkloadModule());
     }
 
 }

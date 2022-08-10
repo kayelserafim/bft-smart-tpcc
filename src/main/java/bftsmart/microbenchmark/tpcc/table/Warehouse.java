@@ -15,8 +15,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import bftsmart.microbenchmark.tpcc.probject.ModelType;
-import bftsmart.microbenchmark.tpcc.probject.PRObject;
+import bftsmart.microbenchmark.tpcc.domain.ModelType;
+import bftsmart.microbenchmark.tpcc.domain.Persistable;
 
 /**
  * Primary Key: W_ID
@@ -25,9 +25,7 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
  *
  */
 @JsonDeserialize(builder = Warehouse.Builder.class)
-public class Warehouse implements PRObject {
-
-    private static final long serialVersionUID = -7955310931632927759L;
+public class Warehouse implements Persistable {
 
     private static final ModelType MODEL_TYPE = ModelType.WAREHOUSE;
 

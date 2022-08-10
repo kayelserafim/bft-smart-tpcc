@@ -2,9 +2,9 @@ package bftsmart.microbenchmark.tpcc.client.terminal;
 
 import java.time.Duration;
 
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
+import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class TPCCTerminalData {
 
@@ -169,7 +169,7 @@ public class TPCCTerminalData {
             return this;
         }
 
-        public Builder workload(WorkloadConfig workload) {
+        public Builder workload(TPCCConfig workload) {
             return warehouseCount(workload.getWarehouses()).stockLevelWeight(workload.getStockLevelWeight())
                     .orderStatusWeight(workload.getOrderStatusWeight())
                     .deliveryWeight(workload.getDeliveryWeight())

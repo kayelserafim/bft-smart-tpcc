@@ -3,14 +3,14 @@ package bftsmart.microbenchmark.tpcc.client.command;
 import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.util.KryoHelper;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
-public class NewOrderCommand implements Command {
+public class NewOrderCommand implements TPCCCommand {
 
     @Override
     public TransactionType transactionType() {
@@ -18,9 +18,9 @@ public class NewOrderCommand implements Command {
     }
 
     @Override
-    public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
+    public Command createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
         final int customerID = random.getCustomerID();
-        final int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+        final int districtId = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
 
         // o_ol_cnt
         final int numItems = random.nextInt(5, 15);
@@ -61,7 +61,7 @@ public class NewOrderCommand implements Command {
                 .withSupplierWarehouseIds(supplierWarehouses)
                 .withOrderQuantities(orderQuantities);
 
-        return new TPCCCommand().withCommandId(UUID.randomUUID().toString())
+        return new Command().withCommandId(UUID.randomUUID().toString())
                 .withTransactionType(transactionType().getClassId())
                 .withRequest(KryoHelper.getInstance().toBytes(input));
     }

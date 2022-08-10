@@ -7,8 +7,8 @@ import org.apache.commons.lang3.BooleanUtils;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.Command;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.HistoryRepository;
@@ -40,7 +40,7 @@ public class PaymentTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand command) {
+    public Command process(final Command command) {
         PaymentInput input = (PaymentInput) KryoHelper.getInstance().fromBytes(command.getRequest());
         PaymentOutput paymentOutput = new PaymentOutput().withDateTime(LocalDateTime.now());
 

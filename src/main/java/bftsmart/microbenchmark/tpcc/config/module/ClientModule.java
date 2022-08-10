@@ -8,7 +8,7 @@ public final class ClientModule extends AbstractModule {
     protected void configure() {
         install(new JacksonModule());
         install(new CommandModule());
-        install(new DataModule());
+        install(new WorkloadModule());
         install(new SpreadsheetModule());
     }
 

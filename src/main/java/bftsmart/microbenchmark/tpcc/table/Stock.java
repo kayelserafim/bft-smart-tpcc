@@ -14,8 +14,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
-import bftsmart.microbenchmark.tpcc.probject.ModelType;
-import bftsmart.microbenchmark.tpcc.probject.PRObject;
+import bftsmart.microbenchmark.tpcc.domain.ModelType;
+import bftsmart.microbenchmark.tpcc.domain.Persistable;
 
 /**
  * <ul>
@@ -25,9 +25,7 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
  * </ul>
  */
 @JsonDeserialize(builder = Stock.Builder.class)
-public class Stock implements PRObject {
-
-    private static final long serialVersionUID = -2966437037838760265L;
+public class Stock implements Persistable {
 
     private static final AtomicInteger ORDER_CNT = new AtomicInteger();
     private static final AtomicInteger REMOTE_CNT = new AtomicInteger();
