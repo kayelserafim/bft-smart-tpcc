@@ -1,12 +1,13 @@
 package bftsmart.microbenchmark.tpcc.server.transaction;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 
 public interface Transaction {
 
     TransactionType transactionType();
 
-    TPCCCommand process(final TPCCCommand aRequest);
+    CommandResponse process(final CommandRequest aRequest);
 
 }

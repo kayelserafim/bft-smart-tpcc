@@ -12,7 +12,6 @@ import com.google.common.base.Stopwatch;
 
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.service.TPCCService;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class TPCCTerminal implements Callable<List<RawResult>> {
@@ -44,7 +43,7 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
             int warmupIterations = terminalData.getWarmupIterations();
             LOGGER.debug("Executing {} warmup iterations...", warmupIterations);
             while (warmupIterations > 0) {
-                executeTransaction();
+                transaction.process(terminalData, random);
                 warmupIterations--;
             }
             LOGGER.debug("Warmup iterations executed");
@@ -56,7 +55,7 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
         Duration minsToWait = terminalData.getRunMins();
         Stopwatch stopwatch = Stopwatch.createStarted();
         while (true) {
-            RawResult rawResult = executeTransaction();
+            RawResult rawResult = transaction.process(terminalData, random);
             if (minsToWait.compareTo(stopwatch.elapsed()) >= 0) {
                 results.add(rawResult);
             } else {
@@ -65,21 +64,6 @@ public class TPCCTerminal implements Callable<List<RawResult>> {
             }
         }
         LOGGER.debug("Limited time execution is over. Elapsed time {}", stopwatch.elapsed().getSeconds());
-    }
-
-    private RawResult executeTransaction() {
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        TPCCCommand tpccCommand = transaction.process(terminalData, random);
-        stopwatch.stop();
-
-        return new RawResult().terminalId(terminalData.getTerminalId())
-                .terminalName(terminalData.getTerminalName())
-                .commandId(tpccCommand.getCommandId())
-                .transactionType(tpccCommand.getTransactionType())
-                .conflict(tpccCommand.getConflict())
-                .status(tpccCommand.getStatus())
-                .elapsed(stopwatch.elapsed())
-                .message("Response received: " + tpccCommand.getResponse());
     }
 
 }

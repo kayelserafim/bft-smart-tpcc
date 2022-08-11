@@ -7,8 +7,9 @@ import org.javatuples.Tuple;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.OrderLineRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.StockRepository;
@@ -34,9 +35,9 @@ public class StockLevelTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand command) {
-        StockLevelInput input = (StockLevelInput) command.getRequest();
-        StockLevelOutput.Builder stockBuilder = StockLevelOutput.builder();
+    public CommandResponse process(final CommandRequest command) {
+        StockLevelInput input = (StockLevelInput) command;
+        StockLevelOutput output = new StockLevelOutput();
 
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
@@ -51,9 +52,12 @@ public class StockLevelTransaction implements Transaction {
 
         long stockCount = stockRepository.count(stockIds, threshold);
 
-        stockBuilder.warehouseId(warehouseId).districtId(districtId).threshold(threshold).stockCount(stockCount);
+        output.withWarehouseId(warehouseId)
+                .withDistrictId(districtId)
+                .withThreshold(threshold)
+                .withStockCount(stockCount);
 
-        return TPCCCommand.from(command).status(0).response(outputScreen(stockBuilder.build())).build();
+        return new CommandResponse().withStatus(0).withResponse(outputScreen(output));
     }
 
     private String outputScreen(StockLevelOutput stockLevel) {

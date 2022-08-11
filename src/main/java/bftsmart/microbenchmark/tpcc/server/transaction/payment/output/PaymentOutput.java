@@ -1,428 +1,550 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.payment.output;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
 
-public class PaymentOutput {
+public class PaymentOutput implements KryoSerializable {
 
-    private final LocalDateTime dateTime;
-    private final Integer warehouseId;
-    private final String warehouseStreet1;
-    private final String warehouseStreet2;
-    private final String warehouseCity;
-    private final String warehouseState;
-    private final String warehouseZip;
-    private final Integer districtId;
-    private final String districtStreet1;
-    private final String districtStreet2;
-    private final String districtCity;
-    private final String districtState;
-    private final String districtZip;
-    private final Integer customerId;
-    private final String customerFirst;
-    private final String customerMiddle;
-    private final String customerLast;
-    private final String customerStreet1;
-    private final String customerStreet2;
-    private final String customerCity;
-    private final String customerState;
-    private final String customerZip;
-    private final Long customerSince;
-    private final String customerCredit;
-    private final BigDecimal customerDiscount;
-    private final String customerPhone;
-    private final BigDecimal amountPaid;
-    private final BigDecimal customerCreditLimit;
-    private final BigDecimal customerBalance;
-    private final String customerData;
+    private long dateTime;
+    private int warehouseId;
+    private String warehouseStreet1;
+    private String warehouseStreet2;
+    private String warehouseCity;
+    private String warehouseState;
+    private String warehouseZip;
+    private int districtId;
+    private String districtStreet1;
+    private String districtStreet2;
+    private String districtCity;
+    private String districtState;
+    private String districtZip;
+    private int customerId;
+    private String customerFirst;
+    private String customerMiddle;
+    private String customerLast;
+    private String customerStreet1;
+    private String customerStreet2;
+    private String customerCity;
+    private String customerState;
+    private String customerZip;
+    private long customerSince;
+    private String customerCredit;
+    private double customerDiscount;
+    private String customerPhone;
+    private double amountPaid;
+    private double customerCreditLimit;
+    private double customerBalance;
+    private String customerData;
 
-    public PaymentOutput(Builder builder) {
-        this.dateTime = builder.dateTime;
-        this.warehouseId = builder.warehouseId;
-        this.warehouseStreet1 = builder.warehouseStreet1;
-        this.warehouseStreet2 = builder.warehouseStreet2;
-        this.warehouseCity = builder.warehouseCity;
-        this.warehouseState = builder.warehouseState;
-        this.warehouseZip = builder.warehouseZip;
-        this.districtId = builder.districtId;
-        this.districtStreet1 = builder.districtStreet1;
-        this.districtStreet2 = builder.districtStreet2;
-        this.districtCity = builder.districtCity;
-        this.districtState = builder.districtState;
-        this.districtZip = builder.districtZip;
-        this.customerId = builder.customerId;
-        this.customerFirst = builder.customerFirst;
-        this.customerMiddle = builder.customerMiddle;
-        this.customerLast = builder.customerLast;
-        this.customerStreet1 = builder.customerStreet1;
-        this.customerStreet2 = builder.customerStreet2;
-        this.customerCity = builder.customerCity;
-        this.customerState = builder.customerState;
-        this.customerZip = builder.customerZip;
-        this.customerSince = builder.customerSince;
-        this.customerCredit = builder.customerCredit;
-        this.customerDiscount = builder.customerDiscount.setScale(4, RoundingMode.HALF_UP);
-        this.customerPhone = builder.customerPhone;
-        this.amountPaid = builder.amountPaid.setScale(2, RoundingMode.HALF_UP);
-        this.customerCreditLimit = builder.customerCreditLimit.setScale(2, RoundingMode.HALF_UP);
-        this.customerBalance = builder.customerBalance.setScale(2, RoundingMode.HALF_UP);
-        this.customerData = builder.customerData;
-    }
-
-    public LocalDateTime getDateTime() {
+    public long getDateTime() {
         return dateTime;
     }
 
-    public Integer getWarehouseId() {
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public PaymentOutput withDateTime(long dateTime) {
+        setDateTime(dateTime);
+        return this;
+    }
+
+    public PaymentOutput withDateTime(LocalDateTime dateTime) {
+        setDateTime(dateTime.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli());
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
+    }
+
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public PaymentOutput withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public PaymentOutput warehouse(Warehouse warehouse) {
+        setWarehouseId(warehouse.getWarehouseId());
+        setWarehouseStreet1(warehouse.getStreet1());
+        setWarehouseStreet2(warehouse.getStreet2());
+        setWarehouseCity(warehouse.getCity());
+        setWarehouseState(warehouse.getState());
+        setWarehouseZip(warehouse.getZip());
+        return this;
     }
 
     public String getWarehouseStreet1() {
         return warehouseStreet1;
     }
 
+    public void setWarehouseStreet1(String warehouseStreet1) {
+        this.warehouseStreet1 = warehouseStreet1;
+    }
+
+    public PaymentOutput withWarehouseStreet1(String warehouseStreet1) {
+        setWarehouseStreet1(warehouseStreet1);
+        return this;
+    }
+
     public String getWarehouseStreet2() {
         return warehouseStreet2;
+    }
+
+    public void setWarehouseStreet2(String warehouseStreet2) {
+        this.warehouseStreet2 = warehouseStreet2;
+    }
+
+    public PaymentOutput withWarehouseStreet2(String warehouseStreet2) {
+        setWarehouseStreet2(warehouseStreet2);
+        return this;
     }
 
     public String getWarehouseCity() {
         return warehouseCity;
     }
 
+    public void setWarehouseCity(String warehouseCity) {
+        this.warehouseCity = warehouseCity;
+    }
+
+    public PaymentOutput withWarehouseCity(String warehouseCity) {
+        setWarehouseCity(warehouseCity);
+        return this;
+    }
+
     public String getWarehouseState() {
         return warehouseState;
+    }
+
+    public void setWarehouseState(String warehouseState) {
+        this.warehouseState = warehouseState;
+    }
+
+    public PaymentOutput withWarehouseState(String warehouseState) {
+        setWarehouseState(warehouseState);
+        return this;
     }
 
     public String getWarehouseZip() {
         return warehouseZip;
     }
 
-    public Integer getDistrictId() {
+    public void setWarehouseZip(String warehouseZip) {
+        this.warehouseZip = warehouseZip;
+    }
+
+    public PaymentOutput withWarehouseZip(String warehouseZip) {
+        setWarehouseZip(warehouseZip);
+        return this;
+    }
+
+    public int getDistrictId() {
         return districtId;
+    }
+
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public PaymentOutput withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public PaymentOutput district(District district) {
+        setDistrictId(district.getDistrictId());
+        setDistrictStreet1(district.getStreet1());
+        setDistrictStreet2(district.getStreet2());
+        setDistrictCity(district.getCity());
+        setDistrictState(district.getState());
+        setDistrictZip(district.getZip());
+        return this;
     }
 
     public String getDistrictStreet1() {
         return districtStreet1;
     }
 
+    public void setDistrictStreet1(String districtStreet1) {
+        this.districtStreet1 = districtStreet1;
+    }
+
+    public PaymentOutput withDistrictStreet1(String districtStreet1) {
+        setDistrictStreet1(districtStreet1);
+        return this;
+    }
+
     public String getDistrictStreet2() {
         return districtStreet2;
+    }
+
+    public void setDistrictStreet2(String districtStreet2) {
+        this.districtStreet2 = districtStreet2;
+    }
+
+    public PaymentOutput withDistrictStreet2(String districtStreet2) {
+        setDistrictStreet2(districtStreet2);
+        return this;
     }
 
     public String getDistrictCity() {
         return districtCity;
     }
 
+    public void setDistrictCity(String districtCity) {
+        this.districtCity = districtCity;
+    }
+
+    public PaymentOutput withDistrictCity(String districtCity) {
+        setDistrictCity(districtCity);
+        return this;
+    }
+
     public String getDistrictState() {
         return districtState;
+    }
+
+    public void setDistrictState(String districtState) {
+        this.districtState = districtState;
+    }
+
+    public PaymentOutput withDistrictState(String districtState) {
+        setDistrictState(districtState);
+        return this;
     }
 
     public String getDistrictZip() {
         return districtZip;
     }
 
-    public Integer getCustomerId() {
+    public void setDistrictZip(String districtZip) {
+        this.districtZip = districtZip;
+    }
+
+    public PaymentOutput withDistrictZip(String districtZip) {
+        setDistrictZip(districtZip);
+        return this;
+    }
+
+    public int getCustomerId() {
         return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public PaymentOutput withCustomerId(int customerId) {
+        setCustomerId(customerId);
+        return this;
+    }
+
+    public PaymentOutput customer(Customer customer) {
+        setCustomerId(customer.getCustomerId());
+        setCustomerFirst(customer.getFirst());
+        setCustomerMiddle(customer.getMiddle());
+        setCustomerLast(customer.getLast());
+        setCustomerStreet1(customer.getStreet1());
+        setCustomerStreet2(customer.getStreet2());
+        setCustomerCity(customer.getCity());
+        setCustomerState(customer.getState());
+        setCustomerZip(customer.getState());
+        setCustomerSince(customer.getSince());
+        setCustomerCredit(customer.getCredit());
+        setCustomerDiscount(customer.getDiscount().setScale(4, RoundingMode.HALF_UP).doubleValue());
+        setCustomerPhone(customer.getPhone());
+        setCustomerCreditLimit(customer.getCreditLimit().setScale(2, RoundingMode.HALF_UP).doubleValue());
+        setCustomerBalance(customer.getBalance().setScale(2, RoundingMode.HALF_UP).doubleValue());
+        setCustomerData(customer.getData());
+        return this;
     }
 
     public String getCustomerFirst() {
         return customerFirst;
     }
 
+    public void setCustomerFirst(String customerFirst) {
+        this.customerFirst = customerFirst;
+    }
+
+    public PaymentOutput withCustomerFirst(String customerFirst) {
+        setCustomerFirst(customerFirst);
+        return this;
+    }
+
     public String getCustomerMiddle() {
         return customerMiddle;
+    }
+
+    public void setCustomerMiddle(String customerMiddle) {
+        this.customerMiddle = customerMiddle;
+    }
+
+    public PaymentOutput withCustomerMiddle(String customerMiddle) {
+        setCustomerMiddle(customerMiddle);
+        return this;
     }
 
     public String getCustomerLast() {
         return customerLast;
     }
 
+    public void setCustomerLast(String customerLast) {
+        this.customerLast = customerLast;
+    }
+
+    public PaymentOutput withCustomerLast(String customerLast) {
+        setCustomerLast(customerLast);
+        return this;
+    }
+
     public String getCustomerStreet1() {
         return customerStreet1;
+    }
+
+    public void setCustomerStreet1(String customerStreet1) {
+        this.customerStreet1 = customerStreet1;
+    }
+
+    public PaymentOutput withCustomerStreet1(String customerStreet1) {
+        setCustomerStreet1(customerStreet1);
+        return this;
     }
 
     public String getCustomerStreet2() {
         return customerStreet2;
     }
 
+    public void setCustomerStreet2(String customerStreet2) {
+        this.customerStreet2 = customerStreet2;
+    }
+
+    public PaymentOutput withCustomerStreet2(String customerStreet2) {
+        setCustomerStreet2(customerStreet2);
+        return this;
+    }
+
     public String getCustomerCity() {
         return customerCity;
+    }
+
+    public void setCustomerCity(String customerCity) {
+        this.customerCity = customerCity;
+    }
+
+    public PaymentOutput withCustomerCity(String customerCity) {
+        setCustomerCity(customerCity);
+        return this;
     }
 
     public String getCustomerState() {
         return customerState;
     }
 
+    public void setCustomerState(String customerState) {
+        this.customerState = customerState;
+    }
+
+    public PaymentOutput withCustomerState(String customerState) {
+        setCustomerState(customerState);
+        return this;
+    }
+
     public String getCustomerZip() {
         return customerZip;
     }
 
-    public Long getCustomerSince() {
+    public void setCustomerZip(String customerZip) {
+        this.customerZip = customerZip;
+    }
+
+    public PaymentOutput withCustomerZip(String customerZip) {
+        setCustomerZip(customerZip);
+        return this;
+    }
+
+    public long getCustomerSince() {
         return customerSince;
+    }
+
+    public void setCustomerSince(long customerSince) {
+        this.customerSince = customerSince;
+    }
+
+    public PaymentOutput withCustomerSince(long customerSince) {
+        setCustomerSince(customerSince);
+        return this;
     }
 
     public String getCustomerCredit() {
         return customerCredit;
     }
 
-    public BigDecimal getCustomerDiscount() {
+    public void setCustomerCredit(String customerCredit) {
+        this.customerCredit = customerCredit;
+    }
+
+    public PaymentOutput withCustomerCredit(String customerCredit) {
+        setCustomerCredit(customerCredit);
+        return this;
+    }
+
+    public double getCustomerDiscount() {
         return customerDiscount;
+    }
+
+    public void setCustomerDiscount(double customerDiscount) {
+        this.customerDiscount = customerDiscount;
+    }
+
+    public PaymentOutput withCustomerDiscount(double customerDiscount) {
+        setCustomerDiscount(customerDiscount);
+        return this;
     }
 
     public String getCustomerPhone() {
         return customerPhone;
     }
 
-    public BigDecimal getAmountPaid() {
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
+    public PaymentOutput withCustomerPhone(String customerPhone) {
+        setCustomerPhone(customerPhone);
+        return this;
+    }
+
+    public double getAmountPaid() {
         return amountPaid;
     }
 
-    public BigDecimal getCustomerCreditLimit() {
+    public void setAmountPaid(double amountPaid) {
+        this.amountPaid = amountPaid;
+    }
+
+    public PaymentOutput withAmountPaid(double amountPaid) {
+        setAmountPaid(amountPaid);
+        return this;
+    }
+
+    public double getCustomerCreditLimit() {
         return customerCreditLimit;
     }
 
-    public BigDecimal getCustomerBalance() {
+    public void setCustomerCreditLimit(double customerCreditLimit) {
+        this.customerCreditLimit = customerCreditLimit;
+    }
+
+    public PaymentOutput withCustomerCreditLimit(double customerCreditLimit) {
+        setCustomerCreditLimit(customerCreditLimit);
+        return this;
+    }
+
+    public double getCustomerBalance() {
         return customerBalance;
+    }
+
+    public void setCustomerBalance(double customerBalance) {
+        this.customerBalance = customerBalance;
+    }
+
+    public PaymentOutput withCustomerBalance(double customerBalance) {
+        setCustomerBalance(customerBalance);
+        return this;
     }
 
     public String getCustomerData() {
         return customerData;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setCustomerData(String customerData) {
+        this.customerData = customerData;
     }
 
-    public static class Builder {
-        private LocalDateTime dateTime;
-        private Integer warehouseId;
-        private String warehouseStreet1;
-        private String warehouseStreet2;
-        private String warehouseCity;
-        private String warehouseState;
-        private String warehouseZip;
-        private Integer districtId;
-        private String districtStreet1;
-        private String districtStreet2;
-        private String districtCity;
-        private String districtState;
-        private String districtZip;
-        private Integer customerId;
-        private String customerFirst;
-        private String customerMiddle;
-        private String customerLast;
-        private String customerStreet1;
-        private String customerStreet2;
-        private String customerCity;
-        private String customerState;
-        private String customerZip;
-        private Long customerSince;
-        private String customerCredit;
-        private BigDecimal customerDiscount;
-        private String customerPhone;
-        private BigDecimal amountPaid;
-        private BigDecimal customerCreditLimit;
-        private BigDecimal customerBalance;
-        private String customerData;
+    public PaymentOutput withCustomerData(String customerData) {
+        setCustomerData(customerData);
+        return this;
+    }
 
-        public Builder dateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
-            return this;
-        }
+    @Override
+    public void write(Kryo kryo, Output output) {
+        output.writeVarLong(dateTime, true);
+        output.writeVarInt(warehouseId, true);
+        output.writeAscii(warehouseStreet1);
+        output.writeAscii(warehouseCity);
+        output.writeAscii(warehouseState);
+        output.writeAscii(warehouseZip);
+        output.writeVarInt(districtId, true);
+        output.writeAscii(districtStreet1);
+        output.writeAscii(districtStreet2);
+        output.writeAscii(districtCity);
+        output.writeAscii(districtState);
+        output.writeAscii(districtZip);
+        output.writeVarInt(customerId, true);
+        output.writeAscii(customerFirst);
+        output.writeAscii(customerMiddle);
+        output.writeAscii(customerLast);
+        output.writeAscii(customerStreet1);
+        output.writeAscii(customerStreet2);
+        output.writeAscii(customerCity);
+        output.writeAscii(customerState);
+        output.writeAscii(customerZip);
+        output.writeVarLong(customerSince, true);
+        output.writeAscii(customerCredit);
+        output.writeVarDouble(customerDiscount, 4, true);
+        output.writeAscii(customerPhone);
+        output.writeVarDouble(amountPaid, 2, true);
+        output.writeVarDouble(customerCreditLimit, 2, true);
+        output.writeVarDouble(customerBalance, 2, true);
+        output.writeAscii(customerData);
+    }
 
-        public Builder warehouse(Warehouse warehouse) {
-            warehouseId(warehouse.getWarehouseId());
-            warehouseStreet1(warehouse.getStreet1());
-            warehouseStreet2(warehouse.getStreet2());
-            warehouseCity(warehouse.getCity());
-            warehouseState(warehouse.getState());
-            warehouseZip(warehouse.getZip());
-            return this;
-        }
-
-        public Builder district(District district) {
-            districtId(district.getDistrictId());
-            districtStreet1(district.getStreet1());
-            districtStreet2(district.getStreet2());
-            districtCity(district.getCity());
-            districtState(district.getState());
-            districtZip(district.getZip());
-            return this;
-        }
-
-        public Builder warehouseId(Integer warehouseId) {
-            this.warehouseId = warehouseId;
-            return this;
-        }
-
-        public Builder warehouseStreet1(String warehouseStreet1) {
-            this.warehouseStreet1 = warehouseStreet1;
-            return this;
-        }
-
-        public Builder warehouseStreet2(String warehouseStreet2) {
-            this.warehouseStreet2 = warehouseStreet2;
-            return this;
-        }
-
-        public Builder warehouseCity(String warehouseCity) {
-            this.warehouseCity = warehouseCity;
-            return this;
-        }
-
-        public Builder warehouseState(String warehouseState) {
-            this.warehouseState = warehouseState;
-            return this;
-        }
-
-        public Builder warehouseZip(String warehouseZip) {
-            this.warehouseZip = warehouseZip;
-            return this;
-        }
-
-        public Builder districtId(Integer districtId) {
-            this.districtId = districtId;
-            return this;
-        }
-
-        public Builder districtStreet1(String districtStreet1) {
-            this.districtStreet1 = districtStreet1;
-            return this;
-        }
-
-        public Builder districtStreet2(String districtStreet2) {
-            this.districtStreet2 = districtStreet2;
-            return this;
-        }
-
-        public Builder districtCity(String districtCity) {
-            this.districtCity = districtCity;
-            return this;
-        }
-
-        public Builder districtState(String districtState) {
-            this.districtState = districtState;
-            return this;
-        }
-
-        public Builder districtZip(String districtZip) {
-            this.districtZip = districtZip;
-            return this;
-        }
-
-        public Builder customer(Customer customer) {
-            customerId(customer.getCustomerId());
-            customerFirst(customer.getFirst());
-            customerMiddle(customer.getMiddle());
-            customerLast(customer.getLast());
-            customerStreet1(customer.getStreet1());
-            customerStreet2(customer.getStreet2());
-            customerCity(customer.getCity());
-            customerState(customer.getState());
-            customerZip(customer.getState());
-            customerSince(customer.getSince());
-            customerCredit(customer.getCredit());
-            customerDiscount(customer.getDiscount());
-            customerPhone(customer.getPhone());
-            customerCreditLimit(customer.getCreditLimit());
-            customerBalance(customer.getBalance());
-            customerData(customer.getData());
-            return this;
-        }
-
-        public Builder customerId(Integer customerId) {
-            this.customerId = customerId;
-            return this;
-        }
-
-        public Builder customerFirst(String customerFirst) {
-            this.customerFirst = customerFirst;
-            return this;
-        }
-
-        public Builder customerMiddle(String customerMiddle) {
-            this.customerMiddle = customerMiddle;
-            return this;
-        }
-
-        public Builder customerLast(String customerLast) {
-            this.customerLast = customerLast;
-            return this;
-        }
-
-        public Builder customerStreet1(String customerStreet1) {
-            this.customerStreet1 = customerStreet1;
-            return this;
-        }
-
-        public Builder customerStreet2(String customerStreet2) {
-            this.customerStreet2 = customerStreet2;
-            return this;
-        }
-
-        public Builder customerCity(String customerCity) {
-            this.customerCity = customerCity;
-            return this;
-        }
-
-        public Builder customerState(String customerState) {
-            this.customerState = customerState;
-            return this;
-        }
-
-        public Builder customerZip(String customerZip) {
-            this.customerZip = customerZip;
-            return this;
-        }
-
-        public Builder customerSince(Long customerSince) {
-            this.customerSince = customerSince;
-            return this;
-        }
-
-        public Builder customerCredit(String customerCredit) {
-            this.customerCredit = customerCredit;
-            return this;
-        }
-
-        public Builder customerDiscount(BigDecimal customerDiscount) {
-            this.customerDiscount = customerDiscount;
-            return this;
-        }
-
-        public Builder customerPhone(String customerPhone) {
-            this.customerPhone = customerPhone;
-            return this;
-        }
-
-        public Builder amountPaid(BigDecimal amountPaid) {
-            this.amountPaid = amountPaid;
-            return this;
-        }
-
-        public Builder customerCreditLimit(BigDecimal customerCreditLimit) {
-            this.customerCreditLimit = customerCreditLimit;
-            return this;
-        }
-
-        public Builder customerBalance(BigDecimal customerBalance) {
-            this.customerBalance = customerBalance;
-            return this;
-        }
-
-        public Builder customerData(String customerData) {
-            this.customerData = customerData;
-            return this;
-        }
-
-        public PaymentOutput build() {
-            return new PaymentOutput(this);
-        }
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setDateTime(input.readVarLong(true));
+        setWarehouseId(input.readVarInt(true));
+        setWarehouseStreet1(input.readString());
+        setWarehouseCity(input.readString());
+        setWarehouseState(input.readString());
+        setWarehouseZip(input.readString());
+        setDistrictId(input.readVarInt(true));
+        setDistrictStreet1(input.readString());
+        setDistrictStreet2(input.readString());
+        setDistrictCity(input.readString());
+        setDistrictState(input.readString());
+        setDistrictZip(input.readString());
+        setCustomerId(input.readVarInt(true));
+        setCustomerFirst(input.readString());
+        setCustomerMiddle(input.readString());
+        setCustomerLast(input.readString());
+        setCustomerStreet1(input.readString());
+        setCustomerStreet2(input.readString());
+        setCustomerCity(input.readString());
+        setCustomerState(input.readString());
+        setCustomerZip(input.readString());
+        setCustomerSince(input.readVarLong(true));
+        setCustomerCredit(input.readString());
+        setCustomerDiscount(input.readVarDouble(4, true));
+        setCustomerPhone(input.readString());
+        setAmountPaid(input.readVarDouble(2, true));
+        setCustomerCreditLimit(input.readVarDouble(2, true));
+        setCustomerBalance(input.readVarDouble(2, true));
+        setCustomerData(input.readString());
     }
 
 }

@@ -1,66 +1,101 @@
 package bftsmart.microbenchmark.tpcc.config;
 
-import java.io.File;
-import java.nio.file.FileSystems;
+import java.time.Duration;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
-import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
-import bftsmart.microbenchmark.tpcc.util.InetAddresses;
-
+@Singleton
 public class TPCCConfig {
 
-    public static final String CONFIG_FOLDER = "config";
-    public static final String DATA_FOLDER = "data";
+    @Inject
+    @Named("warehousesCnt")
+    private Integer warehouses;
+    @Inject
+    @Named("terminalRunMins")
+    private Integer runMins;
+    @Inject
+    @Named("warmupIterations")
+    private Integer warmupIterations;
+    @Inject
+    @Named("newOrderWeight")
+    private Integer newOrderWeight;
+    @Inject
+    @Named("paymentWeight")
+    private Integer paymentWeight;
+    @Inject
+    @Named("orderStatusWeight")
+    private Integer orderStatusWeight;
+    @Inject
+    @Named("deliveryWeight")
+    private Integer deliveryWeight;
+    @Inject
+    @Named("stockLevelWeight")
+    private Integer stockLevelWeight;
 
-    public static final String JSON_EXTENSION = ".json";
-
-    /**
-     * <p>
-     * For each WAREHOUSE there are 10 DISTRICT rows.
-     * </p>
-     * <code>tpc-c std = 10</code>
-     */
-    public static final int DIST_PER_WHSE = 10;
-
-    public static final int LIMIT_ORDER = 2101;
-    /**
-     * <p>
-     * Within each DISTRICT there are 3,000 CUSTOMERs.
-     * </p>
-     * <code>tpc-c std = 3,000</code>
-     */
-    public static final int CUST_PER_DIST = 3000;
-    public static final int NB_MAX_ITEM = 100_000;
-
-    public static final int C_LAST = 255;
-    public static final int C_ID = 1023;
-    public static final int OL_I_ID = 8191;
-    public static final int MAX_C_LAST = 999;
-    public static final int NB_MAX_CUSTOMER = 3000;
-
-    private TPCCConfig() {
-        super();
+    public Integer getWarehouses() {
+        return warehouses;
     }
 
-    public static File getWorkloadConfigFile() {
-        return FileSystems.getDefault().getPath(CONFIG_FOLDER + File.separator + WorkloadConfig.RESOURCE_PATH).toFile();
+    public Duration getRunMins() {
+        return Duration.ofMinutes(runMins);
     }
 
-    public static File getResultFile(String fileName) {
-        String name = StringUtils.appendIfMissing(fileName, Spreadsheet.EXTENSION);
-        return FileSystems.getDefault().getPath(InetAddresses.getHostName() + '_' + name).toFile();
+    public Integer getWarmupIterations() {
+        return warmupIterations;
     }
 
-    public static File getTPCCDataFile(String fileName) {
-        String pathName = DATA_FOLDER + File.separator + StringUtils.appendIfMissing(fileName, JSON_EXTENSION);
-        File file = FileSystems.getDefault().getPath(pathName).toFile();
+    public Integer getNewOrderWeight() {
+        return newOrderWeight;
+    }
 
-        File parentFile = file.getParentFile();
-        if (parentFile != null && !parentFile.exists()) {
-            parentFile.mkdir();
-        }
-        return file;
+    public Integer getPaymentWeight() {
+        return paymentWeight;
+    }
+
+    public Integer getOrderStatusWeight() {
+        return orderStatusWeight;
+    }
+
+    public Integer getDeliveryWeight() {
+        return deliveryWeight;
+    }
+
+    public Integer getStockLevelWeight() {
+        return stockLevelWeight;
+    }
+
+    public String getFileName() {
+        StringBuilder sb = new StringBuilder(64);
+        sb.append("w_").append(warehouses);
+        sb.append("_d_").append(TPCCConstants.DIST_PER_WHSE * warehouses);
+        sb.append("_c_").append(TPCCConstants.CUST_PER_DIST * TPCCConstants.DIST_PER_WHSE * warehouses);
+        sb.append("_i_").append(TPCCConstants.NB_MAX_ITEM * warehouses);
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("WorkloadConfig [warehouses=")
+                .append(warehouses)
+                .append(", runMins=")
+                .append(runMins)
+                .append(", warmupIterations=")
+                .append(warmupIterations)
+                .append(", newOrderWeight=")
+                .append(newOrderWeight)
+                .append(", paymentWeight=")
+                .append(paymentWeight)
+                .append(", orderStatusWeight=")
+                .append(orderStatusWeight)
+                .append(", deliveryWeight=")
+                .append(deliveryWeight)
+                .append(", stockLevelWeight=")
+                .append(stockLevelWeight)
+                .append(']');
+        return builder.toString();
     }
 
 }

@@ -2,94 +2,108 @@ package bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.output;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.StringJoiner;
 
-public class OrderLineOutput {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-    private final Integer supplierWarehouseId;
-    private final Integer itemId;
-    private final Integer orderQuantities;
-    private final BigDecimal amount;
-    private final Long deliveryDateTime;
+public class OrderLineOutput implements KryoSerializable {
 
-    public OrderLineOutput(Builder builder) {
-        this.supplierWarehouseId = builder.supplierWarehouseId;
-        this.itemId = builder.itemId;
-        this.orderQuantities = builder.orderQuantities;
-        this.amount = builder.amount.setScale(2, RoundingMode.HALF_UP);
-        this.deliveryDateTime = builder.deliveryDateTime;
-    }
+    private int supplierWarehouseId;
+    private int itemId;
+    private int orderQuantities;
+    private double amount;
+    private long deliveryDateTime;
 
-    public Integer getSupplierWarehouseId() {
+    public int getSupplierWarehouseId() {
         return supplierWarehouseId;
     }
 
-    public Integer getItemId() {
+    public void setSupplierWarehouseId(int supplierWarehouseId) {
+        this.supplierWarehouseId = supplierWarehouseId;
+    }
+
+    public OrderLineOutput withSupplierWarehouseId(int supplierWarehouseId) {
+        setSupplierWarehouseId(supplierWarehouseId);
+        return this;
+    }
+
+    public int getItemId() {
         return itemId;
     }
 
-    public Integer getOrderQuantities() {
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public OrderLineOutput withItemId(int itemId) {
+        setItemId(itemId);
+        return this;
+    }
+
+    public int getOrderQuantities() {
         return orderQuantities;
     }
 
-    public BigDecimal getAmount() {
+    public void setOrderQuantities(int orderQuantities) {
+        this.orderQuantities = orderQuantities;
+    }
+
+    public OrderLineOutput withOrderQuantities(int orderQuantities) {
+        setOrderQuantities(orderQuantities);
+        return this;
+    }
+
+    public double getAmount() {
         return amount;
     }
 
-    public Long getDeliveryDateTime() {
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public OrderLineOutput withAmount(double amount) {
+        setAmount(amount);
+        return this;
+    }
+
+    public OrderLineOutput withAmount(BigDecimal amount) {
+        setAmount(amount.setScale(2, RoundingMode.HALF_UP).doubleValue());
+        return this;
+    }
+
+    public long getDeliveryDateTime() {
         return deliveryDateTime;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setDeliveryDateTime(long deliveryDateTime) {
+        this.deliveryDateTime = deliveryDateTime;
     }
 
-    public static class Builder {
-
-        private Integer supplierWarehouseId;
-        private Integer itemId;
-        private Integer orderQuantities;
-        private BigDecimal amount;
-        private Long deliveryDateTime;
-
-        public Builder supplierWarehouseId(Integer supplierWarehouseId) {
-            this.supplierWarehouseId = supplierWarehouseId;
-            return this;
+    public OrderLineOutput withDeliveryDateTime(Long deliveryDateTime) {
+        if (deliveryDateTime != null) {
+            setDeliveryDateTime(deliveryDateTime);
         }
-
-        public Builder itemId(Integer itemId) {
-            this.itemId = itemId;
-            return this;
-        }
-
-        public Builder orderQuantities(Integer orderQuantities) {
-            this.orderQuantities = orderQuantities;
-            return this;
-        }
-
-        public Builder amount(BigDecimal amount) {
-            this.amount = amount;
-            return this;
-        }
-
-        public Builder deliveryDateTime(Long deliveryDateTime) {
-            this.deliveryDateTime = deliveryDateTime;
-            return this;
-        }
-
-        public OrderLineOutput build() {
-            return new OrderLineOutput(this);
-        }
+        return this;
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(", ", OrderLineOutput.class.getSimpleName() + "[", "]")
-                .add("supplierWarehouseId=" + supplierWarehouseId)
-                .add("itemId=" + itemId)
-                .add("orderQuantities=" + orderQuantities)
-                .add("amount=" + amount)
-                .add("deliveryDateTime=" + deliveryDateTime)
-                .toString();
+    public void write(Kryo kryo, Output output) {
+        output.writeVarInt(supplierWarehouseId, true);
+        output.writeVarInt(itemId, true);
+        output.writeVarInt(orderQuantities, true);
+        output.writeVarDouble(amount, 2, true);
+        output.writeVarLong(deliveryDateTime, true);
     }
+
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setSupplierWarehouseId(input.readVarInt(true));
+        setItemId(input.readVarInt(true));
+        setOrderQuantities(input.readVarInt(true));
+        setAmount(input.readVarDouble(2, true));
+        setDeliveryDateTime(input.readVarLong(true));
+    }
+
 }

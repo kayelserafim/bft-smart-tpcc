@@ -16,8 +16,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.google.common.collect.ImmutableSet;
 
-import bftsmart.microbenchmark.tpcc.probject.ModelType;
-import bftsmart.microbenchmark.tpcc.probject.PRObject;
+import bftsmart.microbenchmark.tpcc.domain.ModelType;
+import bftsmart.microbenchmark.tpcc.domain.Persistable;
 
 /**
  * <ol>
@@ -28,9 +28,7 @@ import bftsmart.microbenchmark.tpcc.probject.PRObject;
  * </ol>
  */
 @JsonDeserialize(builder = OrderLine.Builder.class)
-public class OrderLine implements PRObject {
-
-    private static final long serialVersionUID = -7028810970529743201L;
+public class OrderLine implements Persistable {
 
     private static final ModelType MODEL_TYPE = ModelType.ORDER_LINE;
 
@@ -279,7 +277,7 @@ public class OrderLine implements PRObject {
             return this;
         }
 
-        public Builder deliveryDateTime(Long deliveryDateTime) {
+        public Builder deliveryDateTime(long deliveryDateTime) {
             this.deliveryDateTime = deliveryDateTime;
             return this;
         }

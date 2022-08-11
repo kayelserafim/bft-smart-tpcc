@@ -12,8 +12,8 @@ import com.google.inject.Inject;
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.monitor.TransactionResult;
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
 
 public class TransactionResultSpreadsheet implements ResultSpreadsheet {
@@ -23,11 +23,11 @@ public class TransactionResultSpreadsheet implements ResultSpreadsheet {
     private static final String[] HEADER = { "Transaction", "Number of requests", "Number of errors",
             "Elapsed Time (sec)", "Average Latency (ms)", "Throughput (op/s)" };
 
-    private final WorkloadConfig workload;
+    private final TPCCConfig workload;
     private final BFTParams bftParams;
 
     @Inject
-    public TransactionResultSpreadsheet(WorkloadConfig workload, BFTParams bftParams) {
+    public TransactionResultSpreadsheet(TPCCConfig workload, BFTParams bftParams) {
         this.workload = workload;
         this.bftParams = bftParams;
     }

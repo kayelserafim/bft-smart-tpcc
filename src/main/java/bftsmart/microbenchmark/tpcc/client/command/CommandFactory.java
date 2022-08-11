@@ -8,22 +8,22 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 @Singleton
 public class CommandFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommandFactory.class);
 
-    private final Set<Command> commands;
+    private final Set<TPCCCommand> commands;
 
     @Inject
-    CommandFactory(Set<Command> commands) {
+    CommandFactory(Set<TPCCCommand> commands) {
         this.commands = commands;
     }
 
-    public Command getFactory(TransactionType transactionType) {
+    public TPCCCommand getFactory(TransactionType transactionType) {
         LOGGER.debug("Starting txn: {}, thread name: {}", transactionType, Thread.currentThread().getName());
         return commands.stream()
                 .filter(message -> message.transactionType() == transactionType)

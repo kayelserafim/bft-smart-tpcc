@@ -1,16 +1,15 @@
 package bftsmart.microbenchmark.tpcc.client.command;
 
-import java.util.Arrays;
 import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
-public class NewOrderCommand implements Command {
+public class NewOrderCommand implements TPCCCommand {
 
     @Override
     public TransactionType transactionType() {
@@ -18,15 +17,15 @@ public class NewOrderCommand implements Command {
     }
 
     @Override
-    public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
+    public CommandRequest createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
         final int customerID = random.getCustomerID();
-        final int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+        final int districtId = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
 
         // o_ol_cnt
         final int numItems = random.nextInt(5, 15);
-        final Integer[] itemIDs = new Integer[numItems];
-        final Integer[] supplierWarehouses = new Integer[numItems];
-        final Integer[] orderQuantities = new Integer[numItems];
+        final int[] itemIDs = new int[numItems];
+        final int[] supplierWarehouses = new int[numItems];
+        final int[] orderQuantities = new int[numItems];
         // see clause 2.4.2.2 (dot 6)
         int allLocal = 1;
         // clause 2.4.1.5
@@ -38,7 +37,7 @@ public class NewOrderCommand implements Command {
                 // see clause 2.4.1.5 (dot 2)
                 do {
                     supplierWarehouses[i] = random.nextInt(1, terminalData.getWarehouseCount());
-                } while (supplierWarehouses[i].equals(terminalData.getWarehouseId())
+                } while (supplierWarehouses[i] == terminalData.getWarehouseId()
                         && terminalData.getWarehouseCount() > 1);
                 // see clause 2.4.2.2 (dot 6)
                 allLocal = 0;
@@ -52,20 +51,16 @@ public class NewOrderCommand implements Command {
             itemIDs[numItems - 1] = -12345;
         }
 
-        final NewOrderInput input = new NewOrderInput().withWarehouseId(terminalData.getWarehouseId())
+        return new NewOrderInput().withCommandId(UUID.randomUUID().toString())
+                .withTransactionType(transactionType().getClassId())
+                .withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)
                 .withCustomerId(customerID)
                 .withOrderLineCnt(numItems)
                 .withOrderAllLocal(allLocal)
-                .withItemIds(Arrays.asList(itemIDs))
-                .withSupplierWarehouseIds(Arrays.asList(supplierWarehouses))
-                .withOrderQuantities(Arrays.asList(orderQuantities));
-
-        return TPCCCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .transactionType(transactionType())
-                .request(input)
-                .build();
+                .withItemIds(itemIDs)
+                .withSupplierWarehouseIds(supplierWarehouses)
+                .withOrderQuantities(orderQuantities);
     }
 
 }

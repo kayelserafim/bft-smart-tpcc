@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Random;
 
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
 
 public class TPCCRandom {
 
@@ -28,9 +28,9 @@ public class TPCCRandom {
      */
     public TPCCRandom() {
         this.random = new SecureRandom();
-        this.nURandCCID = nextLong(0, TPCCConfig.C_ID);
-        this.nURandCIID = nextLong(0, TPCCConfig.OL_I_ID);
-        this.nURandCLast = nextLong(0, TPCCConfig.C_LAST);
+        this.nURandCCID = nextLong(0, TPCCConstants.C_ID);
+        this.nURandCIID = nextLong(0, TPCCConstants.OL_I_ID);
+        this.nURandCLast = nextLong(0, TPCCConstants.C_LAST);
     }
 
     /**
@@ -48,11 +48,11 @@ public class TPCCRandom {
         long delta;
 
         this.random = new SecureRandom();
-        this.nURandCCID = nextLong(0, TPCCConfig.C_ID);
-        this.nURandCIID = nextLong(0, TPCCConfig.OL_I_ID);
+        this.nURandCCID = nextLong(0, TPCCConstants.C_ID);
+        this.nURandCIID = nextLong(0, TPCCConstants.OL_I_ID);
 
         do {
-            this.nURandCLast = nextLong(0, TPCCConfig.C_LAST);
+            this.nURandCLast = nextLong(0, TPCCConstants.C_LAST);
 
             delta = Math.abs(this.nURandCLast - cLoad);
         } while (delta == 96 || delta < 65 || delta == 112 || delta > 119);
@@ -250,7 +250,7 @@ public class TPCCRandom {
      * </p>
      */
     public String getCLast() {
-        long num = nonUniformRandom(nURandCLast, TPCCConfig.C_LAST, 0, TPCCConfig.MAX_C_LAST);
+        long num = nonUniformRandom(nURandCLast, TPCCConstants.C_LAST, 0, TPCCConstants.MAX_C_LAST);
         return getCLast((int) num);
     }
 
@@ -260,7 +260,7 @@ public class TPCCRandom {
      * @return a customer ID
      */
     public int getCustomerID() {
-        return (int) nonUniformRandom(nURandCCID, TPCCConfig.C_ID, 1, TPCCConfig.NB_MAX_CUSTOMER);
+        return (int) nonUniformRandom(nURandCCID, TPCCConstants.C_ID, 1, TPCCConstants.NB_MAX_CUSTOMER);
     }
 
     /**
@@ -269,7 +269,7 @@ public class TPCCRandom {
      * @return an Item ID
      */
     public int getItemID() {
-        return (int) nonUniformRandom(nURandCIID, TPCCConfig.OL_I_ID, 1, TPCCConfig.NB_MAX_ITEM);
+        return (int) nonUniformRandom(nURandCIID, TPCCConstants.OL_I_ID, 1, TPCCConstants.NB_MAX_ITEM);
     }
 
     /**

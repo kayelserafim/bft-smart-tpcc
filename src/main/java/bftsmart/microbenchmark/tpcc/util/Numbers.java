@@ -30,6 +30,36 @@ public class Numbers {
     }
 
     /**
+     * Returns the value of the specified number as an int.
+     * 
+     * @param number
+     *            to be converted.
+     * @return the numeric value represented by this object after conversion to
+     *         type int.
+     */
+    public static int toInt(Number number) {
+        if (number == null) {
+            return 0;
+        }
+        return number.intValue();
+    }
+
+    /**
+     * Returns the value of the specified number as an int.
+     * 
+     * @param number
+     *            to be converted.
+     * @return the numeric value represented by this object after conversion to
+     *         type int.
+     */
+    public static long toLong(Number number) {
+        if (number == null) {
+            return 0l;
+        }
+        return number.longValue();
+    }
+
+    /**
      * Returns the value of the specified number as a double
      * 
      * @param number
@@ -37,9 +67,9 @@ public class Numbers {
      * @return the numeric value represented by this object after conversion to
      *         type double.
      */
-    public static Double toDouble(Number number) {
+    public static double toDouble(Number number) {
         if (number == null) {
-            return null;
+            return 0d;
         }
         return number.doubleValue();
     }

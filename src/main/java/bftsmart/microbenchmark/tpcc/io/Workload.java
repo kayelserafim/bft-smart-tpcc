@@ -3,7 +3,7 @@ package bftsmart.microbenchmark.tpcc.io;
 import java.util.HashSet;
 import java.util.Set;
 
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.History;
@@ -14,7 +14,7 @@ import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
 
-public class TPCCData {
+public class Workload {
 
     private Long cLoad;
     private Integer warehouseCount;
@@ -29,20 +29,20 @@ public class TPCCData {
     private final Set<OrderLine> orderLines;
     private final Set<History> histories;
 
-    public TPCCData() {
+    public Workload() {
         super();
         this.warehouses = new HashSet<>();
-        this.items = new HashSet<>(TPCCConfig.NB_MAX_ITEM);
-        this.stocks = new HashSet<>(TPCCConfig.NB_MAX_ITEM);
-        this.districts = new HashSet<>(TPCCConfig.DIST_PER_WHSE);
-        this.customers = new HashSet<>(TPCCConfig.CUST_PER_DIST);
-        this.orders = new HashSet<>(TPCCConfig.CUST_PER_DIST);
+        this.items = new HashSet<>(TPCCConstants.NB_MAX_ITEM);
+        this.stocks = new HashSet<>(TPCCConstants.NB_MAX_ITEM);
+        this.districts = new HashSet<>(TPCCConstants.DIST_PER_WHSE);
+        this.customers = new HashSet<>(TPCCConstants.CUST_PER_DIST);
+        this.orders = new HashSet<>(TPCCConstants.CUST_PER_DIST);
         this.newOrders = new HashSet<>();
         this.orderLines = new HashSet<>();
         this.histories = new HashSet<>();
     }
 
-    public TPCCData(final Integer warehouseCount) {
+    public Workload(final Integer warehouseCount) {
         this();
         setWarehouseCount(warehouseCount);
     }

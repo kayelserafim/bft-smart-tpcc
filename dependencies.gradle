@@ -6,6 +6,7 @@ ext {
 	set('commonsIo_version', "2.4")
 	set('guice_version', "5.0.1")
 	set('poi_version', "4.1.2")
+	set('kryo_version', "5.3.0")
 	set('vavr_version', "0.10.4")
 	set('javatuples_version', "1.2")
 	set('slf4j_version', "1.7.32")
@@ -35,6 +36,9 @@ dependencies {
 	// Apache POI
 	implementation group: 'org.apache.poi', name: 'poi', version: poi_version
 	implementation group: 'org.apache.poi', name: 'poi-ooxml', version: poi_version
+	
+	// Fast, efficient Java serialization
+	implementation group: 'com.esotericsoftware', name: 'kryo', version: kryo_version
 	
     // Vavr
 	implementation group: 'io.vavr', name: 'vavr', version: vavr_version

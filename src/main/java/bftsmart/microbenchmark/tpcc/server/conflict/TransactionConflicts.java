@@ -9,65 +9,65 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 
 /**
  * Contains static utility methods belonging to transactions and their conflicting types.
  */
 public class TransactionConflicts {
 
-    private static final Map<TransactionType, Collection<TransactionType>> CONFLICTING_TRANSACTIONS;
-    private static final Map<TransactionType, Collection<TransactionType>> NOT_CONFLICTING_TRANSACTIONS;
-    private static final Set<TransactionType> PESSIMISTIC_MODEL =
-            Sets.newHashSet(TransactionType.STOCK_LEVEL, TransactionType.DELIVERY);
+    private static final Map<Integer, Collection<Integer>> CONFLICTING_TRANSACTIONS;
+    private static final Map<Integer, Collection<Integer>> NOT_CONFLICTING_TRANSACTIONS;
+    private static final Set<Integer> PESSIMISTIC_MODEL =
+            Sets.newHashSet(TransactionType.STOCK_LEVEL.getClassId(), TransactionType.DELIVERY.getClassId());
 
     private TransactionConflicts() {
         super();
     }
 
     static {
-        Multimap<TransactionType, TransactionType> conflicting = ArrayListMultimap.create();
-        Multimap<TransactionType, TransactionType> notConflicting = ArrayListMultimap.create();
+        Multimap<Integer, Integer> conflicting = ArrayListMultimap.create();
+        Multimap<Integer, Integer> notConflicting = ArrayListMultimap.create();
 
-        conflicting.put(TransactionType.ORDER_STATUS, TransactionType.NEW_ORDER);
-        conflicting.put(TransactionType.ORDER_STATUS, TransactionType.PAYMENT);
-        conflicting.put(TransactionType.ORDER_STATUS, TransactionType.DELIVERY);
-        notConflicting.put(TransactionType.ORDER_STATUS, TransactionType.ORDER_STATUS);
-        notConflicting.put(TransactionType.ORDER_STATUS, TransactionType.STOCK_LEVEL);
+        conflicting.put(TransactionType.ORDER_STATUS.getClassId(), TransactionType.NEW_ORDER.getClassId());
+        conflicting.put(TransactionType.ORDER_STATUS.getClassId(), TransactionType.PAYMENT.getClassId());
+        conflicting.put(TransactionType.ORDER_STATUS.getClassId(), TransactionType.DELIVERY.getClassId());
+        notConflicting.put(TransactionType.ORDER_STATUS.getClassId(), TransactionType.ORDER_STATUS.getClassId());
+        notConflicting.put(TransactionType.ORDER_STATUS.getClassId(), TransactionType.STOCK_LEVEL.getClassId());
 
-        conflicting.put(TransactionType.NEW_ORDER, TransactionType.NEW_ORDER);
-        conflicting.put(TransactionType.NEW_ORDER, TransactionType.ORDER_STATUS);
-        conflicting.put(TransactionType.NEW_ORDER, TransactionType.STOCK_LEVEL);
-        notConflicting.put(TransactionType.NEW_ORDER, TransactionType.PAYMENT);
-        notConflicting.put(TransactionType.NEW_ORDER, TransactionType.DELIVERY);
+        conflicting.put(TransactionType.NEW_ORDER.getClassId(), TransactionType.NEW_ORDER.getClassId());
+        conflicting.put(TransactionType.NEW_ORDER.getClassId(), TransactionType.ORDER_STATUS.getClassId());
+        conflicting.put(TransactionType.NEW_ORDER.getClassId(), TransactionType.STOCK_LEVEL.getClassId());
+        notConflicting.put(TransactionType.NEW_ORDER.getClassId(), TransactionType.PAYMENT.getClassId());
+        notConflicting.put(TransactionType.NEW_ORDER.getClassId(), TransactionType.DELIVERY.getClassId());
 
-        conflicting.put(TransactionType.STOCK_LEVEL, TransactionType.NEW_ORDER);
-        notConflicting.put(TransactionType.STOCK_LEVEL, TransactionType.STOCK_LEVEL);
-        notConflicting.put(TransactionType.STOCK_LEVEL, TransactionType.ORDER_STATUS);
-        notConflicting.put(TransactionType.STOCK_LEVEL, TransactionType.PAYMENT);
-        notConflicting.put(TransactionType.STOCK_LEVEL, TransactionType.DELIVERY);
+        conflicting.put(TransactionType.STOCK_LEVEL.getClassId(), TransactionType.NEW_ORDER.getClassId());
+        notConflicting.put(TransactionType.STOCK_LEVEL.getClassId(), TransactionType.STOCK_LEVEL.getClassId());
+        notConflicting.put(TransactionType.STOCK_LEVEL.getClassId(), TransactionType.ORDER_STATUS.getClassId());
+        notConflicting.put(TransactionType.STOCK_LEVEL.getClassId(), TransactionType.PAYMENT.getClassId());
+        notConflicting.put(TransactionType.STOCK_LEVEL.getClassId(), TransactionType.DELIVERY.getClassId());
 
-        conflicting.put(TransactionType.PAYMENT, TransactionType.PAYMENT);
-        conflicting.put(TransactionType.PAYMENT, TransactionType.DELIVERY);
-        conflicting.put(TransactionType.PAYMENT, TransactionType.ORDER_STATUS);
-        notConflicting.put(TransactionType.PAYMENT, TransactionType.NEW_ORDER);
-        notConflicting.put(TransactionType.PAYMENT, TransactionType.STOCK_LEVEL);
+        conflicting.put(TransactionType.PAYMENT.getClassId(), TransactionType.PAYMENT.getClassId());
+        conflicting.put(TransactionType.PAYMENT.getClassId(), TransactionType.DELIVERY.getClassId());
+        conflicting.put(TransactionType.PAYMENT.getClassId(), TransactionType.ORDER_STATUS.getClassId());
+        notConflicting.put(TransactionType.PAYMENT.getClassId(), TransactionType.NEW_ORDER.getClassId());
+        notConflicting.put(TransactionType.PAYMENT.getClassId(), TransactionType.STOCK_LEVEL.getClassId());
 
-        conflicting.put(TransactionType.DELIVERY, TransactionType.DELIVERY);
-        conflicting.put(TransactionType.DELIVERY, TransactionType.ORDER_STATUS);
-        conflicting.put(TransactionType.DELIVERY, TransactionType.PAYMENT);
-        notConflicting.put(TransactionType.DELIVERY, TransactionType.NEW_ORDER);
-        notConflicting.put(TransactionType.DELIVERY, TransactionType.STOCK_LEVEL);
+        conflicting.put(TransactionType.DELIVERY.getClassId(), TransactionType.DELIVERY.getClassId());
+        conflicting.put(TransactionType.DELIVERY.getClassId(), TransactionType.ORDER_STATUS.getClassId());
+        conflicting.put(TransactionType.DELIVERY.getClassId(), TransactionType.PAYMENT.getClassId());
+        notConflicting.put(TransactionType.DELIVERY.getClassId(), TransactionType.NEW_ORDER.getClassId());
+        notConflicting.put(TransactionType.DELIVERY.getClassId(), TransactionType.STOCK_LEVEL.getClassId());
 
         CONFLICTING_TRANSACTIONS = Collections.unmodifiableMap(conflicting.asMap());
         NOT_CONFLICTING_TRANSACTIONS = Collections.unmodifiableMap(notConflicting.asMap());
     }
 
-    public static boolean hasConflict(TransactionType t1, TransactionType t2) {
+    public static boolean hasConflict(final int t1, final int t2) {
         return CONFLICTING_TRANSACTIONS.get(t1).contains(t2);
     }
 
-    public static boolean hasNotConflict(TransactionType t1, TransactionType t2) {
+    public static boolean hasNotConflict(int t1, int t2) {
         return NOT_CONFLICTING_TRANSACTIONS.get(t1).contains(t2);
     }
 
@@ -80,7 +80,7 @@ public class TransactionConflicts {
      *            The second transaction type
      * @return true if it is, false otherwise
      */
-    public static boolean isPessimistic(TransactionType t1, TransactionType t2) {
+    public static boolean isPessimistic(int t1, int t2) {
         return PESSIMISTIC_MODEL.contains(t1) || PESSIMISTIC_MODEL.contains(t2);
     }
 

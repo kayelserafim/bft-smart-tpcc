@@ -5,13 +5,13 @@ import java.math.RoundingMode;
 import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
-public class PaymentCommand implements Command {
+public class PaymentCommand implements TPCCCommand {
 
     private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
 
@@ -21,16 +21,16 @@ public class PaymentCommand implements Command {
     }
 
     @Override
-    public TPCCCommand createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
+    public CommandRequest createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
         final int x = random.nextInt(1, 100);
-        final int districtId = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+        final int districtId = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
         int customerDistrictID;
         int customerWarehouseID;
         if (x <= 85) {
             customerWarehouseID = terminalData.getWarehouseId();
             customerDistrictID = districtId;
         } else {
-            customerDistrictID = random.nextInt(1, TPCCConfig.DIST_PER_WHSE);
+            customerDistrictID = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
             do {
                 customerWarehouseID = random.nextInt(1, terminalData.getWarehouseCount());
             } while (customerWarehouseID == terminalData.getWarehouseId() && terminalData.getWarehouseCount() > 1);
@@ -53,7 +53,9 @@ public class PaymentCommand implements Command {
         final BigDecimal paymentAmount =
                 random.nextBigDecimal(100, 500000).divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP);
 
-        final PaymentInput input = new PaymentInput().withWarehouseId(terminalData.getWarehouseId())
+        return new PaymentInput().withCommandId(UUID.randomUUID().toString())
+                .withTransactionType(transactionType().getClassId())
+                .withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)
                 .withCustomerWarehouseId(customerWarehouseID)
                 .withCustomerDistrictId(customerDistrictID)
@@ -61,12 +63,6 @@ public class PaymentCommand implements Command {
                 .withCustomerLastName(customerLastName)
                 .withCustomerByName(customerByName)
                 .withPaymentAmount(paymentAmount);
-
-        return TPCCCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .transactionType(transactionType())
-                .request(input)
-                .build();
     }
 
 }

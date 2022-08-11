@@ -16,19 +16,18 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 
-import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
-import bftsmart.microbenchmark.tpcc.io.TPCCData;
+import bftsmart.microbenchmark.tpcc.io.Workload;
+import bftsmart.microbenchmark.tpcc.io.WorkloadFile;
 import io.vavr.control.Try;
 
-public class DataModule extends AbstractModule {
+public class WorkloadModule extends AbstractModule {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataModule.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkloadModule.class);
 
     @Override
     protected void configure() {
         Properties properties = new Properties(System.getProperties());
-        try (InputStream inStream = new FileInputStream(TPCCConfig.getWorkloadConfigFile())) {
+        try (InputStream inStream = new FileInputStream(WorkloadFile.defaultWorkload())) {
             properties.load(inStream);
         } catch (IOException e) {
             LOGGER.error("Could not load WorkloadConfig.", e);
@@ -38,18 +37,18 @@ public class DataModule extends AbstractModule {
 
     @Provides
     @Singleton
-    public TPCCData tpccData(ObjectMapper objectMapper, WorkloadConfig workloadConfig) {
-        File file = TPCCConfig.getTPCCDataFile(workloadConfig.getFileName());
+    public Workload workload(WorkloadFile workloadFile, ObjectMapper objectMapper) {
+        File file = workloadFile.defaultWorkloadData();
         LOGGER.info("Reading TPCCData from Json file {}", file.getName());
 
         Stopwatch stopwatch = Stopwatch.createStarted();
-        TPCCData tpccData = Try.of(() -> objectMapper.readValue(file, TPCCData.class))
+        Workload workload = Try.of(() -> objectMapper.readValue(file, Workload.class))
                 .onFailure(e -> LOGGER.error("Error reading file [{}].", file.getName(), e))
-                .getOrElse(new TPCCData());
+                .getOrElse(new Workload());
 
         stopwatch.stop();
         LOGGER.info("Data read in {} seconds.", stopwatch.elapsed().getSeconds());
-        return tpccData;
+        return workload;
     }
 
 }

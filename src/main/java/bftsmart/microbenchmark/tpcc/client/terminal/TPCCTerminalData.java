@@ -2,9 +2,9 @@ package bftsmart.microbenchmark.tpcc.client.terminal;
 
 import java.time.Duration;
 
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
+import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
 
 public class TPCCTerminalData {
 
@@ -20,7 +20,7 @@ public class TPCCTerminalData {
     private final Integer warehouseCount;
     private final Integer warmupIterations;
     private final Duration runMins;
-    private final Boolean parallelExecution;
+    private final Boolean parallel;
 
     public Integer getTerminalId() {
         return terminalId;
@@ -50,8 +50,8 @@ public class TPCCTerminalData {
         return runMins;
     }
 
-    public Boolean getParallelExecution() {
-        return parallelExecution;
+    public Boolean getParallel() {
+        return parallel;
     }
 
     public TransactionType getTransactionType(Integer weight) {
@@ -89,7 +89,7 @@ public class TPCCTerminalData {
         warehouseCount = builder.warehouseCount;
         warmupIterations = builder.warmupIterations;
         runMins = builder.runMins;
-        parallelExecution = builder.parallelExecution;
+        parallel = builder.parallel;
     }
 
     public static class Builder {
@@ -106,7 +106,7 @@ public class TPCCTerminalData {
         private Integer warehouseCount;
         private Integer warmupIterations;
         private Duration runMins;
-        private Boolean parallelExecution;
+        private Boolean parallel;
 
         public Builder warehouseCount(Integer warehouseCount) {
             this.warehouseCount = warehouseCount;
@@ -164,12 +164,12 @@ public class TPCCTerminalData {
             return this;
         }
 
-        public Builder parallelExecution(Boolean parallelExecution) {
-            this.parallelExecution = parallelExecution;
+        public Builder parallel(Boolean parallel) {
+            this.parallel = parallel;
             return this;
         }
 
-        public Builder workload(WorkloadConfig workload) {
+        public Builder workload(TPCCConfig workload) {
             return warehouseCount(workload.getWarehouses()).stockLevelWeight(workload.getStockLevelWeight())
                     .orderStatusWeight(workload.getOrderStatusWeight())
                     .deliveryWeight(workload.getDeliveryWeight())

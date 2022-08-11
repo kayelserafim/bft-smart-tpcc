@@ -3,175 +3,224 @@ package bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.output;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.ZoneOffset;
 
-public class OrderStatusOutput {
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoSerializable;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
-    private final LocalDateTime dateTime;
-    private final Integer warehouseId;
-    private final Integer districtId;
-    private final Integer customerId;
-    private final String customerFirst;
-    private final String customerMiddle;
-    private final String customerLast;
-    private final BigDecimal customerBalance;
-    private final Integer orderId;
-    private final Long entryDate;
-    private final Integer carrierId;
-    private final List<OrderLineOutput> orderLines;
+public class OrderStatusOutput implements KryoSerializable {
 
-    public OrderStatusOutput(Builder builder) {
-        this.dateTime = builder.dateTime;
-        this.warehouseId = builder.warehouseId;
-        this.districtId = builder.districtId;
-        this.customerId = builder.customerId;
-        this.customerFirst = builder.customerFirst;
-        this.customerMiddle = builder.customerMiddle;
-        this.customerLast = builder.customerLast;
-        this.customerBalance = builder.customerBalance.setScale(2, RoundingMode.HALF_UP);
-        this.orderId = builder.orderId;
-        this.entryDate = builder.entryDate;
-        this.carrierId = builder.carrierId;
-        this.orderLines = builder.orderLines;
-    }
+    private long dateTime;
+    private int warehouseId;
+    private int districtId;
+    private int customerId;
+    private String customerFirst;
+    private String customerMiddle;
+    private String customerLast;
+    private double customerBalance;
+    private int orderId;
+    private long entryDate;
+    private int carrierId;
+    private OrderLineOutput[] orderLines;
 
-    public LocalDateTime getDateTime() {
+    public long getDateTime() {
         return dateTime;
     }
 
-    public Integer getWarehouseId() {
+    public void setDateTime(long dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public OrderStatusOutput withDateTime(long dateTime) {
+        setDateTime(dateTime);
+        return this;
+    }
+
+    public OrderStatusOutput withDateTime(LocalDateTime dateTime) {
+        setDateTime(dateTime.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli());
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public Integer getDistrictId() {
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public OrderStatusOutput withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public int getDistrictId() {
         return districtId;
     }
 
-    public Integer getCustomerId() {
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public OrderStatusOutput withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public int getCustomerId() {
         return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public OrderStatusOutput withCustomerId(int customerId) {
+        setCustomerId(customerId);
+        return this;
     }
 
     public String getCustomerFirst() {
         return customerFirst;
     }
 
+    public void setCustomerFirst(String customerFirst) {
+        this.customerFirst = customerFirst;
+    }
+
+    public OrderStatusOutput withCustomerFirst(String customerFirst) {
+        setCustomerFirst(customerFirst);
+        return this;
+    }
+
     public String getCustomerMiddle() {
         return customerMiddle;
+    }
+
+    public void setCustomerMiddle(String customerMiddle) {
+        this.customerMiddle = customerMiddle;
+    }
+
+    public OrderStatusOutput withCustomerMiddle(String customerMiddle) {
+        setCustomerMiddle(customerMiddle);
+        return this;
     }
 
     public String getCustomerLast() {
         return customerLast;
     }
 
-    public BigDecimal getCustomerBalance() {
+    public void setCustomerLast(String customerLast) {
+        this.customerLast = customerLast;
+    }
+
+    public OrderStatusOutput withCustomerLast(String customerLast) {
+        setCustomerLast(customerLast);
+        return this;
+    }
+
+    public double getCustomerBalance() {
         return customerBalance;
     }
 
-    public Integer getOrderId() {
+    public void setCustomerBalance(double customerBalance) {
+        this.customerBalance = customerBalance;
+    }
+
+    public OrderStatusOutput withCustomerBalance(double customerBalance) {
+        setCustomerBalance(customerBalance);
+        return this;
+    }
+
+    public OrderStatusOutput withCustomerBalance(BigDecimal customerBalance) {
+        setCustomerBalance(customerBalance.setScale(2, RoundingMode.HALF_UP).doubleValue());
+        return this;
+    }
+
+    public int getOrderId() {
         return orderId;
     }
 
-    public Long getEntryDate() {
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public OrderStatusOutput withOrderId(int orderId) {
+        setOrderId(orderId);
+        return this;
+    }
+
+    public long getEntryDate() {
         return entryDate;
     }
 
-    public Integer getCarrierId() {
+    public void setEntryDate(long entryDate) {
+        this.entryDate = entryDate;
+    }
+
+    public OrderStatusOutput withEntryDate(long entryDate) {
+        setEntryDate(entryDate);
+        return this;
+    }
+
+    public int getCarrierId() {
         return carrierId;
     }
 
-    public List<OrderLineOutput> getOrderLines() {
+    public void setCarrierId(int carrierId) {
+        this.carrierId = carrierId;
+    }
+
+    public OrderStatusOutput withCarrierId(int carrierId) {
+        setCarrierId(carrierId);
+        return this;
+    }
+
+    public OrderLineOutput[] getOrderLines() {
         return orderLines;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public void setOrderLines(OrderLineOutput[] orderLines) {
+        this.orderLines = orderLines;
     }
 
-    public static class Builder {
+    public OrderStatusOutput withOrderLines(OrderLineOutput[] orderLines) {
+        setOrderLines(orderLines);
+        return this;
+    }
 
-        private LocalDateTime dateTime;
-        private Integer warehouseId;
-        private Integer districtId;
-        private Integer customerId;
-        private String customerFirst;
-        private String customerMiddle;
-        private String customerLast;
-        private BigDecimal customerBalance;
-        private Integer orderId;
-        private Long entryDate;
-        private Integer carrierId;
-        private List<OrderLineOutput> orderLines;
+    @Override
+    public void write(Kryo kryo, Output output) {
+        output.writeVarLong(dateTime, true);
+        output.writeVarInt(warehouseId, true);
+        output.writeVarInt(districtId, true);
+        output.writeVarInt(customerId, true);
+        output.writeAscii(customerFirst);
+        output.writeAscii(customerMiddle);
+        output.writeAscii(customerLast);
+        output.writeVarDouble(customerBalance, 2, true);
+        output.writeVarInt(orderId, true);
+        output.writeVarLong(entryDate, true);
+        output.writeVarInt(carrierId, true);
+        kryo.writeObject(output, orderLines);
+    }
 
-        public Builder dateTime(LocalDateTime dateTime) {
-            this.dateTime = dateTime;
-            return this;
-        }
-
-        public Builder warehouseId(Integer warehouseId) {
-            this.warehouseId = warehouseId;
-            return this;
-        }
-
-        public Builder districtId(Integer districtId) {
-            this.districtId = districtId;
-            return this;
-        }
-
-        public Builder customerId(Integer customerId) {
-            this.customerId = customerId;
-            return this;
-        }
-
-        public Builder customerFirst(String customerFirst) {
-            this.customerFirst = customerFirst;
-            return this;
-        }
-
-        public Builder customerMiddle(String customerMiddle) {
-            this.customerMiddle = customerMiddle;
-            return this;
-        }
-
-        public Builder customerLast(String customerLast) {
-            this.customerLast = customerLast;
-            return this;
-        }
-
-        public Builder customerBalance(BigDecimal customerBalance) {
-            this.customerBalance = customerBalance;
-            return this;
-        }
-
-        public Builder orderId(Integer orderId) {
-            this.orderId = orderId;
-            return this;
-        }
-
-        public Builder entryDate(Long entryDate) {
-            this.entryDate = entryDate;
-            return this;
-        }
-
-        public Builder carrierId(Integer carrierId) {
-            this.carrierId = carrierId;
-            return this;
-        }
-
-        public Builder orderLine(OrderLineOutput orderLine) {
-            if (orderLines == null) {
-                orderLines = new ArrayList<>();
-            }
-            if (orderLine != null) {
-                orderLines.add(orderLine);
-            }
-            return this;
-        }
-
-        public OrderStatusOutput build() {
-            return new OrderStatusOutput(this);
-        }
-
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setDateTime(input.readVarLong(true));
+        setWarehouseId(input.readVarInt(true));
+        setDistrictId(input.readVarInt(true));
+        setCustomerId(input.readVarInt(true));
+        setCustomerFirst(input.readString());
+        setCustomerMiddle(input.readString());
+        setCustomerLast(input.readString());
+        setCustomerBalance(input.readVarDouble(2, true));
+        setOrderId(input.readVarInt(true));
+        setEntryDate(input.readVarLong(true));
+        setCarrierId(input.readVarInt(true));
+        setOrderLines(kryo.readObject(input, OrderLineOutput[].class));
     }
 
 }

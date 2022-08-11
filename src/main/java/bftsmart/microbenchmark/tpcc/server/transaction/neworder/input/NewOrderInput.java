@@ -1,147 +1,193 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.neworder.input;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.StringJoiner;
-
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class NewOrderInput implements Serializable {
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
 
-    private static final long serialVersionUID = -5998555582667194482L;
+public class NewOrderInput implements CommandRequest {
 
+    private String commandId;
+    private int transactionType;
     @JsonProperty("w_id")
-    private Integer warehouseId;
+    private int warehouseId;
     @JsonProperty("d_id")
-    private Integer districtId;
+    private int districtId;
     @JsonProperty("c_id")
-    private Integer customerId;
+    private int customerId;
     @JsonProperty("ol_o_cnt")
-    private Integer orderLineCnt;
+    private int orderLineCnt;
     @JsonProperty("o_all_local")
-    private Integer orderAllLocal;
+    private int orderAllLocal;
     @JsonProperty("itemIds")
-    private List<Integer> itemIds;
+    private int[] itemIds;
     @JsonProperty("supplierWarehouseIDs")
-    private List<Integer> supplierWarehouseIds;
+    private int[] supplierWarehouseIds;
     @JsonProperty("orderQuantities")
-    private List<Integer> orderQuantities;
+    private int[] orderQuantities;
 
-    public Integer getWarehouseId() {
+    @Override
+    public String getCommandId() {
+        return commandId;
+    }
+
+    @Override
+    public void setCommandId(String commandId) {
+        this.commandId = commandId;
+    }
+
+    public NewOrderInput withCommandId(String commandId) {
+        setCommandId(commandId);
+        return this;
+    }
+
+    @Override
+    public int getTransactionType() {
+        return transactionType;
+    }
+
+    @Override
+    public void setTransactionType(int transactionType) {
+        this.transactionType = transactionType;
+    }
+
+    public NewOrderInput withTransactionType(int transactionType) {
+        setTransactionType(transactionType);
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public void setWarehouseId(Integer warehouseId) {
+    public void setWarehouseId(int warehouseId) {
         this.warehouseId = warehouseId;
     }
 
-    public NewOrderInput withWarehouseId(Integer warehouseId) {
+    public NewOrderInput withWarehouseId(int warehouseId) {
         setWarehouseId(warehouseId);
         return this;
     }
 
-    public Integer getDistrictId() {
+    public int getDistrictId() {
         return districtId;
     }
 
-    public void setDistrictId(Integer districtId) {
+    public void setDistrictId(int districtId) {
         this.districtId = districtId;
     }
 
-    public NewOrderInput withDistrictId(Integer districtId) {
+    public NewOrderInput withDistrictId(int districtId) {
         setDistrictId(districtId);
         return this;
     }
 
-    public Integer getCustomerId() {
+    public int getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
 
-    public NewOrderInput withCustomerId(Integer customerId) {
+    public NewOrderInput withCustomerId(int customerId) {
         setCustomerId(customerId);
         return this;
     }
 
-    public Integer getOrderLineCnt() {
+    public int getOrderLineCnt() {
         return orderLineCnt;
     }
 
-    public void setOrderLineCnt(Integer orderLineCnt) {
+    public void setOrderLineCnt(int orderLineCnt) {
         this.orderLineCnt = orderLineCnt;
     }
 
-    public NewOrderInput withOrderLineCnt(Integer orderLineCnt) {
+    public NewOrderInput withOrderLineCnt(int orderLineCnt) {
         setOrderLineCnt(orderLineCnt);
         return this;
     }
 
-    public Integer getOrderAllLocal() {
+    public int getOrderAllLocal() {
         return orderAllLocal;
     }
 
-    public void setOrderAllLocal(Integer orderAllLocal) {
+    public void setOrderAllLocal(int orderAllLocal) {
         this.orderAllLocal = orderAllLocal;
     }
 
-    public NewOrderInput withOrderAllLocal(Integer orderAllLocal) {
+    public NewOrderInput withOrderAllLocal(int orderAllLocal) {
         setOrderAllLocal(orderAllLocal);
         return this;
     }
 
-    public List<Integer> getItemIds() {
+    public int[] getItemIds() {
         return itemIds;
     }
 
-    public void setItemIds(List<Integer> itemIds) {
+    public void setItemIds(int[] itemIds) {
         this.itemIds = itemIds;
     }
 
-    public NewOrderInput withItemIds(List<Integer> itemIds) {
+    public NewOrderInput withItemIds(int[] itemIds) {
         setItemIds(itemIds);
         return this;
     }
 
-    public List<Integer> getSupplierWarehouseIds() {
+    public int[] getSupplierWarehouseIds() {
         return supplierWarehouseIds;
     }
 
-    public void setSupplierWarehouseIds(List<Integer> supplierWarehouseIds) {
+    public void setSupplierWarehouseIds(int[] supplierWarehouseIds) {
         this.supplierWarehouseIds = supplierWarehouseIds;
     }
 
-    public NewOrderInput withSupplierWarehouseIds(List<Integer> supplierWarehouseIds) {
+    public NewOrderInput withSupplierWarehouseIds(int[] supplierWarehouseIds) {
         setSupplierWarehouseIds(supplierWarehouseIds);
         return this;
     }
 
-    public List<Integer> getOrderQuantities() {
+    public int[] getOrderQuantities() {
         return orderQuantities;
     }
 
-    public void setOrderQuantities(List<Integer> orderQuantities) {
+    public void setOrderQuantities(int[] orderQuantities) {
         this.orderQuantities = orderQuantities;
     }
 
-    public NewOrderInput withOrderQuantities(List<Integer> orderQuantities) {
+    public NewOrderInput withOrderQuantities(int[] orderQuantities) {
         setOrderQuantities(orderQuantities);
         return this;
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(", ", NewOrderInput.class.getSimpleName() + "[", "]")
-                .add("warehouseId=" + warehouseId)
-                .add("districtId=" + districtId)
-                .add("customerId=" + customerId)
-                .add("orderLineCnt=" + orderLineCnt)
-                .add("orderAllLocal=" + orderAllLocal)
-                .add("itemIds=" + itemIds)
-                .add("supplierWarehouseIds=" + supplierWarehouseIds)
-                .add("orderQuantities=" + orderQuantities)
-                .toString();
+    public void write(Kryo kryo, Output output) {
+        output.writeAscii(commandId);
+        output.writeVarInt(transactionType, true);
+        output.writeVarInt(warehouseId, true);
+        output.writeVarInt(districtId, true);
+        output.writeVarInt(customerId, true);
+        output.writeVarInt(orderLineCnt, true);
+        output.writeVarInt(orderAllLocal, true);
+        kryo.writeObjectOrNull(output, itemIds, int[].class);
+        kryo.writeObjectOrNull(output, supplierWarehouseIds, int[].class);
+        kryo.writeObjectOrNull(output, orderQuantities, int[].class);
     }
+
+    @Override
+    public void read(Kryo kryo, Input input) {
+        setCommandId(input.readString());
+        setTransactionType(input.readVarInt(true));
+        setWarehouseId(input.readVarInt(true));
+        setDistrictId(input.readVarInt(true));
+        setCustomerId(input.readVarInt(true));
+        setOrderLineCnt(input.readVarInt(true));
+        setOrderAllLocal(input.readVarInt(true));
+        setItemIds(kryo.readObjectOrNull(input, int[].class));
+        setSupplierWarehouseIds(kryo.readObjectOrNull(input, int[].class));
+        setOrderQuantities(kryo.readObjectOrNull(input, int[].class));
+    }
+
 }

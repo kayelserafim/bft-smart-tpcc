@@ -1,13 +1,15 @@
 package bftsmart.microbenchmark.tpcc.server.transaction.payment;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.apache.commons.lang3.BooleanUtils;
 
 import com.google.inject.Inject;
 
-import bftsmart.microbenchmark.tpcc.probject.TPCCCommand;
-import bftsmart.microbenchmark.tpcc.probject.TransactionType;
+import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
+import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
+import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.server.repository.CustomerRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.DistrictRepository;
 import bftsmart.microbenchmark.tpcc.server.repository.HistoryRepository;
@@ -19,7 +21,7 @@ import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.History;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
-import bftsmart.microbenchmark.tpcc.util.Times;
+import bftsmart.microbenchmark.tpcc.util.Dates;
 
 public class PaymentTransaction implements Transaction {
 
@@ -38,9 +40,9 @@ public class PaymentTransaction implements Transaction {
     }
 
     @Override
-    public TPCCCommand process(final TPCCCommand command) {
-        PaymentInput input = (PaymentInput) command.getRequest();
-        PaymentOutput.Builder paymentBuilder = PaymentOutput.builder().dateTime(LocalDateTime.now());
+    public CommandResponse process(final CommandRequest command) {
+        PaymentInput input = (PaymentInput) command;
+        PaymentOutput paymentOutput = new PaymentOutput().withDateTime(LocalDateTime.now());
 
         Integer warehouseId = input.getWarehouseId();
         Integer districtId = input.getDistrictId();
@@ -54,7 +56,7 @@ public class PaymentTransaction implements Transaction {
             if (customer == null) {
                 String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
                 String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
-                return TPCCCommand.from(command).status(-1).response(msg).build();
+                return new CommandResponse().withStatus(-1).withResponse(msg);
             }
         } else {
             // clause 2.6.2.2 (dot 3, Case 1)
@@ -62,11 +64,11 @@ public class PaymentTransaction implements Transaction {
         }
 
         Warehouse warehouse = Warehouse.from(warehouseRepository.find(warehouseId))
-                .addYearToDateBalance(input.getPaymentAmount())
+                .addYearToDateBalance(BigDecimal.valueOf(input.getPaymentAmount()))
                 .build();
 
         District district = District.from(districtRepository.find(districtId, warehouseId))
-                .addYearToDateBalance(input.getPaymentAmount())
+                .addYearToDateBalance(BigDecimal.valueOf(input.getPaymentAmount()))
                 .build();
 
         String data = null;
@@ -109,8 +111,8 @@ public class PaymentTransaction implements Transaction {
                 .customerId(input.getCustomerId())
                 .districtId(input.getDistrictId())
                 .warehouseId(input.getWarehouseId())
-                .date(Times.now())
-                .amount(input.getPaymentAmount())
+                .date(Dates.now())
+                .amount(BigDecimal.valueOf(input.getPaymentAmount()))
                 .data(historyData)
                 .build();
 
@@ -119,20 +121,23 @@ public class PaymentTransaction implements Transaction {
         customerRepository.save(Customer.from(customer)
                 .data(data)
                 .paymentCntIncrement()
-                .subtractBalance(input.getPaymentAmount())
-                .yearToDateBalancePayment(input.getPaymentAmount())
+                .subtractBalance(BigDecimal.valueOf(input.getPaymentAmount()))
+                .yearToDateBalancePayment(BigDecimal.valueOf(input.getPaymentAmount()))
                 .build());
         historyRepository.save(history);
 
-        paymentBuilder.warehouse(warehouse).district(district).customer(customer).amountPaid(input.getPaymentAmount());
+        paymentOutput.warehouse(warehouse)
+                .district(district)
+                .customer(customer)
+                .withAmountPaid(input.getPaymentAmount());
 
-        return TPCCCommand.from(command).status(0).response(outputScreen(paymentBuilder.build())).build();
+        return new CommandResponse().withStatus(0).withResponse(outputScreen(paymentOutput));
     }
 
     private String outputScreen(PaymentOutput paymentOutput) {
         StringBuilder message = new StringBuilder();
         message.append("\n+---------------------------- PAYMENT ----------------------------+");
-        message.append("\n Date: ").append(paymentOutput.getDateTime().format(Times.DATE_TIME_FORMAT));
+        message.append("\n Date: ").append(Dates.format(paymentOutput.getDateTime(), Dates.DATE_TIME_FORMAT));
         message.append("\n\n Warehouse: ");
         message.append(paymentOutput.getWarehouseId());
         message.append("\n   Street 1(W):  ");

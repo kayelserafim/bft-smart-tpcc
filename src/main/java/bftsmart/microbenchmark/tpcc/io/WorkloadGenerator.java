@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.config.WorkloadConfig;
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.History;
@@ -22,22 +22,22 @@ import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
-import bftsmart.microbenchmark.tpcc.util.Times;
+import bftsmart.microbenchmark.tpcc.util.Dates;
 
 @Singleton
-public class TPCCDataGenerator {
+public class WorkloadGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TPCCDataGenerator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkloadGenerator.class);
 
     private final TPCCRandom random = new TPCCRandom();
 
-    private final TPCCData tpccData;
-    private final TPCCJsonWriter jsonWriter;
+    private final Workload workload;
+    private final WorkloadFile workloadFile;
 
     @Inject
-    TPCCDataGenerator(WorkloadConfig workloadConfig, TPCCJsonWriter jsonWriter) {
-        this.tpccData = new TPCCData(workloadConfig.getWarehouses());
-        this.jsonWriter = jsonWriter;
+    WorkloadGenerator(TPCCConfig tpccConfig, WorkloadFile workloadFile) {
+        this.workload = new Workload(tpccConfig.getWarehouses());
+        this.workloadFile = workloadFile;
     }
 
     public void start() {
@@ -46,9 +46,9 @@ public class TPCCDataGenerator {
     }
 
     public void writeFile() {
-        String info = tpccData.toString();
+        String info = workload.toString();
         LOGGER.info("saving data to file. ");
-        jsonWriter.writeToJsonFile(tpccData);
+        workloadFile.writeWorkloadToFile(workload);
         LOGGER.info("data saved in file: {}", info);
     }
 
@@ -62,12 +62,12 @@ public class TPCCDataGenerator {
         createStocks();
         createOrder();
         createHistory();
-        tpccData.setcLoad(random.getCLoad());
+        workload.setcLoad(random.getCLoad());
         LOGGER.info("Data generated in {} seconds.", Duration.between(start, Instant.now()).getSeconds());
     }
 
     private void createWarehouses() {
-        for (int w = 1; w <= tpccData.getWarehouseCount(); w++) {
+        for (int w = 1; w <= workload.getWarehouseCount(); w++) {
             Warehouse warehouse = Warehouse.builder()
                     .warehouseId(w)
                     .name(random.getAString(6, 10))
@@ -80,13 +80,13 @@ public class TPCCDataGenerator {
                     .yearToDateBalance(BigDecimal.valueOf(300000.00))
                     .build();
 
-            tpccData.getWarehouses().add(warehouse);
+            workload.getWarehouses().add(warehouse);
         }
     }
 
     private void createDistricts() {
-        for (int w = 1; w <= tpccData.getWarehouseCount(); w++) {
-            for (int d = 1; d <= TPCCConfig.DIST_PER_WHSE; d++) {
+        for (int w = 1; w <= workload.getWarehouseCount(); w++) {
+            for (int d = 1; d <= TPCCConstants.DIST_PER_WHSE; d++) {
                 District district = District.builder()
                         .districtId(d)
                         .warehouseId(w)
@@ -101,15 +101,15 @@ public class TPCCDataGenerator {
                         .nextOrderId(3001)
                         .build();
 
-                tpccData.getDistricts().add(district);
+                workload.getDistricts().add(district);
             }
         }
     }
 
     private void createCustomers() {
-        for (int w = 1; w <= tpccData.getWarehouseCount(); w++) {
-            for (int d = 1; d <= TPCCConfig.DIST_PER_WHSE; d++) {
-                for (int c = 1; c <= TPCCConfig.CUST_PER_DIST; c++) {
+        for (int w = 1; w <= workload.getWarehouseCount(); w++) {
+            for (int d = 1; d <= TPCCConstants.DIST_PER_WHSE; d++) {
+                for (int c = 1; c <= TPCCConstants.CUST_PER_DIST; c++) {
                     Customer customer = Customer.builder()
                             .customerId(c)
                             .districtId(d)
@@ -123,7 +123,7 @@ public class TPCCDataGenerator {
                             .state(random.getAString(2))
                             .zip(random.getAZip())
                             .phone(random.getNString(16))
-                            .since(Times.now())
+                            .since(Dates.now())
                             .credit(random.nextInt(1, 10) == 1 ? "BC" : "GC")
                             .creditLimit(BigDecimal.valueOf(50000))
                             .discount(BigDecimal.valueOf(random.getAPercent(0, 0.5)))
@@ -134,14 +134,14 @@ public class TPCCDataGenerator {
                             .data(random.getAString(300, 500))
                             .build();
 
-                    tpccData.getCustomers().add(customer);
+                    workload.getCustomers().add(customer);
                 }
             }
         }
     }
 
     private void createItems() {
-        for (int i = 1; i <= TPCCConfig.NB_MAX_ITEM; i++) {
+        for (int i = 1; i <= TPCCConstants.NB_MAX_ITEM; i++) {
             Item item = Item.builder()
                     .itemId(i)
                     .imageId(random.nextInt(1, 10000))
@@ -150,13 +150,13 @@ public class TPCCDataGenerator {
                     .data(random.getData())
                     .build();
 
-            tpccData.getItems().add(item);
+            workload.getItems().add(item);
         }
     }
 
     private void createStocks() {
-        for (int w = 1; w <= tpccData.getWarehouseCount(); w++) {
-            for (int i = 1; i <= TPCCConfig.NB_MAX_ITEM; i++) {
+        for (int w = 1; w <= workload.getWarehouseCount(); w++) {
+            for (int i = 1; i <= TPCCConstants.NB_MAX_ITEM; i++) {
                 Stock stock = Stock.builder()
                         .itemId(i)
                         .warehouseId(w)
@@ -177,27 +177,27 @@ public class TPCCDataGenerator {
                         .data(random.getData())
                         .build();
 
-                tpccData.getStocks().add(stock);
+                workload.getStocks().add(stock);
             }
         }
     }
 
     private void createHistory() {
-        for (int w = 1; w <= tpccData.getWarehouseCount(); w++) {
-            for (int d = 1; d <= TPCCConfig.DIST_PER_WHSE; d++) {
-                for (Customer customer : tpccData.getCustomers()) {
+        for (int w = 1; w <= workload.getWarehouseCount(); w++) {
+            for (int d = 1; d <= TPCCConstants.DIST_PER_WHSE; d++) {
+                for (Customer customer : workload.getCustomers()) {
                     History history = History.builder()
                             .customerId(customer.getCustomerId())
                             .districtId(d)
                             .warehouseId(w)
                             .customerDistrictId(customer.getDistrictId())
                             .customerWarehouseId(customer.getWarehouseId())
-                            .date(Times.now())
+                            .date(Dates.now())
                             .amount(BigDecimal.TEN)
                             .data(random.getAString(12, 24))
                             .build();
 
-                    tpccData.getHistories().add(history);
+                    workload.getHistories().add(history);
                 }
             }
         }
@@ -208,10 +208,10 @@ public class TPCCDataGenerator {
      * generated using a random permutation of all 3,000 customers
      */
     private void createOrder() {
-        for (int w = 1; w <= tpccData.getWarehouseCount(); w++) {
-            for (int d = 1; d <= TPCCConfig.DIST_PER_WHSE; d++) {
-                for (int o = 1; o <= TPCCConfig.CUST_PER_DIST; o++) {
-                    int c = random.nextInt(1, TPCCConfig.CUST_PER_DIST);
+        for (int w = 1; w <= workload.getWarehouseCount(); w++) {
+            for (int d = 1; d <= TPCCConstants.DIST_PER_WHSE; d++) {
+                for (int o = 1; o <= TPCCConstants.CUST_PER_DIST; o++) {
+                    int c = random.nextInt(1, TPCCConstants.CUST_PER_DIST);
 
                     // carrierId: random within [1 .. 10] if O_ID < 2,101, null otherwise
                     Order order = Order.builder()
@@ -219,21 +219,21 @@ public class TPCCDataGenerator {
                             .districtId(d)
                             .warehouseId(w)
                             .customerId(c)
-                            .entryDate(Times.now())
-                            .carrierId(o < TPCCConfig.LIMIT_ORDER ? random.nextInt(1, 10) : null)
+                            .entryDate(Dates.now())
+                            .carrierId(o < TPCCConstants.LIMIT_ORDER ? random.nextInt(1, 10) : null)
                             .orderLineCounter(random.nextInt(5, 15))
                             .allLocal(1)
                             .build();
 
-                    tpccData.getOrders().add(order);
+                    workload.getOrders().add(order);
 
                     // 900 rows in the NEW-ORDER table corresponding to the last
                     // 900 rows in the ORDER table for that district (i.e., with
                     // NO_O_ID between 2,101 and 3,000) (70%)
-                    if (o >= TPCCConfig.LIMIT_ORDER) {
+                    if (o >= TPCCConstants.LIMIT_ORDER) {
                         NewOrder newOrder = NewOrder.builder().orderId(o).districtId(d).warehouseId(w).build();
 
-                        tpccData.getNewOrders().add(newOrder);
+                        workload.getNewOrders().add(newOrder);
                     }
 
                     createOrderLine(w, d, order);
@@ -252,12 +252,12 @@ public class TPCCDataGenerator {
                     .supplyWarehouseId(w)
                     .quantity(5)
                     .itemId(random.getItemID())
-                    .deliveryDateTime(ol < TPCCConfig.LIMIT_ORDER ? order.getEntryDate() : null)
-                    .amount(ol < TPCCConfig.LIMIT_ORDER ? BigDecimal.ZERO : random.nextBigDecimal(0.01, 9999.99))
+                    .deliveryDateTime(ol < TPCCConstants.LIMIT_ORDER ? order.getEntryDate() : null)
+                    .amount(ol < TPCCConstants.LIMIT_ORDER ? BigDecimal.ZERO : random.nextBigDecimal(0.01, 9999.99))
                     .districtInfo(random.getAString(24))
                     .build();
 
-            tpccData.getOrderLines().add(orderLine);
+            workload.getOrderLines().add(orderLine);
         }
     }
 
