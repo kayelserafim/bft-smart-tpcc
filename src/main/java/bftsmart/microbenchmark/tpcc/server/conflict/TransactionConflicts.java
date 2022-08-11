@@ -9,7 +9,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
-import bftsmart.microbenchmark.tpcc.domain.TransactionType;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionType;
 
 /**
  * Contains static utility methods belonging to transactions and their conflicting types.

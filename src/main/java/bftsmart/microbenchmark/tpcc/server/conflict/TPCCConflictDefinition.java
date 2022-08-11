@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.inject.Singleton;
 
-import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
-import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.neworder.request.NewOrderRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.request.OrderStatusRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.payment.request.PaymentRequest;
 import bftsmart.util.MultiOperationRequest;
 import parallelism.MessageContextPair;
 import parallelism.late.ConflictDefinition;
@@ -21,8 +21,8 @@ public class TPCCConflictDefinition extends ConflictDefinition {
 
     @Override
     public boolean isDependent(MessageContextPair arg0, MessageContextPair arg1) {
-        final CommandRequest req1 = CommandRequest.deserialize(new MultiOperationRequest(arg0.request.getContent()));
-        final CommandRequest req2 = CommandRequest.deserialize(new MultiOperationRequest(arg1.request.getContent()));
+        final TransactionRequest req1 = TransactionRequest.deserialize(new MultiOperationRequest(arg0.request.getContent()));
+        final TransactionRequest req2 = TransactionRequest.deserialize(new MultiOperationRequest(arg1.request.getContent()));
 
         if (TransactionConflicts.hasNotConflict(req1.getTransactionType(), req2.getTransactionType())) {
             conflictMap.put(req1.getCommandId(), Boolean.FALSE);
@@ -35,8 +35,8 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             return true;
         }
 
-        final Customer customer1 = getCustomerId(req1);
-        final Customer customer2 = getCustomerId(req2);
+        final Customer customer1 = getCustomer(req1);
+        final Customer customer2 = getCustomer(req2);
 
         boolean isDependent;
         // customer1 não possui ID
@@ -71,18 +71,18 @@ public class TPCCConflictDefinition extends ConflictDefinition {
         return conflictMap.getOrDefault(commandId, Boolean.FALSE);
     }
 
-    private Customer getCustomerId(CommandRequest command) {
+    private Customer getCustomer(TransactionRequest command) {
         final int transactionType = command.getTransactionType();
 
         switch (transactionType) {
         case 1:
-            NewOrderInput newOrder = (NewOrderInput) command;
+            NewOrderRequest newOrder = (NewOrderRequest) command;
             return new Customer(newOrder.getCustomerId(), null);
         case 2:
-            PaymentInput payment = (PaymentInput) command;
+            PaymentRequest payment = (PaymentRequest) command;
             return new Customer(payment.getCustomerId(), payment.getCustomerLastName());
         case 3:
-            OrderStatusInput orderStatus = (OrderStatusInput) command;
+            OrderStatusRequest orderStatus = (OrderStatusRequest) command;
             return new Customer(orderStatus.getCustomerId(), orderStatus.getCustomerLastName());
         case 4:
         case 5:

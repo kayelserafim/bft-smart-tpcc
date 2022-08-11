@@ -1,6 +1,6 @@
 package bftsmart.microbenchmark.tpcc.config;
 
-public class TPCCConstants {
+public final class TPCCConstants {
 
     /**
      * <p>

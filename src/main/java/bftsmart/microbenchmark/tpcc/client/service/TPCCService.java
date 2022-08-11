@@ -15,9 +15,9 @@ import com.google.inject.Singleton;
 import bftsmart.microbenchmark.tpcc.client.command.CommandFactory;
 import bftsmart.microbenchmark.tpcc.client.monitor.RawResult;
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
-import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
-import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
-import bftsmart.microbenchmark.tpcc.domain.TransactionType;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionType;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 import bftsmart.tom.ParallelServiceProxy;
 import bftsmart.util.MultiOperationRequest;
@@ -35,11 +35,11 @@ public class TPCCService {
 
     public RawResult process(TPCCTerminalData data, TPCCRandom random) {
         final TransactionType transactionType = data.getTransactionType(random.nextInt(1, 100));
-        final CommandRequest commandRequest = commandFactory.getFactory(transactionType).createCommand(data, random);
+        final TransactionRequest commandRequest = commandFactory.getFactory(transactionType).createCommand(data, random);
 
-        final Pair<Duration, CommandResponse> pair = process(commandRequest, data.getTerminalId(), data.getParallel());
+        final Pair<Duration, TransactionResponse> pair = process(commandRequest, data.getTerminalId(), data.getParallel());
         final Duration elapsedTime = pair.getValue0();
-        final CommandResponse commandResponse = pair.getValue1();
+        final TransactionResponse commandResponse = pair.getValue1();
 
         return new RawResult().terminalId(data.getTerminalId())
                 .terminalName(data.getTerminalName())
@@ -52,7 +52,7 @@ public class TPCCService {
 
     }
 
-    private Pair<Duration, CommandResponse> process(CommandRequest commandRequest, int terminalId, boolean parallel) {
+    private Pair<Duration, TransactionResponse> process(TransactionRequest commandRequest, int terminalId, boolean parallel) {
         final ParallelServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalId);
         try {
             final byte[] req = commandRequest.serialize(new MultiOperationRequest(1));
@@ -64,10 +64,10 @@ public class TPCCService {
                 resp = serviceProxy.invokeOrdered(req);
             }
             stopwatch.stop();
-            return Pair.with(stopwatch.elapsed(), CommandResponse.deserialize(new MultiOperationResponse(resp)));
+            return Pair.with(stopwatch.elapsed(), TransactionResponse.deserialize(new MultiOperationResponse(resp)));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return Pair.with(Duration.ZERO, new CommandResponse().withStatus(-1).withResponse(e.getMessage()));
+            return Pair.with(Duration.ZERO, new TransactionResponse().withStatus(-1).withResponse(e.getMessage()));
         }
     }
 

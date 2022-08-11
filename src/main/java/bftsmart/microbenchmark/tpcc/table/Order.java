@@ -1,20 +1,14 @@
 package bftsmart.microbenchmark.tpcc.table;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
 
-import org.javatuples.Quartet;
-import org.javatuples.Quintet;
-import org.javatuples.Tuple;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.common.collect.ImmutableSet;
-
-import bftsmart.microbenchmark.tpcc.domain.ModelType;
-import bftsmart.microbenchmark.tpcc.domain.Persistable;
 
 /**
  * <ol>
@@ -23,239 +17,261 @@ import bftsmart.microbenchmark.tpcc.domain.Persistable;
  * C_ID)</li>
  * </ol>
  */
-@JsonDeserialize(builder = Order.Builder.class)
-public class Order implements Persistable {
+public class Order implements Externalizable {
 
-    private static final ModelType MODEL_TYPE = ModelType.ORDER;
-
-    private final Tuple key;
-    private final Set<Tuple> secondaryKeys;
+    public static final TableType MODEL_TYPE = TableType.ORDER;
 
     /**
      * o_id - 10,000,000 unique IDs
      */
     @JsonProperty("o_id")
-    private final Integer orderId;
+    private int orderId;
     /**
      * o_d_id - 20 unique IDs
      */
     @JsonProperty("o_d_id")
-    private final Integer districtId;
+    private int districtId;
     /**
      * o_w_id - 2*W unique IDs
      */
     @JsonProperty("o_w_id")
-    private final Integer warehouseId;
+    private int warehouseId;
     /**
      * o_c_id - 96,000 unique IDs
      */
     @JsonProperty("o_c_id")
-    private final Integer customerId;
+    private int customerId;
     /**
      * o_entry_d - date and time
      */
     @JsonProperty("o_entry_d")
-    private final Long entryDate;
+    private long entryDate;
     /**
      * o_carrier_id - 10 unique IDs, or null
      */
     @JsonProperty("o_carrier_id")
-    private final Integer carrierId;
+    private int carrierId;
     /**
      * o_ol_cnt - numeric(2) - Count of Order-Lines
      */
     @JsonProperty("o_ol_cnt")
-    private final Integer orderLineCounter;
+    private int orderLineCounter;
     /**
      * o_all_local - numeric(1)
      */
     @JsonProperty("o_all_local")
-    private final Integer allLocal;
+    private int allLocal;
 
-    private Order(Builder builder) {
-        this.orderId = builder.orderId;
-        this.districtId = builder.districtId;
-        this.warehouseId = builder.warehouseId;
-        this.customerId = builder.customerId;
-        this.entryDate = builder.entryDate;
-        this.carrierId = builder.carrierId;
-        this.orderLineCounter = builder.orderLineCounter;
-        this.allLocal = builder.allLocal;
-        this.key = key(warehouseId, districtId, orderId);
-        this.secondaryKeys = ImmutableSet.of(orderKey(warehouseId, districtId, customerId, orderId),
-                customerKey(warehouseId, districtId, customerId));
+    public OrderKey createKey() {
+        return new OrderKey(warehouseId, districtId, orderId);
     }
 
-    @Override
-    public Tuple getKey() {
-        return key;
-    }
-
-    @Override
-    public Set<Tuple> getSecondaryKeys() {
-        return secondaryKeys;
-    }
-
-    public Integer getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
-    public Integer getDistrictId() {
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public Order withOrderId(int orderId) {
+        setOrderId(orderId);
+        return this;
+    }
+
+    public int getDistrictId() {
         return districtId;
     }
 
-    public Integer getWarehouseId() {
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public Order withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public Integer getCustomerId() {
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public Order withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public int getCustomerId() {
         return customerId;
     }
 
-    public Long getEntryDate() {
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public Order withCustomerId(int customerId) {
+        setCustomerId(customerId);
+        return this;
+    }
+
+    public long getEntryDate() {
         return entryDate;
     }
 
-    public Integer getCarrierId() {
+    public void setEntryDate(long entryDate) {
+        this.entryDate = entryDate;
+    }
+
+    public Order withEntryDate(long entryDate) {
+        setEntryDate(entryDate);
+        return this;
+    }
+
+    public int getCarrierId() {
         return carrierId;
     }
 
-    public Integer getOrderLineCounter() {
+    public void setCarrierId(int carrierId) {
+        this.carrierId = carrierId;
+    }
+
+    public Order withCarrierId(int carrierId) {
+        setCarrierId(carrierId);
+        return this;
+    }
+
+    public int getOrderLineCounter() {
         return orderLineCounter;
     }
 
-    public Integer getAllLocal() {
+    public void setOrderLineCounter(int orderLineCounter) {
+        this.orderLineCounter = orderLineCounter;
+    }
+
+    public Order withOrderLineCounter(int orderLineCounter) {
+        setOrderLineCounter(orderLineCounter);
+        return this;
+    }
+
+    public int getAllLocal() {
         return allLocal;
     }
 
-    public static Tuple orderKey(Integer warehouseId, Integer districtId, Integer customerId, Integer orderId) {
-        return Quintet.with(MODEL_TYPE, warehouseId, districtId, customerId, orderId);
+    public void setAllLocal(int allLocal) {
+        this.allLocal = allLocal;
     }
 
-    public static Tuple customerKey(Integer warehouseId, Integer districtId, Integer customerId) {
-        return Quartet.with(MODEL_TYPE, warehouseId, districtId, customerId);
-    }
-
-    public static Tuple key(Integer warehouseId, Integer districtId, Integer orderId) {
-        return Quartet.with(MODEL_TYPE, warehouseId, districtId, orderId);
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static Builder from(Order order) {
-        return new Builder(order);
+    public Order withAllLocal(int allLocal) {
+        setAllLocal(allLocal);
+        return this;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(key);
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.orderId = in.readInt();
+        this.districtId = in.readInt();
+        this.warehouseId = in.readInt();
+        this.customerId = in.readInt();
+        this.entryDate = in.readLong();
+        this.carrierId = in.readInt();
+        this.orderLineCounter = in.readInt();
+        this.allLocal = in.readInt();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Order other = (Order) obj;
-        return Objects.equals(key, other.key);
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(orderId);
+        out.writeInt(districtId);
+        out.writeInt(warehouseId);
+        out.writeInt(customerId);
+        out.writeLong(entryDate);
+        out.writeInt(carrierId);
+        out.writeInt(orderLineCounter);
+        out.writeInt(allLocal);
     }
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Order.class.getSimpleName() + "[", "]").add("key=" + key)
-                .add("secondaryKeys=" + secondaryKeys)
-                .add("orderId=" + orderId)
-                .add("districtId=" + districtId)
-                .add("warehouseId=" + warehouseId)
-                .add("customerId=" + customerId)
-                .add("entryDate=" + entryDate)
-                .add("carrierId=" + carrierId)
-                .add("orderLineCounter=" + orderLineCounter)
-                .add("allLocal=" + allLocal)
-                .toString();
-    }
+    public static class OrderKey implements Externalizable, Comparable<OrderKey> {
+        private int warehouseId;
+        private int districtId;
+        private int orderId;
 
-    @JsonPOJOBuilder
-    public static class Builder {
-        @JsonProperty("o_id")
-        private Integer orderId;
-        @JsonProperty("o_d_id")
-        private Integer districtId;
-        @JsonProperty("o_w_id")
-        private Integer warehouseId;
-        @JsonProperty("o_c_id")
-        private Integer customerId;
-        @JsonProperty("o_entry_d")
-        private Long entryDate;
-        @JsonProperty("o_carrier_id")
-        private Integer carrierId;
-        @JsonProperty("o_ol_cnt")
-        private Integer orderLineCounter;
-        @JsonProperty("o_all_local")
-        private Integer allLocal;
-
-        private Builder() {
+        public OrderKey() {
             super();
         }
 
-        private Builder(Order order) {
-            this.orderId = order.orderId;
-            this.districtId = order.districtId;
-            this.warehouseId = order.warehouseId;
-            this.customerId = order.customerId;
-            this.entryDate = order.entryDate;
-            this.carrierId = order.carrierId;
-            this.orderLineCounter = order.orderLineCounter;
-            this.allLocal = order.allLocal;
-        }
-
-        public Builder orderId(Integer orderId) {
-            this.orderId = orderId;
-            return this;
-        }
-
-        public Builder districtId(Integer districtId) {
-            this.districtId = districtId;
-            return this;
-        }
-
-        public Builder warehouseId(Integer warehouseId) {
+        public OrderKey(int warehouseId, int districtId, int orderId) {
             this.warehouseId = warehouseId;
-            return this;
+            this.districtId = districtId;
+            this.orderId = orderId;
         }
 
-        public Builder customerId(Integer customerId) {
-            this.customerId = customerId;
-            return this;
+        public int getWarehouseId() {
+            return warehouseId;
         }
 
-        public Builder entryDate(Long entryDate) {
-            this.entryDate = entryDate;
-            return this;
+        public void setWarehouseId(int warehouseId) {
+            this.warehouseId = warehouseId;
         }
 
-        public Builder carrierId(Integer carrierId) {
-            this.carrierId = carrierId;
-            return this;
+        public int getDistrictId() {
+            return districtId;
         }
 
-        public Builder orderLineCounter(Integer orderLineCounter) {
-            this.orderLineCounter = orderLineCounter;
-            return this;
+        public void setDistrictId(int districtId) {
+            this.districtId = districtId;
         }
 
-        public Builder allLocal(Integer allLocal) {
-            this.allLocal = allLocal;
-            return this;
+        public int getOrderId() {
+            return orderId;
         }
 
-        public Order build() {
-            return new Order(this);
+        public void setOrderId(int orderId) {
+            this.orderId = orderId;
         }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            this.warehouseId = in.readInt();
+            this.districtId = in.readInt();
+            this.orderId = in.readInt();
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeInt(warehouseId);
+            out.writeInt(districtId);
+            out.writeInt(orderId);
+        }
+
+        @Override
+        public int compareTo(OrderKey key) {
+            return new CompareToBuilder().append(getWarehouseId(), key.getWarehouseId())
+                    .append(getDistrictId(), key.getDistrictId())
+                    .append(getOrderId(), key.getOrderId())
+                    .toComparison();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(districtId, orderId, warehouseId);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            OrderKey other = (OrderKey) obj;
+            return districtId == other.districtId && orderId == other.orderId && warehouseId == other.warehouseId;
+        }
+
     }
+
 }

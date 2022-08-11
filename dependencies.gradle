@@ -45,6 +45,9 @@ dependencies {
     
     // Java Tuples
     implementation group: 'org.javatuples', name: 'javatuples', version: javatuples_version
+    
+    // Distributed in-memory data structure storage
+    compile group: 'com.hazelcast', name: 'hazelcast', version: '4.0.1'
 
 	// SLF4J Logging API
     implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version

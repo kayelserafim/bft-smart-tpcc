@@ -6,9 +6,9 @@ import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
-import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
-import bftsmart.microbenchmark.tpcc.domain.TransactionType;
-import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionType;
+import bftsmart.microbenchmark.tpcc.server.transaction.payment.request.PaymentRequest;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class PaymentCommand implements TPCCCommand {
@@ -21,7 +21,7 @@ public class PaymentCommand implements TPCCCommand {
     }
 
     @Override
-    public CommandRequest createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
+    public TransactionRequest createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
         final int x = random.nextInt(1, 100);
         final int districtId = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
         int customerDistrictID;
@@ -53,7 +53,7 @@ public class PaymentCommand implements TPCCCommand {
         final BigDecimal paymentAmount =
                 random.nextBigDecimal(100, 500000).divide(ONE_HUNDRED, 2, RoundingMode.HALF_UP);
 
-        return new PaymentInput().withCommandId(UUID.randomUUID().toString())
+        return new PaymentRequest().withCommandId(UUID.randomUUID().toString())
                 .withTransactionType(transactionType().getClassId())
                 .withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)

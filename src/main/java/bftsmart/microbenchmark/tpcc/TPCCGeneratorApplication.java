@@ -3,8 +3,8 @@ package bftsmart.microbenchmark.tpcc;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import bftsmart.microbenchmark.tpcc.config.module.WorkloadGeneratorModule;
-import bftsmart.microbenchmark.tpcc.io.WorkloadGenerator;
+import bftsmart.microbenchmark.tpcc.workload.WorkloadGenerator;
+import bftsmart.microbenchmark.tpcc.workload.module.WorkloadGeneratorModule;
 
 public class TPCCGeneratorApplication {
 

@@ -1,0 +1,219 @@
+package bftsmart.microbenchmark.tpcc.server.hazelcast.transaction;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.apache.commons.lang3.BooleanUtils;
+
+import com.google.inject.Inject;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.transaction.TransactionContext;
+import com.hazelcast.transaction.TransactionOptions;
+
+import bftsmart.microbenchmark.tpcc.server.hazelcast.repository.CustomerRepository;
+import bftsmart.microbenchmark.tpcc.server.hazelcast.repository.DistrictRepository;
+import bftsmart.microbenchmark.tpcc.server.hazelcast.repository.HistoryRepository;
+import bftsmart.microbenchmark.tpcc.server.hazelcast.repository.WarehouseRepository;
+import bftsmart.microbenchmark.tpcc.server.transaction.Transaction;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionType;
+import bftsmart.microbenchmark.tpcc.server.transaction.payment.request.PaymentRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.payment.response.PaymentResponse;
+import bftsmart.microbenchmark.tpcc.table.Customer;
+import bftsmart.microbenchmark.tpcc.table.District;
+import bftsmart.microbenchmark.tpcc.table.History;
+import bftsmart.microbenchmark.tpcc.table.Warehouse;
+import bftsmart.microbenchmark.tpcc.util.Dates;
+
+public class PaymentTransaction implements Transaction {
+
+    @Inject
+    private WarehouseRepository warehouseRepository;
+    @Inject
+    private DistrictRepository districtRepository;
+    @Inject
+    private CustomerRepository customerRepository;
+    @Inject
+    private HistoryRepository historyRepository;
+
+    @Inject
+    private TransactionOptions transactionOptions;
+    @Inject
+    private HazelcastInstance hazelcastInstance;
+
+    @Override
+    public TransactionType transactionType() {
+        return TransactionType.PAYMENT;
+    }
+
+    @Override
+    public TransactionResponse process(final TransactionRequest command) {
+        PaymentRequest input = (PaymentRequest) command;
+        PaymentResponse paymentOutput = new PaymentResponse().withDateTime(LocalDateTime.now());
+        TransactionContext txCxt = hazelcastInstance.newTransactionContext(transactionOptions);
+        txCxt.beginTransaction();
+
+        Integer warehouseId = input.getWarehouseId();
+        Integer districtId = input.getDistrictId();
+
+        Integer customerWarehouseId = input.getCustomerWarehouseId();
+        Integer customerDistrictId = input.getCustomerDistrictId();
+        Customer customer;
+        if (BooleanUtils.isTrue(input.getCustomerByName())) {
+            // clause 2.6.2.2 (dot 3, Case 2)
+            customer = customerRepository.find(input.getCustomerLastName(), districtId, warehouseId);
+            if (customer == null) {
+                String text = "C_LAST [%s] not found. D_ID [%s], W_ID [%s]";
+                String msg = String.format(text, input.getCustomerLastName(), districtId, warehouseId);
+                return new TransactionResponse().withStatus(-1).withResponse(msg);
+            }
+        } else {
+            // clause 2.6.2.2 (dot 3, Case 1)
+            customer = customerRepository.find(input.getCustomerId(), districtId, warehouseId);
+        }
+
+        Warehouse warehouse = warehouseRepository.find(warehouseId)
+                .addYearToDateBalance(BigDecimal.valueOf(input.getPaymentAmount()));
+
+        District district = districtRepository.find(districtId, warehouseId)
+                .addYearToDateBalance(BigDecimal.valueOf(input.getPaymentAmount()));
+
+        String data = "";
+        if ("BC".equals(customer.getCredit())) {
+            data = new StringBuilder().append(input.getCustomerId())
+                    .append(" ")
+                    .append(customerDistrictId)
+                    .append(" ")
+                    .append(customerWarehouseId)
+                    .append(" ")
+                    .append(input.getDistrictId())
+                    .append(" ")
+                    .append(input.getWarehouseId())
+                    .append(" ")
+                    .append(input.getPaymentAmount())
+                    .append(" |")
+                    .toString();
+            if (customer.getData().length() > data.length()) {
+                data += customer.getData().substring(0, customer.getData().length() - data.length());
+            } else {
+                data += customer.getData();
+            }
+            if (data.length() > 500) {
+                data = data.substring(0, 500);
+            }
+        }
+        String warehouseName = warehouse.getName();
+        if (warehouseName.length() > 10) {
+            warehouseName = warehouseName.substring(0, 10);
+        }
+        String districtName = district.getName();
+        if (districtName.length() > 10) {
+            districtName = districtName.substring(0, 10);
+        }
+        String historyData = warehouseName + "    " + districtName;
+
+        History history = new History().withCustomerDistrictId(customerDistrictId)
+                .withCustomerWarehouseId(customerWarehouseId)
+                .withCustomerId(input.getCustomerId())
+                .withDistrictId(input.getDistrictId())
+                .withWarehouseId(input.getWarehouseId())
+                .withDate(Dates.now())
+                .withAmount(BigDecimal.valueOf(input.getPaymentAmount()))
+                .withData(historyData);
+
+        warehouseRepository.save(txCxt, warehouse);
+        districtRepository.save(txCxt, district);
+        customerRepository.save(txCxt,
+                customer.withData(data)
+                        .paymentCntIncrement()
+                        .subtractBalance(BigDecimal.valueOf(input.getPaymentAmount()))
+                        .withYearToDateBalancePayment(BigDecimal.valueOf(input.getPaymentAmount())));
+        historyRepository.save(txCxt, history);
+
+        paymentOutput.warehouse(warehouse)
+                .district(district)
+                .customer(customer)
+                .withAmountPaid(input.getPaymentAmount());
+        
+        txCxt.commitTransaction();
+
+        return new TransactionResponse().withStatus(0).withResponse(outputScreen(paymentOutput));
+    }
+
+    private String outputScreen(PaymentResponse paymentOutput) {
+        StringBuilder message = new StringBuilder();
+        message.append("\n+---------------------------- PAYMENT ----------------------------+");
+        message.append("\n Date: ").append(Dates.format(paymentOutput.getDateTime(), Dates.DATE_TIME_FORMAT));
+        message.append("\n\n Warehouse: ");
+        message.append(paymentOutput.getWarehouseId());
+        message.append("\n   Street 1(W):  ");
+        message.append(paymentOutput.getWarehouseStreet1());
+        message.append("\n   Street 2(W):  ");
+        message.append(paymentOutput.getWarehouseStreet2());
+        message.append("\n   City(W):    ");
+        message.append(paymentOutput.getWarehouseCity());
+        message.append("   State(W): ");
+        message.append(paymentOutput.getWarehouseState());
+        message.append("  Zip(W): ");
+        message.append(paymentOutput.getWarehouseZip());
+        message.append("\n\n District:  ");
+        message.append(paymentOutput.getDistrictId());
+        message.append("\n   Street 1(D):  ");
+        message.append(paymentOutput.getDistrictStreet1());
+        message.append("\n   Street 2(D):  ");
+        message.append(paymentOutput.getDistrictStreet2());
+        message.append("\n   City(D):    ");
+        message.append(paymentOutput.getDistrictCity());
+        message.append("   State(D): ");
+        message.append(paymentOutput.getDistrictState());
+        message.append("  Zip(D): ");
+        message.append(paymentOutput.getDistrictZip());
+        message.append("\n\n Customer:  ");
+        message.append(paymentOutput.getCustomerId());
+        message.append("\n   Name:    ");
+        message.append(paymentOutput.getCustomerFirst());
+        message.append(" ");
+        message.append(paymentOutput.getCustomerMiddle());
+        message.append(" ");
+        message.append(paymentOutput.getCustomerLast());
+        message.append("\n   Street 1(C):  ");
+        message.append(paymentOutput.getCustomerStreet1());
+        message.append("\n   Street 2(C):  ");
+        message.append(paymentOutput.getCustomerStreet2());
+        message.append("\n   City(C):    ");
+        message.append(paymentOutput.getCustomerCity());
+        message.append("   State(C): ");
+        message.append(paymentOutput.getCustomerState());
+        message.append("  Zip(C): ");
+        message.append(paymentOutput.getCustomerZip());
+        message.append("\n   Since:   ");
+        message.append(paymentOutput.getCustomerSince());
+        message.append("\n   Credit:  ");
+        message.append(paymentOutput.getCustomerCredit());
+        message.append("\n   %Disc:   ");
+        message.append(paymentOutput.getCustomerDiscount());
+        message.append("\n   Phone:   ");
+        message.append(paymentOutput.getCustomerPhone());
+        message.append("\n\n Amount Paid:      ");
+        message.append(paymentOutput.getAmountPaid());
+        message.append("\n Credit Limit:     ");
+        message.append(paymentOutput.getCustomerCreditLimit());
+        message.append("\n New Cust-Balance: ");
+        message.append(paymentOutput.getCustomerBalance());
+        if ("BC".equals(paymentOutput.getCustomerCredit())) {
+            String customerData = paymentOutput.getCustomerData();
+            if (customerData.length() > 40) {
+                message.append("\n\n Cust-Data: ").append(customerData.substring(0, 50));
+                int dataChunks = customerData.length() > 200 ? 4 : customerData.length() / 50;
+                for (int n = 1; n < dataChunks; n++)
+                    message.append("\n            ").append(customerData.substring(n * 50, (n + 1) * 50));
+            } else {
+                message.append("\n\n Cust-Data: ").append(customerData);
+            }
+        }
+        message.append("\n+-----------------------------------------------------------------+\n\n");
+        return message.toString();
+    }
+
+}

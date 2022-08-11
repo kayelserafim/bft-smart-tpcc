@@ -10,20 +10,20 @@ import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import com.esotericsoftware.kryo.util.Pool;
 
-import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
-import bftsmart.microbenchmark.tpcc.server.transaction.delivery.input.DeliveryInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.delivery.output.DeliveryOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.delivery.output.OrderOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.neworder.input.NewOrderInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderLineOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.neworder.output.NewOrderOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.output.OrderLineOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.output.OrderStatusOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.payment.input.PaymentInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.payment.output.PaymentOutput;
-import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.input.StockLevelInput;
-import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.output.StockLevelOutput;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.delivery.request.DeliveryRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.delivery.response.DeliveryOutput;
+import bftsmart.microbenchmark.tpcc.server.transaction.delivery.response.OrderResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.neworder.request.NewOrderRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.neworder.response.NewOrderLineResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.neworder.response.NewOrderResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.request.OrderStatusRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.response.OrderLineResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.response.OrderStatusResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.payment.request.PaymentRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.payment.response.PaymentResponse;
+import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.request.StockLevelRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.response.StockLevelResponse;
 
 public final class KryoHelper {
 
@@ -39,20 +39,20 @@ public final class KryoHelper {
                 kryo.setOptimizedGenerics(false);
                 kryo.setInstantiatorStrategy(new DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
                 kryo.register(int[].class);
-                kryo.register(DeliveryInput.class);
+                kryo.register(DeliveryRequest.class);
                 kryo.register(DeliveryOutput.class);
-                kryo.register(OrderOutput.class);
-                kryo.register(NewOrderInput.class);
-                kryo.register(NewOrderOutput.class);
-                kryo.register(NewOrderLineOutput.class);
-                kryo.register(OrderStatusInput.class);
-                kryo.register(OrderLineOutput.class);
-                kryo.register(OrderStatusOutput.class);
-                kryo.register(PaymentInput.class);
-                kryo.register(PaymentOutput.class);
-                kryo.register(StockLevelInput.class);
-                kryo.register(StockLevelOutput.class);
-                kryo.register(CommandResponse.class);
+                kryo.register(OrderResponse.class);
+                kryo.register(NewOrderRequest.class);
+                kryo.register(NewOrderResponse.class);
+                kryo.register(NewOrderLineResponse.class);
+                kryo.register(OrderStatusRequest.class);
+                kryo.register(OrderLineResponse.class);
+                kryo.register(OrderStatusResponse.class);
+                kryo.register(PaymentRequest.class);
+                kryo.register(PaymentResponse.class);
+                kryo.register(StockLevelRequest.class);
+                kryo.register(StockLevelResponse.class);
+                kryo.register(TransactionResponse.class);
                 return kryo;
             }
         };

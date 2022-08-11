@@ -3,8 +3,8 @@ package bftsmart.microbenchmark.tpcc;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import bftsmart.microbenchmark.tpcc.config.module.ServerModule;
 import bftsmart.microbenchmark.tpcc.server.TPCCServer;
+import bftsmart.microbenchmark.tpcc.server.module.ServerModule;
 
 public class TPCCServerApplication {
 

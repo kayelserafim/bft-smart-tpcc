@@ -1,21 +1,16 @@
 package bftsmart.microbenchmark.tpcc.table;
 
-import java.util.Collections;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.javatuples.Triplet;
-import org.javatuples.Tuple;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-
-import bftsmart.microbenchmark.tpcc.domain.ModelType;
-import bftsmart.microbenchmark.tpcc.domain.Persistable;
 
 /**
  * <ul>
@@ -24,432 +19,458 @@ import bftsmart.microbenchmark.tpcc.domain.Persistable;
  * <li>S_I_ID Foreign Key, references I_ID</li>
  * </ul>
  */
-@JsonDeserialize(builder = Stock.Builder.class)
-public class Stock implements Persistable {
+public class Stock implements Externalizable {
 
     private static final AtomicInteger ORDER_CNT = new AtomicInteger();
     private static final AtomicInteger REMOTE_CNT = new AtomicInteger();
 
-    private static final ModelType MODEL_TYPE = ModelType.STOCK;
-
-    private final Tuple key;
-    private final Set<Tuple> secondaryKeys;
+    public static final TableType MODEL_TYPE = TableType.STOCK;
 
     /**
      * s_i_id - 200,000 unique IDs - 100,000 populated per warehouse
      */
     @JsonProperty("s_i_id")
-    private final Integer itemId;
+    private int itemId;
     /**
      * s_w_id - 2*W unique IDs
      */
     @JsonProperty("s_w_id")
-    private final Integer warehouseId;
+    private int warehouseId;
     /**
      * s_quantity - signed numeric(4)
      */
     @JsonProperty("s_quantity")
-    private final Integer quantity;
+    private int quantity;
     /**
      * s_dist_01 - fixed text, size 24
      */
     @JsonProperty("s_dist_01")
-    private final String district01;
+    private String district01;
     /**
      * s_dist_02 - fixed text, size 24
      */
     @JsonProperty("s_dist_02")
-    private final String district02;
+    private String district02;
     /**
      * s_dist_03 - fixed text, size 24
      */
     @JsonProperty("s_dist_03")
-    private final String district03;
+    private String district03;
     /**
      * s_dist_04 - fixed text, size 24
      */
     @JsonProperty("s_dist_04")
-    private final String district04;
+    private String district04;
     /**
      * s_dist_05 - fixed text, size 24
      */
     @JsonProperty("s_dist_05")
-    private final String district05;
+    private String district05;
     /**
      * s_dist_06 - fixed text, size 24
      */
     @JsonProperty("s_dist_06")
-    private final String district06;
+    private String district06;
     /**
      * s_dist_07 - fixed text, size 24
      */
     @JsonProperty("s_dist_07")
-    private final String district07;
+    private String district07;
     /**
      * s_dist_08 - fixed text, size 24
      */
     @JsonProperty("s_dist_08")
-    private final String district08;
+    private String district08;
     /**
      * s_dist_09 - fixed text, size 24
      */
     @JsonProperty("s_dist_09")
-    private final String district09;
+    private String district09;
     /**
      * s_dist_10 - fixed text, size 24
      */
     @JsonProperty("s_dist_10")
-    private final String district10;
+    private String district10;
     /**
      * s_ytd - numeric(8)
      */
     @JsonProperty("s_ytd")
-    private final Long yearToDate;
+    private long yearToDate;
     /**
      * s_order_cnt - numeric(4)
      */
     @JsonProperty("s_order_cnt")
-    private final Integer orderCount;
+    private int orderCount;
     /**
      * s_remote_cnt - numeric(4)
      */
     @JsonProperty("s_remote_cnt")
-    private final Integer remoteCount;
+    private int remoteCount;
     /**
      * s_data - variable text, size 50 - Make information
      */
     @JsonProperty("s_data")
-    private final String data;
+    private String data;
 
-    private Stock(Builder builder) {
-        this.itemId = builder.itemId;
-        this.warehouseId = builder.warehouseId;
-        this.quantity = builder.quantity;
-        this.district01 = builder.district01;
-        this.district02 = builder.district02;
-        this.district03 = builder.district03;
-        this.district04 = builder.district04;
-        this.district05 = builder.district05;
-        this.district06 = builder.district06;
-        this.district07 = builder.district07;
-        this.district08 = builder.district08;
-        this.district09 = builder.district09;
-        this.district10 = builder.district10;
-        this.yearToDate = builder.yearToDate;
-        this.orderCount = builder.orderCount;
-        this.remoteCount = builder.remoteCount;
-        this.data = builder.data;
-        this.key = key(warehouseId, itemId);
-        this.secondaryKeys = Collections.emptySet();
+    public StockKey createKey() {
+        return new StockKey(warehouseId, itemId);
     }
 
-    @Override
-    public Tuple getKey() {
-        return key;
-    }
-
-    @Override
-    public Set<Tuple> getSecondaryKeys() {
-        return secondaryKeys;
-    }
-
-    public Integer getItemId() {
+    public int getItemId() {
         return itemId;
     }
 
-    public Integer getWarehouseId() {
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public Stock withItemId(int itemId) {
+        setItemId(itemId);
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public Integer getQuantity() {
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public Stock withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public int getQuantity() {
         return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public Stock withQuantity(int quantity) {
+        setQuantity(quantity);
+        return this;
     }
 
     public String getDistrict01() {
         return district01;
     }
 
+    public void setDistrict01(String district01) {
+        this.district01 = district01;
+    }
+
+    public Stock withDistrict01(String district01) {
+        setDistrict01(district01);
+        return this;
+    }
+
     public String getDistrict02() {
         return district02;
+    }
+
+    public void setDistrict02(String district02) {
+        this.district02 = district02;
+    }
+
+    public Stock withDistrict02(String district02) {
+        setDistrict02(district02);
+        return this;
     }
 
     public String getDistrict03() {
         return district03;
     }
 
+    public void setDistrict03(String district03) {
+        this.district03 = district03;
+    }
+
+    public Stock withDistrict03(String district03) {
+        setDistrict03(district03);
+        return this;
+    }
+
     public String getDistrict04() {
         return district04;
+    }
+
+    public void setDistrict04(String district04) {
+        this.district04 = district04;
+    }
+
+    public Stock withDistrict04(String district04) {
+        setDistrict04(district04);
+        return this;
     }
 
     public String getDistrict05() {
         return district05;
     }
 
+    public void setDistrict05(String district05) {
+        this.district05 = district05;
+    }
+
+    public Stock withDistrict05(String district05) {
+        setDistrict05(district05);
+        return this;
+    }
+
     public String getDistrict06() {
         return district06;
+    }
+
+    public void setDistrict06(String district06) {
+        this.district06 = district06;
+    }
+
+    public Stock withDistrict06(String district06) {
+        setDistrict06(district06);
+        return this;
     }
 
     public String getDistrict07() {
         return district07;
     }
 
+    public void setDistrict07(String district07) {
+        this.district07 = district07;
+    }
+
+    public Stock withDistrict07(String district07) {
+        setDistrict07(district07);
+        return this;
+    }
+
     public String getDistrict08() {
         return district08;
+    }
+
+    public void setDistrict08(String district08) {
+        this.district08 = district08;
+    }
+
+    public Stock withDistrict08(String district08) {
+        setDistrict08(district08);
+        return this;
     }
 
     public String getDistrict09() {
         return district09;
     }
 
+    public void setDistrict09(String district09) {
+        this.district09 = district09;
+    }
+
+    public Stock withDistrict09(String district09) {
+        setDistrict09(district09);
+        return this;
+    }
+
     public String getDistrict10() {
         return district10;
     }
 
-    public double getYearToDate() {
+    public void setDistrict10(String district10) {
+        this.district10 = district10;
+    }
+
+    public Stock withDistrict10(String district10) {
+        setDistrict10(district10);
+        return this;
+    }
+
+    public long getYearToDate() {
         return yearToDate;
     }
 
-    public Integer getOrderCount() {
+    public void setYearToDate(long yearToDate) {
+        this.yearToDate = yearToDate;
+    }
+
+    public Stock withYearToDate(long yearToDate) {
+        setYearToDate(yearToDate);
+        return this;
+    }
+
+    public int getOrderCount() {
         return orderCount;
     }
 
-    public Integer getRemoteCount() {
+    public void setOrderCount(int orderCount) {
+        this.orderCount = orderCount;
+    }
+
+    public Stock withOrderCount(int orderCount) {
+        setOrderCount(orderCount);
+        return this;
+    }
+
+    public int getRemoteCount() {
         return remoteCount;
+    }
+
+    public void setRemoteCount(int remoteCount) {
+        this.remoteCount = remoteCount;
+    }
+
+    public Stock withRemoteCount(int remoteCount) {
+        setRemoteCount(remoteCount);
+        return this;
     }
 
     public String getData() {
         return data;
     }
 
-    public static Tuple key(Integer warehouseId, Integer itemId) {
-        return Triplet.with(MODEL_TYPE, warehouseId, itemId);
+    public void setData(String data) {
+        this.data = data;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public Stock withData(String data) {
+        setData(data);
+        return this;
     }
 
-    public static Builder from(Stock stock) {
-        return new Builder(stock);
+    public Stock orderCountIncrement() {
+        this.orderCount = ORDER_CNT.incrementAndGet();
+        return this;
+    }
+
+    public Stock remoteCntIncrement(boolean remote) {
+        if (remote) {
+            this.remoteCount = REMOTE_CNT.incrementAndGet();
+        }
+        return this;
+    }
+
+    public Stock addQuantity(int amount) {
+        this.quantity = Optional.ofNullable(this.quantity).orElse(0);
+        if (this.quantity - amount >= 10) {
+            this.quantity = this.quantity - amount;
+        } else {
+            this.quantity = this.quantity - amount + 91;
+        }
+        return this;
+    }
+
+    public Stock addYearToDate(int amount) {
+        this.yearToDate = Optional.ofNullable(yearToDate).orElse(0L) + amount;
+        return this;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(key);
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.itemId = in.readInt();
+        this.warehouseId = in.readInt();
+        this.quantity = in.readInt();
+        this.district01 = in.readUTF();
+        this.district02 = in.readUTF();
+        this.district03 = in.readUTF();
+        this.district04 = in.readUTF();
+        this.district05 = in.readUTF();
+        this.district06 = in.readUTF();
+        this.district07 = in.readUTF();
+        this.district08 = in.readUTF();
+        this.district09 = in.readUTF();
+        this.district10 = in.readUTF();
+        this.yearToDate = in.readLong();
+        this.orderCount = in.readInt();
+        this.remoteCount = in.readInt();
+        this.data = in.readUTF();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Stock other = (Stock) obj;
-        return Objects.equals(key, other.key);
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(itemId);
+        out.writeInt(warehouseId);
+        out.writeInt(quantity);
+        out.writeUTF(district01);
+        out.writeUTF(district02);
+        out.writeUTF(district03);
+        out.writeUTF(district04);
+        out.writeUTF(district05);
+        out.writeUTF(district06);
+        out.writeUTF(district07);
+        out.writeUTF(district08);
+        out.writeUTF(district09);
+        out.writeUTF(district10);
+        out.writeLong(yearToDate);
+        out.writeInt(orderCount);
+        out.writeInt(remoteCount);
+        out.writeUTF(data);
     }
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", Stock.class.getSimpleName() + "[", "]").add("key=" + key)
-                .add("secondaryKeys=" + secondaryKeys)
-                .add("itemId=" + itemId)
-                .add("warehouseId=" + warehouseId)
-                .add("quantity=" + quantity)
-                .add("district01='" + district01 + "'")
-                .add("district02='" + district02 + "'")
-                .add("district03='" + district03 + "'")
-                .add("district04='" + district04 + "'")
-                .add("district05='" + district05 + "'")
-                .add("district06='" + district06 + "'")
-                .add("district07='" + district07 + "'")
-                .add("district08='" + district08 + "'")
-                .add("district09='" + district09 + "'")
-                .add("district10='" + district10 + "'")
-                .add("yearToDate=" + yearToDate)
-                .add("orderCount=" + orderCount)
-                .add("remoteCount=" + remoteCount)
-                .add("data='" + data + "'")
-                .toString();
-    }
+    public static class StockKey implements Externalizable, Comparable<StockKey> {
+        private int warehouseId;
+        private int itemId;
 
-    @JsonPOJOBuilder
-    public static class Builder {
-        @JsonProperty("s_i_id")
-        private Integer itemId;
-        @JsonProperty("s_w_id")
-        private Integer warehouseId;
-        @JsonProperty("s_quantity")
-        private Integer quantity;
-        @JsonProperty("s_dist_01")
-        private String district01;
-        @JsonProperty("s_dist_02")
-        private String district02;
-        @JsonProperty("s_dist_03")
-        private String district03;
-        @JsonProperty("s_dist_04")
-        private String district04;
-        @JsonProperty("s_dist_05")
-        private String district05;
-        @JsonProperty("s_dist_06")
-        private String district06;
-        @JsonProperty("s_dist_07")
-        private String district07;
-        @JsonProperty("s_dist_08")
-        private String district08;
-        @JsonProperty("s_dist_09")
-        private String district09;
-        @JsonProperty("s_dist_10")
-        private String district10;
-        @JsonProperty("s_ytd")
-        private Long yearToDate;
-        @JsonProperty("s_order_cnt")
-        private Integer orderCount;
-        @JsonProperty("s_remote_cnt")
-        private Integer remoteCount;
-        @JsonProperty("s_data")
-        private String data;
-
-        public Builder() {
+        public StockKey() {
             super();
         }
 
-        public Builder(Stock stock) {
-            this.itemId = stock.itemId;
-            this.warehouseId = stock.warehouseId;
-            this.quantity = stock.quantity;
-            this.district01 = stock.district01;
-            this.district02 = stock.district02;
-            this.district03 = stock.district03;
-            this.district04 = stock.district04;
-            this.district05 = stock.district05;
-            this.district06 = stock.district06;
-            this.district07 = stock.district07;
-            this.district08 = stock.district08;
-            this.district09 = stock.district09;
-            this.district10 = stock.district10;
-            this.yearToDate = stock.yearToDate;
-            this.orderCount = stock.orderCount;
-            this.remoteCount = stock.remoteCount;
-            this.data = stock.data;
-        }
-
-        public Builder itemId(Integer itemId) {
-            this.itemId = itemId;
-            return this;
-        }
-
-        public Builder warehouseId(Integer warehouseId) {
+        public StockKey(int warehouseId, int itemId) {
             this.warehouseId = warehouseId;
-            return this;
+            this.itemId = itemId;
         }
 
-        public Builder quantity(Integer quantity) {
-            this.quantity = quantity;
-            return this;
+        public int getWarehouseId() {
+            return warehouseId;
         }
 
-        public Builder addQuantity(Integer amount) {
-            this.quantity = Optional.ofNullable(this.quantity).orElse(0);
-            if (this.quantity - amount >= 10) {
-                this.quantity = this.quantity - amount;
-            } else {
-                this.quantity = this.quantity - amount + 91;
-            }
-            return this;
+        public void setWarehouseId(int warehouseId) {
+            this.warehouseId = warehouseId;
         }
 
-        public Builder district01(String district01) {
-            this.district01 = district01;
-            return this;
+        public int getItemId() {
+            return itemId;
         }
 
-        public Builder district02(String district02) {
-            this.district02 = district02;
-            return this;
+        public void setItemId(int itemId) {
+            this.itemId = itemId;
         }
 
-        public Builder district03(String district03) {
-            this.district03 = district03;
-            return this;
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            this.warehouseId = in.readInt();
+            this.itemId = in.readInt();
         }
 
-        public Builder district04(String district04) {
-            this.district04 = district04;
-            return this;
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeInt(warehouseId);
+            out.writeInt(itemId);
         }
 
-        public Builder district05(String district05) {
-            this.district05 = district05;
-            return this;
+        @Override
+        public int compareTo(StockKey key) {
+            return new CompareToBuilder().append(getWarehouseId(), key.getWarehouseId())
+                    .append(getWarehouseId(), key.getWarehouseId())
+                    .toComparison();
         }
 
-        public Builder district06(String district06) {
-            this.district06 = district06;
-            return this;
+        @Override
+        public int hashCode() {
+            return Objects.hash(itemId, warehouseId);
         }
 
-        public Builder district07(String district07) {
-            this.district07 = district07;
-            return this;
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            StockKey other = (StockKey) obj;
+            return itemId == other.itemId && warehouseId == other.warehouseId;
         }
 
-        public Builder district08(String district08) {
-            this.district08 = district08;
-            return this;
-        }
-
-        public Builder district09(String district09) {
-            this.district09 = district09;
-            return this;
-        }
-
-        public Builder district10(String district10) {
-            this.district10 = district10;
-            return this;
-        }
-
-        public Builder yearToDate(Long yearToDate) {
-            this.yearToDate = yearToDate;
-            return this;
-        }
-
-        public Builder addYearToDate(Integer amount) {
-            this.yearToDate = Optional.ofNullable(yearToDate).orElse(0L) + amount;
-            return this;
-        }
-
-        public Builder orderCount(Integer orderCount) {
-            this.orderCount = orderCount;
-            return this;
-        }
-
-        public Builder orderCountIncrement() {
-            this.orderCount = ORDER_CNT.incrementAndGet();
-            return this;
-        }
-
-        public Builder remoteCount(Integer remoteCount) {
-            this.remoteCount = remoteCount;
-            return this;
-        }
-
-        public Builder remoteCntIncrement(boolean remote) {
-            if (remote) {
-                this.remoteCount = REMOTE_CNT.incrementAndGet();
-            }
-            return this;
-        }
-
-        public Builder data(String data) {
-            this.data = data;
-            return this;
-        }
-
-        public Stock build() {
-            return new Stock(this);
-        }
     }
 
 }

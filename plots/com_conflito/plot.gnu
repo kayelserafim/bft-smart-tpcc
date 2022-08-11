@@ -25,8 +25,8 @@ set key left top font "Helvetica, 14"
 
 set xlabel 'Throughput (op/s)'
 set ylabel 'Latency (ms)'
-set xrange [305:396]
-set yrange [5:52]
+set xrange [304:570]
+set yrange [3:33]
 
 set output 'lat_thr_com_conf.pdf'
 

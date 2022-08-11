@@ -22,8 +22,8 @@ import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalFactory;
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
 import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.io.Workload;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
+import bftsmart.microbenchmark.tpcc.workload.Workload;
 
 public class TPCCClient {
 

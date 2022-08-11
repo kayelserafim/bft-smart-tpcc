@@ -8,9 +8,9 @@ import com.google.inject.Inject;
 
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
-import bftsmart.microbenchmark.tpcc.domain.CommandResponse;
 import bftsmart.microbenchmark.tpcc.server.conflict.TPCCConflictDefinition;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionResponse;
 import bftsmart.microbenchmark.tpcc.server.transaction.TransactionFactory;
 import bftsmart.tom.MessageContext;
 import bftsmart.tom.server.SingleExecutable;
@@ -43,7 +43,7 @@ public class TPCCServer implements SingleExecutable {
 
     @Override
     public byte[] executeOrdered(byte[] theCommand, MessageContext theContext) {
-        CommandRequest aRequest = CommandRequest.deserialize(theCommand);
+        TransactionRequest aRequest = TransactionRequest.deserialize(theCommand);
         LOGGER.debug("Processing an ordered request of type [{}]", aRequest.getTransactionType());
 
         byte[] reply = execute(aRequest);
@@ -54,7 +54,7 @@ public class TPCCServer implements SingleExecutable {
 
     @Override
     public byte[] executeUnordered(byte[] theCommand, MessageContext theContext) {
-        CommandRequest aRequest = CommandRequest.deserialize(theCommand);
+        TransactionRequest aRequest = TransactionRequest.deserialize(theCommand);
         LOGGER.debug("Processing an unordered request of type [{}]", aRequest.getTransactionType());
 
         byte[] reply = execute(aRequest);
@@ -63,8 +63,8 @@ public class TPCCServer implements SingleExecutable {
         return reply;
     }
 
-    private byte[] execute(CommandRequest aRequest) {
-        CommandResponse reply = transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
+    private byte[] execute(TransactionRequest aRequest) {
+        TransactionResponse reply = transactionFactory.getFactory(aRequest.getTransactionType()).process(aRequest);
 
         return reply.withConflict(conflictDefinition.isDependent(aRequest.getCommandId())).serialize();
     }

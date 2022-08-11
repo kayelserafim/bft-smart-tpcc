@@ -1,20 +1,14 @@
 package bftsmart.microbenchmark.tpcc.table;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
 
-import org.javatuples.Quartet;
-import org.javatuples.Triplet;
-import org.javatuples.Tuple;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.google.common.collect.ImmutableSet;
-
-import bftsmart.microbenchmark.tpcc.domain.ModelType;
-import bftsmart.microbenchmark.tpcc.domain.Persistable;
 
 /**
  * <ol>
@@ -23,126 +17,160 @@ import bftsmart.microbenchmark.tpcc.domain.Persistable;
  * O_ID)</li>
  * </ol>
  */
-@JsonDeserialize(builder = NewOrder.Builder.class)
-public class NewOrder implements Persistable {
+public class NewOrder implements Externalizable {
 
-    private static final ModelType MODEL_TYPE = ModelType.NEW_ORDER;
-
-    private final Tuple key;
-    private final Set<Tuple> secondaryKeys;
+    public static final TableType MODEL_TYPE = TableType.NEW_ORDER;
 
     /**
      * no_o_id - 10,000,000 unique IDs
      * 
      */
     @JsonProperty("no_o_id")
-    private final Integer orderId;
+    private int orderId;
     /**
      * no_d_id - 20 unique IDs
      */
     @JsonProperty("no_d_id")
-    private final Integer districtId;
+    private int districtId;
     /**
      * no_w_id - 2*W unique IDs
      */
     @JsonProperty("no_w_id")
-    private final Integer warehouseId;
+    private int warehouseId;
 
-    private NewOrder(Builder builder) {
-        this.orderId = builder.orderId;
-        this.districtId = builder.districtId;
-        this.warehouseId = builder.warehouseId;
-        this.key = key(warehouseId, districtId, orderId);
-        this.secondaryKeys = ImmutableSet.of(districtKey(warehouseId, districtId));
+    public NewOrderKey createKey() {
+        return new NewOrderKey(warehouseId, districtId, orderId);
     }
 
-    @Override
-    public Tuple getKey() {
-        return key;
-    }
-
-    @Override
-    public Set<Tuple> getSecondaryKeys() {
-        return secondaryKeys;
-    }
-
-    public Integer getOrderId() {
+    public int getOrderId() {
         return orderId;
     }
 
-    public Integer getDistrictId() {
+    public void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    public NewOrder withOrderId(int orderId) {
+        setOrderId(orderId);
+        return this;
+    }
+
+    public int getDistrictId() {
         return districtId;
     }
 
-    public Integer getWarehouseId() {
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public NewOrder withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public static Tuple key(Integer warehouseId, Integer districtId, Integer orderId) {
-        return Quartet.with(MODEL_TYPE, warehouseId, districtId, orderId);
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
     }
 
-    public static Tuple districtKey(Integer warehouseId, Integer districtId) {
-        return Triplet.with(MODEL_TYPE, warehouseId, districtId);
-    }
-
-    public static Builder builder() {
-        return new Builder();
+    public NewOrder withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(key);
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.warehouseId = in.readInt();
+        this.districtId = in.readInt();
+        this.orderId = in.readInt();
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        NewOrder other = (NewOrder) obj;
-        return Objects.equals(key, other.key);
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(warehouseId);
+        out.writeInt(districtId);
+        out.writeInt(orderId);
     }
 
-    @Override
-    public String toString() {
-        return new StringJoiner(", ", NewOrder.class.getSimpleName() + "[", "]").add("key=" + key)
-                .add("secondaryKeys=" + secondaryKeys)
-                .add("orderId=" + orderId)
-                .add("districtId=" + districtId)
-                .add("warehouseId=" + warehouseId)
-                .toString();
-    }
+    public static class NewOrderKey implements Externalizable, Comparable<NewOrderKey> {
+        private int warehouseId;
+        private int districtId;
+        private int orderId;
 
-    @JsonPOJOBuilder
-    public static class Builder {
-        @JsonProperty("no_o_id")
-        private Integer orderId;
-        @JsonProperty("no_d_id")
-        private Integer districtId;
-        @JsonProperty("no_w_id")
-        private Integer warehouseId;
-
-        public Builder orderId(Integer orderId) {
-            this.orderId = orderId;
-            return this;
+        public NewOrderKey() {
+            super();
         }
 
-        public Builder districtId(Integer districtId) {
-            this.districtId = districtId;
-            return this;
-        }
-
-        public Builder warehouseId(Integer warehouseId) {
+        public NewOrderKey(int warehouseId, int districtId, int orderId) {
             this.warehouseId = warehouseId;
-            return this;
+            this.districtId = districtId;
+            this.orderId = orderId;
         }
 
-        public NewOrder build() {
-            return new NewOrder(this);
+        public int getWarehouseId() {
+            return warehouseId;
+        }
+
+        public void setWarehouseId(int warehouseId) {
+            this.warehouseId = warehouseId;
+        }
+
+        public int getDistrictId() {
+            return districtId;
+        }
+
+        public void setDistrictId(int districtId) {
+            this.districtId = districtId;
+        }
+
+        public int getOrderId() {
+            return orderId;
+        }
+
+        public void setOrderId(int orderId) {
+            this.orderId = orderId;
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            this.warehouseId = in.readInt();
+            this.districtId = in.readInt();
+            this.orderId = in.readInt();
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeInt(warehouseId);
+            out.writeInt(districtId);
+            out.writeInt(orderId);
+        }
+
+        @Override
+        public int compareTo(NewOrderKey key) {
+            return new CompareToBuilder().append(getWarehouseId(), key.getWarehouseId())
+                    .append(getDistrictId(), key.getDistrictId())
+                    .append(getOrderId(), key.getOrderId())
+                    .toComparison();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(districtId, orderId, warehouseId);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            NewOrderKey other = (NewOrderKey) obj;
+            return districtId == other.districtId && orderId == other.orderId && warehouseId == other.warehouseId;
         }
     }
 

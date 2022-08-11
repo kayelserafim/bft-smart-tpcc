@@ -1,21 +1,15 @@
 package bftsmart.microbenchmark.tpcc.table;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Collections;
 import java.util.Objects;
-import java.util.Set;
-import java.util.StringJoiner;
 
-import org.javatuples.Quartet;
-import org.javatuples.Tuple;
+import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-
-import bftsmart.microbenchmark.tpcc.domain.ModelType;
-import bftsmart.microbenchmark.tpcc.domain.Persistable;
 
 /**
  * <ol>
@@ -28,7 +22,7 @@ import bftsmart.microbenchmark.tpcc.domain.Persistable;
  * <p>
  * <b>Comment:</b> Row s in the History table do not have a primary key as,
  * within the context of the
- * benchmark, there is no need to uniquely id entify a row within this table.
+ * benchmark, there is no need to uniquely id entity a row within this table.
  * </p>
  * 
  * <p>
@@ -37,211 +31,244 @@ import bftsmart.microbenchmark.tpcc.domain.Persistable;
  * values beyond 6,000.
  * </p>
  */
-@JsonDeserialize(builder = History.Builder.class)
-public class History implements Persistable {
+public class History implements Externalizable {
 
-    private static final ModelType MODEL_TYPE = ModelType.HISTORY;
-
-    private final Tuple key;
-    private final Set<Tuple> secondaryKeys;
+    public static final TableType TABLE_TYPE = TableType.HISTORY;
 
     /**
      * h_c_id - 96,000 unique IDs
      */
     @JsonProperty("h_c_id")
-    private final Integer customerId;
+    private int customerId;
     /**
      * h_c_d_id - 20 unique IDs
      */
     @JsonProperty("h_c_d_id")
-    private final Integer customerDistrictId;
+    private int customerDistrictId;
     /**
      * h_c_w_id - 2*W unique IDs
      */
     @JsonProperty("h_c_w_id")
-    private final Integer customerWarehouseId;
+    private int customerWarehouseId;
     /**
      * h_d_id - 20 unique IDs
      */
     @JsonProperty("h_d_id")
-    private final Integer districtId;
+    private int districtId;
     /**
      * h_w_id - 2*W unique IDs
      */
     @JsonProperty("h_w_id")
-    private final Integer warehouseId;
+    private int warehouseId;
     /**
      * h_date - date and time
      */
     @JsonProperty("h_date")
-    private final Long date;
+    private long date;
     /**
      * h_amount - signed numeric(6, 2)
      */
     @JsonProperty("h_amount")
-    private final BigDecimal amount;
+    private BigDecimal amount;
     /**
      * h_data - variable text, size 24
      */
     @JsonProperty("h_data")
-    private final String data;
+    private String data;
 
-    private History(Builder builder) {
-        this.customerId = builder.customerId;
-        this.customerDistrictId = builder.customerDistrictId;
-        this.customerWarehouseId = builder.customerWarehouseId;
-        this.districtId = builder.districtId;
-        this.warehouseId = builder.warehouseId;
-        this.date = builder.date;
-        this.amount = builder.amount.setScale(2, RoundingMode.HALF_UP);
-        this.data = builder.data;
-        this.key = key(customerWarehouseId, customerDistrictId, customerId);
-        this.secondaryKeys = Collections.emptySet();
+    public HistoryKey createKey() {
+        return new HistoryKey(warehouseId, districtId);
     }
 
-    @Override
-    public Tuple getKey() {
-        return key;
-    }
-
-    @Override
-    public Set<Tuple> getSecondaryKeys() {
-        return secondaryKeys;
-    }
-
-    public Integer getCustomerId() {
+    public int getCustomerId() {
         return customerId;
     }
 
-    public Integer getCustomerDistrictId() {
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public History withCustomerId(int customerId) {
+        setCustomerId(customerId);
+        return this;
+    }
+
+    public int getCustomerDistrictId() {
         return customerDistrictId;
     }
 
-    public Integer getCustomerWarehouseId() {
+    public void setCustomerDistrictId(int customerDistrictId) {
+        this.customerDistrictId = customerDistrictId;
+    }
+
+    public History withCustomerDistrictId(int customerDistrictId) {
+        setCustomerDistrictId(customerDistrictId);
+        return this;
+    }
+
+    public int getCustomerWarehouseId() {
         return customerWarehouseId;
     }
 
-    public Integer getDistrictId() {
+    public void setCustomerWarehouseId(int customerWarehouseId) {
+        this.customerWarehouseId = customerWarehouseId;
+    }
+
+    public History withCustomerWarehouseId(int customerWarehouseId) {
+        setCustomerWarehouseId(customerWarehouseId);
+        return this;
+    }
+
+    public int getDistrictId() {
         return districtId;
     }
 
-    public Integer getWarehouseId() {
+    public void setDistrictId(int districtId) {
+        this.districtId = districtId;
+    }
+
+    public History withDistrictId(int districtId) {
+        setDistrictId(districtId);
+        return this;
+    }
+
+    public int getWarehouseId() {
         return warehouseId;
     }
 
-    public Long getDate() {
+    public void setWarehouseId(int warehouseId) {
+        this.warehouseId = warehouseId;
+    }
+
+    public History withWarehouseId(int warehouseId) {
+        setWarehouseId(warehouseId);
+        return this;
+    }
+
+    public long getDate() {
         return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
+    }
+
+    public History withDate(long date) {
+        setDate(date);
+        return this;
     }
 
     public BigDecimal getAmount() {
         return amount;
     }
 
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public History withAmount(BigDecimal amount) {
+        setAmount(amount);
+        return this;
+    }
+
     public String getData() {
         return data;
     }
 
-    public static Tuple key(Integer warehouseId, Integer districtId, Integer customerId) {
-        return Quartet.with(MODEL_TYPE, warehouseId, districtId, customerId);
+    public void setData(String data) {
+        this.data = data;
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(key);
+    public History withData(String data) {
+        setData(data);
+        return this;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        History other = (History) obj;
-        return Objects.equals(key, other.key);
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        this.customerId = in.readInt();
+        this.customerDistrictId = in.readInt();
+        this.customerWarehouseId = in.readInt();
+        this.districtId = in.readInt();
+        this.date = in.readLong();
+        this.amount = BigDecimal.valueOf(in.readDouble());
+        this.data = in.readUTF();
     }
 
     @Override
-    public String toString() {
-        return new StringJoiner(", ", History.class.getSimpleName() + "[", "]").add("key=" + key)
-                .add("secondaryKeys=" + secondaryKeys)
-                .add("customerId=" + customerId)
-                .add("customerDistrictId=" + customerDistrictId)
-                .add("customerWarehouseId=" + customerWarehouseId)
-                .add("districtId=" + districtId)
-                .add("warehouseId=" + warehouseId)
-                .add("date=" + date)
-                .add("amount=" + amount)
-                .add("data='" + data + "'")
-                .toString();
+    public void writeExternal(ObjectOutput out) throws IOException {
+        out.writeInt(customerId);
+        out.writeInt(customerDistrictId);
+        out.writeInt(customerWarehouseId);
+        out.writeInt(districtId);
+        out.writeLong(date);
+        out.writeDouble(amount.doubleValue());
+        out.writeUTF(data);
     }
 
-    @JsonPOJOBuilder
-    public static class Builder {
-        @JsonProperty("h_c_id")
-        private Integer customerId;
-        @JsonProperty("h_c_d_id")
-        private Integer customerDistrictId;
-        @JsonProperty("h_c_w_id")
-        private Integer customerWarehouseId;
-        @JsonProperty("h_d_id")
-        private Integer districtId;
-        @JsonProperty("h_w_id")
-        private Integer warehouseId;
-        @JsonProperty("h_date")
-        private Long date;
-        @JsonProperty("h_amount")
-        private BigDecimal amount;
-        @JsonProperty("h_data")
-        private String data;
+    public static class HistoryKey implements Externalizable, Comparable<HistoryKey> {
+        private int warehouseId;
+        private int districtId;
 
-        public Builder customerId(Integer customerId) {
-            this.customerId = customerId;
-            return this;
+        public HistoryKey() {
+            super();
         }
 
-        public Builder customerDistrictId(Integer customerDistrictId) {
-            this.customerDistrictId = customerDistrictId;
-            return this;
-        }
-
-        public Builder customerWarehouseId(Integer customerWarehouseId) {
-            this.customerWarehouseId = customerWarehouseId;
-            return this;
-        }
-
-        public Builder districtId(Integer districtId) {
-            this.districtId = districtId;
-            return this;
-        }
-
-        public Builder warehouseId(Integer warehouseId) {
+        public HistoryKey(int warehouseId, int districtId) {
             this.warehouseId = warehouseId;
-            return this;
+            this.districtId = districtId;
         }
 
-        public Builder date(Long date) {
-            this.date = date;
-            return this;
+        public int getWarehouseId() {
+            return warehouseId;
         }
 
-        public Builder amount(BigDecimal amount) {
-            this.amount = amount;
-            return this;
+        public void setWarehouseId(int warehouseId) {
+            this.warehouseId = warehouseId;
         }
 
-        public Builder data(String data) {
-            this.data = data;
-            return this;
+        public int getDistrictId() {
+            return districtId;
         }
 
-        public History build() {
-            return new History(this);
+        public void setDistrictId(int districtId) {
+            this.districtId = districtId;
+        }
+
+        @Override
+        public int compareTo(HistoryKey key) {
+            return new CompareToBuilder().append(getWarehouseId(), key.getWarehouseId())
+                    .append(getDistrictId(), key.getDistrictId())
+                    .toComparison();
+        }
+
+        @Override
+        public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+            this.warehouseId = in.readInt();
+            this.districtId = in.readInt();
+        }
+
+        @Override
+        public void writeExternal(ObjectOutput out) throws IOException {
+            out.writeInt(warehouseId);
+            out.writeInt(districtId);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(districtId, warehouseId);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            HistoryKey other = (HistoryKey) obj;
+            return districtId == other.districtId && warehouseId == other.warehouseId;
         }
     }
 

@@ -3,8 +3,8 @@ package bftsmart.microbenchmark.tpcc.client.terminal;
 import java.time.Duration;
 
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
-import bftsmart.microbenchmark.tpcc.domain.TransactionType;
 import bftsmart.microbenchmark.tpcc.exception.ConfigurationException;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionType;
 
 public class TPCCTerminalData {
 

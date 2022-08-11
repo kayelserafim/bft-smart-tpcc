@@ -18,8 +18,8 @@ import com.google.common.base.Stopwatch;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import bftsmart.microbenchmark.tpcc.client.monitor.spreadsheet.ResultSpreadsheet;
 import bftsmart.microbenchmark.tpcc.config.BFTParams;
+import bftsmart.microbenchmark.tpcc.spreadsheet.ResultSpreadsheet;
 import bftsmart.microbenchmark.tpcc.spreadsheet.Spreadsheet;
 import bftsmart.microbenchmark.tpcc.util.InetAddresses;
 

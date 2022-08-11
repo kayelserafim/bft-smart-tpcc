@@ -20,13 +20,15 @@ set style line 3 lc rgb '#0000FF' pt 3 ps 1 lt 1 lw 2 # --- blue
 set style line 4 lc rgb '#FFFF00' pt 4 ps 1 lt 1 lw 2 # --- yellow
 set style line 5 lc rgb '#800080' pt 5 ps 1 lt 1 lw 2 # --- purple
 set style line 6 lc rgb '#FF00FF' pt 6 ps 1 lt 1 lw 2 # --- Magenta
+set style line 7 lc rgb '#00CC00' pt 7 ps 1 lt 1 lw 2 # --- green
+set style line 8 lc rgb '#FF0000' pt 8 ps 1 lt 1 lw 2 # --- red
 
-set key left top font "Helvetica, 14"
+set key center top font "Helvetica, 10"
 
 set xlabel 'Throughput (op/s)'
 set ylabel 'Latency (ms)'
-set xrange [305:4200]
-set yrange [2:10]
+set xrange [305:7350]
+set yrange [2:19]
 
 set output 'lat_thr_sem_conf.pdf'
 
@@ -35,4 +37,6 @@ plot 'sequential_plot.dat' u 1:2 t 'Sequential' w lp ls 1, \
      'parallel_w04.dat'   u 1:2 t 'Parallel, 04 workers'   w lp ls 3, \
      'parallel_w06.dat'   u 1:2 t 'Parallel, 06 workers'   w lp ls 4, \
      'parallel_w08.dat'   u 1:2 t 'Parallel, 08 workers'   w lp ls 5, \
-     'parallel_w16.dat'   u 1:2 t 'Parallel, 16 workers'   w lp ls 6
+     'parallel_w16.dat'   u 1:2 t 'Parallel, 16 workers'   w lp ls 6, \
+     'parallel_w32.dat'   u 1:2 t 'Parallel, 32 workers'   w lp ls 7, \
+     'parallel_w64.dat'   u 1:2 t 'Parallel, 64 workers'   w lp ls 8

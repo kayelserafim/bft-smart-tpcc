@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import bftsmart.microbenchmark.tpcc.client.terminal.TPCCTerminalData;
 import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
-import bftsmart.microbenchmark.tpcc.domain.CommandRequest;
-import bftsmart.microbenchmark.tpcc.domain.TransactionType;
-import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.input.OrderStatusInput;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionRequest;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionType;
+import bftsmart.microbenchmark.tpcc.server.transaction.orderstatus.request.OrderStatusRequest;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 
 public class OrderStatusCommand implements TPCCCommand {
@@ -17,7 +17,7 @@ public class OrderStatusCommand implements TPCCCommand {
     }
 
     @Override
-    public CommandRequest createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
+    public TransactionRequest createCommand(TPCCTerminalData terminalData, TPCCRandom random) {
         final int y = random.nextInt(1, 100);
         final int districtId = random.nextInt(1, TPCCConstants.DIST_PER_WHSE);
         int customerId = -1;
@@ -33,7 +33,7 @@ public class OrderStatusCommand implements TPCCCommand {
             customerId = random.getCustomerID();
         }
 
-        return new OrderStatusInput().withCommandId(UUID.randomUUID().toString())
+        return new OrderStatusRequest().withCommandId(UUID.randomUUID().toString())
                 .withTransactionType(transactionType().getClassId())
                 .withWarehouseId(terminalData.getWarehouseId())
                 .withDistrictId(districtId)

@@ -2,7 +2,7 @@ package bftsmart.microbenchmark.tpcc.client.monitor;
 
 import java.time.Duration;
 
-import bftsmart.microbenchmark.tpcc.domain.TransactionType;
+import bftsmart.microbenchmark.tpcc.server.transaction.TransactionType;
 
 public class RawResult {
 
