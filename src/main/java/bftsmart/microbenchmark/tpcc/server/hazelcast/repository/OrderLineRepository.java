@@ -9,15 +9,13 @@ import com.hazelcast.config.IndexType;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
-import com.hazelcast.query.PredicateBuilder;
-import com.hazelcast.query.PredicateBuilder.EntryObject;
 import com.hazelcast.query.Predicates;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionalMap;
 
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
-import bftsmart.microbenchmark.tpcc.table.OrderLine.OrderLineKey;
+import bftsmart.microbenchmark.tpcc.table.key.OrderLineKey;
 import bftsmart.microbenchmark.tpcc.workload.Workload;
 
 @Singleton
@@ -52,11 +50,10 @@ public class OrderLineRepository {
 
     public Collection<OrderLine> find(Integer orderId, Integer districtId, Integer warehouseId) {
         IMap<OrderLineKey, OrderLine> orderLineMap = hazelcastInstance.getMap(TABLE_NAME);
-        EntryObject e = Predicates.newPredicateBuilder().getEntryObject();
 
-        PredicateBuilder warehousePredicate = e.get(WAREHOUSE_ID_FILTER).equal(warehouseId);
-        PredicateBuilder districtPredicate = e.get(DISTRICT_ID_FILTER).equal(districtId);
-        PredicateBuilder orderLinePredicate = e.get(ORDER_ID_FILTER).equal(orderId);
+        Predicate<OrderLineKey, OrderLine> warehousePredicate = Predicates.equal(WAREHOUSE_ID_FILTER, warehouseId);
+        Predicate<OrderLineKey, OrderLine> districtPredicate = Predicates.equal(DISTRICT_ID_FILTER, districtId);
+        Predicate<OrderLineKey, OrderLine> orderLinePredicate = Predicates.equal(ORDER_ID_FILTER, orderId);
 
         Predicate<OrderLineKey, OrderLine> predicate =
                 Predicates.and(warehousePredicate, districtPredicate, orderLinePredicate);
@@ -76,15 +73,15 @@ public class OrderLineRepository {
      */
     public Collection<OrderLine> find(District district, Integer warehouseId) {
         IMap<OrderLineKey, OrderLine> orderLineMap = hazelcastInstance.getMap(TABLE_NAME);
-        EntryObject e = Predicates.newPredicateBuilder().getEntryObject();
 
-        PredicateBuilder warehousePredicate = e.get(WAREHOUSE_ID_FILTER).equal(warehouseId);
-        PredicateBuilder districtPredicate = e.get(DISTRICT_ID_FILTER).equal(district.getDistrictId());
-        PredicateBuilder orderIdGtPredicate = e.get(ORDER_ID_FILTER).greaterEqual(district.getNextOrderId() - 20);
-        PredicateBuilder orderIdLtPredicate = e.get(ORDER_ID_FILTER).lessEqual(district.getNextOrderId());
+        Predicate<OrderLineKey, OrderLine> warehousePredicate = Predicates.equal(WAREHOUSE_ID_FILTER, warehouseId);
+        Predicate<OrderLineKey, OrderLine> districtPredicate =
+                Predicates.equal(DISTRICT_ID_FILTER, district.getDistrictId());
+        Predicate<OrderLineKey, OrderLine> orderIdPredicate =
+                Predicates.between(ORDER_ID_FILTER, district.getNextOrderId() - 20, district.getNextOrderId());
 
         Predicate<OrderLineKey, OrderLine> predicate =
-                Predicates.and(warehousePredicate, districtPredicate, orderIdGtPredicate, orderIdLtPredicate);
+                Predicates.and(warehousePredicate, districtPredicate, orderIdPredicate);
 
         return orderLineMap.values(predicate);
     }

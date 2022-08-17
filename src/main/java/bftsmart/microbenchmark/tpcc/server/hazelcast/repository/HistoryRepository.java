@@ -8,7 +8,7 @@ import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionalMultiMap;
 
 import bftsmart.microbenchmark.tpcc.table.History;
-import bftsmart.microbenchmark.tpcc.table.History.HistoryKey;
+import bftsmart.microbenchmark.tpcc.table.key.HistoryKey;
 import bftsmart.microbenchmark.tpcc.workload.Workload;
 
 @Singleton

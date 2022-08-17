@@ -4,7 +4,6 @@ import static parallelism.ParallelMapping.SYNC_ALL;
 
 import java.time.Duration;
 
-import org.javatuples.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +21,8 @@ import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
 import bftsmart.tom.ParallelServiceProxy;
 import bftsmart.util.MultiOperationRequest;
 import bftsmart.util.MultiOperationResponse;
+import io.vavr.Tuple;
+import io.vavr.Tuple2;
 
 @Singleton
 public class TPCCService {
@@ -35,11 +36,13 @@ public class TPCCService {
 
     public RawResult process(TPCCTerminalData data, TPCCRandom random) {
         final TransactionType transactionType = data.getTransactionType(random.nextInt(1, 100));
-        final TransactionRequest commandRequest = commandFactory.getFactory(transactionType).createCommand(data, random);
+        final TransactionRequest commandRequest =
+                commandFactory.getFactory(transactionType).createCommand(data, random);
 
-        final Pair<Duration, TransactionResponse> pair = process(commandRequest, data.getTerminalId(), data.getParallel());
-        final Duration elapsedTime = pair.getValue0();
-        final TransactionResponse commandResponse = pair.getValue1();
+        final Tuple2<Duration, TransactionResponse> pair =
+                process(commandRequest, data.getTerminalId(), data.getParallel());
+        final Duration elapsedTime = pair._1();
+        final TransactionResponse commandResponse = pair._2();
 
         return new RawResult().terminalId(data.getTerminalId())
                 .terminalName(data.getTerminalName())
@@ -52,10 +55,11 @@ public class TPCCService {
 
     }
 
-    private Pair<Duration, TransactionResponse> process(TransactionRequest commandRequest, int terminalId, boolean parallel) {
+    private Tuple2<Duration, TransactionResponse> process(TransactionRequest request, int terminalId,
+            boolean parallel) {
         final ParallelServiceProxy serviceProxy = bftServiceProxy.getInstance(terminalId);
         try {
-            final byte[] req = commandRequest.serialize(new MultiOperationRequest(1));
+            final byte[] req = request.serialize(new MultiOperationRequest(1));
             final byte[] resp;
             final Stopwatch stopwatch = Stopwatch.createStarted();
             if (parallel) {
@@ -64,11 +68,23 @@ public class TPCCService {
                 resp = serviceProxy.invokeOrdered(req);
             }
             stopwatch.stop();
-            return Pair.with(stopwatch.elapsed(), TransactionResponse.deserialize(new MultiOperationResponse(resp)));
+            return Tuple.of(stopwatch.elapsed(), getResponse(request, resp));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return Pair.with(Duration.ZERO, new TransactionResponse().withStatus(-1).withResponse(e.getMessage()));
+            return Tuple.of(Duration.ZERO, new TransactionResponse().withStatus(-1).withResponse(e.getMessage()));
         }
+    }
+
+    private TransactionResponse getResponse(TransactionRequest request, byte[] response) {
+        TransactionResponse command;
+        if (response != null) {
+            command = TransactionResponse.deserialize(new MultiOperationResponse(response));
+        } else {
+            String errorMessage = "Server replied null value for [%s]";
+            command = new TransactionResponse().withStatus(-1)
+                    .withResponse(String.format(errorMessage, request.getTransactionType()));
+        }
+        return command;
     }
 
 }

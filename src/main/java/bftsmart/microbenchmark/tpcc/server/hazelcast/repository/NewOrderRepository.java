@@ -1,8 +1,5 @@
 package bftsmart.microbenchmark.tpcc.server.hazelcast.repository;
 
-import org.apache.commons.collections4.IterableUtils;
-import org.javatuples.Tuple;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.hazelcast.config.IndexConfig;
@@ -10,14 +7,13 @@ import com.hazelcast.config.IndexType;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
-import com.hazelcast.query.PredicateBuilder;
-import com.hazelcast.query.PredicateBuilder.EntryObject;
 import com.hazelcast.query.Predicates;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionalMap;
 
 import bftsmart.microbenchmark.tpcc.table.NewOrder;
-import bftsmart.microbenchmark.tpcc.table.NewOrder.NewOrderKey;
+import bftsmart.microbenchmark.tpcc.table.key.NewOrderKey;
+import bftsmart.microbenchmark.tpcc.util.Lists;
 import bftsmart.microbenchmark.tpcc.workload.Workload;
 
 @Singleton
@@ -54,7 +50,7 @@ public class NewOrderRepository {
     }
 
     public boolean delete(TransactionContext txCxt, NewOrder newOrder) {
-        TransactionalMap<Tuple, NewOrder> newOrdersMap = txCxt.getMap(TABLE_NAME);
+        TransactionalMap<NewOrderKey, NewOrder> newOrdersMap = txCxt.getMap(TABLE_NAME);
 
         return newOrdersMap.remove(newOrder.createKey()) != null;
     }
@@ -69,14 +65,13 @@ public class NewOrderRepository {
 
     public NewOrder findFirst(Integer districtId, Integer warehouseId) {
         IMap<NewOrderKey, NewOrder> newOrdersMap = hazelcastInstance.getMap(TABLE_NAME);
-        EntryObject e = Predicates.newPredicateBuilder().getEntryObject();
 
-        PredicateBuilder warehousePredicate = e.get("warehouseId").equal(warehouseId);
-        PredicateBuilder districtPredicate = e.get("districtId").equal(districtId);
+        Predicate<NewOrderKey, NewOrder> warehousePredicate = Predicates.equal("warehouseId", warehouseId);
+        Predicate<NewOrderKey, NewOrder> districtPredicate = Predicates.equal("districtId", districtId);
 
         Predicate<NewOrderKey, NewOrder> predicate = Predicates.and(warehousePredicate, districtPredicate);
 
-        return IterableUtils.first(newOrdersMap.values(predicate));
+        return Lists.getFirst(newOrdersMap.values(predicate));
     }
 
 }

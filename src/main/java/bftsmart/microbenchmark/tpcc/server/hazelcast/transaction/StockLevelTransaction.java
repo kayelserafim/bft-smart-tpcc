@@ -16,7 +16,7 @@ import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.request.StockL
 import bftsmart.microbenchmark.tpcc.server.transaction.stocklevel.response.StockLevelResponse;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.OrderLine;
-import bftsmart.microbenchmark.tpcc.table.Stock.StockKey;
+import bftsmart.microbenchmark.tpcc.table.key.StockKey;
 
 public class StockLevelTransaction implements Transaction {
 

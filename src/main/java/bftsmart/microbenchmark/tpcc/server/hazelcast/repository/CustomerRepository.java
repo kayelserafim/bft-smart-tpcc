@@ -3,7 +3,6 @@ package bftsmart.microbenchmark.tpcc.server.hazelcast.repository;
 import java.util.Collection;
 
 import org.apache.commons.collections4.IterableUtils;
-import org.javatuples.Tuple;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -12,14 +11,12 @@ import com.hazelcast.config.IndexType;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
-import com.hazelcast.query.PredicateBuilder;
-import com.hazelcast.query.PredicateBuilder.EntryObject;
 import com.hazelcast.query.Predicates;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionalMap;
 
 import bftsmart.microbenchmark.tpcc.table.Customer;
-import bftsmart.microbenchmark.tpcc.table.Customer.CustomerKey;
+import bftsmart.microbenchmark.tpcc.table.key.CustomerKey;
 import bftsmart.microbenchmark.tpcc.util.Numbers;
 import bftsmart.microbenchmark.tpcc.workload.Workload;
 
@@ -65,14 +62,14 @@ public class CustomerRepository {
      * @return The list of customers that match with the last name
      */
     public Customer find(String lastName, Integer districtId, Integer warehouseId) {
-        IMap<Tuple, Customer> customerMap = hazelcastInstance.getMap(TABLE_NAME);
-        EntryObject e = Predicates.newPredicateBuilder().getEntryObject();
+        IMap<CustomerKey, Customer> customerMap = hazelcastInstance.getMap(TABLE_NAME);
 
-        PredicateBuilder warehousePredicate = e.get("warehouseId").equal(warehouseId);
-        PredicateBuilder districtPredicate = e.get("districtId").equal(districtId);
-        PredicateBuilder lastNamePredicate = e.get("last").equal(warehouseId);
+        Predicate<CustomerKey, Customer> warehousePredicate = Predicates.equal("warehouseId", warehouseId);
+        Predicate<CustomerKey, Customer> districtPredicate = Predicates.equal("districtId", districtId);
+        Predicate<CustomerKey, Customer> lastNamePredicate = Predicates.equal("last", warehouseId);
 
-        Predicate<Tuple, Customer> predicate = Predicates.and(warehousePredicate, districtPredicate, lastNamePredicate);
+        Predicate<CustomerKey, Customer> predicate =
+                Predicates.and(warehousePredicate, districtPredicate, lastNamePredicate);
 
         Collection<Customer> customers = customerMap.values(predicate);
         if (customers.isEmpty()) {

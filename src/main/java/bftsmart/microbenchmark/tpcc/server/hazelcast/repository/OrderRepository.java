@@ -1,7 +1,5 @@
 package bftsmart.microbenchmark.tpcc.server.hazelcast.repository;
 
-import org.apache.commons.collections4.IterableUtils;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.hazelcast.config.IndexConfig;
@@ -9,14 +7,13 @@ import com.hazelcast.config.IndexType;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import com.hazelcast.query.Predicate;
-import com.hazelcast.query.PredicateBuilder;
-import com.hazelcast.query.PredicateBuilder.EntryObject;
 import com.hazelcast.query.Predicates;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionalMap;
 
 import bftsmart.microbenchmark.tpcc.table.Order;
-import bftsmart.microbenchmark.tpcc.table.Order.OrderKey;
+import bftsmart.microbenchmark.tpcc.table.key.OrderKey;
+import bftsmart.microbenchmark.tpcc.util.Lists;
 import bftsmart.microbenchmark.tpcc.workload.Workload;
 
 @Singleton
@@ -45,16 +42,15 @@ public class OrderRepository {
 
     public Order findByCustomerId(Integer customerId, Integer districtId, Integer warehouseId) {
         IMap<OrderKey, Order> orders = hazelcastInstance.getMap(TABLE_NAME);
-        EntryObject e = Predicates.newPredicateBuilder().getEntryObject();
 
-        PredicateBuilder warehousePredicate = e.get("warehouseId").equal(warehouseId);
-        PredicateBuilder districtPredicate = e.get("districtId").equal(districtId);
-        PredicateBuilder customerIdPredicate = e.get("customerId").equal(customerId);
+        Predicate<OrderKey, Order> warehousePredicate = Predicates.equal("warehouseId", warehouseId);
+        Predicate<OrderKey, Order> districtPredicate = Predicates.equal("districtId", districtId);
+        Predicate<OrderKey, Order> customerIdPredicate = Predicates.equal("customerId", customerId);
 
         Predicate<OrderKey, Order> predicate =
                 Predicates.and(warehousePredicate, districtPredicate, customerIdPredicate);
 
-        return IterableUtils.first(orders.values(predicate));
+        return Lists.getFirst(orders.values(predicate));
     }
 
     public Order save(TransactionContext txCxt, Order order) {

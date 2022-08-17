@@ -13,7 +13,7 @@ import com.hazelcast.transaction.TransactionalMap;
 
 import bftsmart.microbenchmark.tpcc.exception.NotFoundException;
 import bftsmart.microbenchmark.tpcc.table.District;
-import bftsmart.microbenchmark.tpcc.table.District.DistrictKey;
+import bftsmart.microbenchmark.tpcc.table.key.DistrictKey;
 import bftsmart.microbenchmark.tpcc.workload.Workload;
 
 @Singleton

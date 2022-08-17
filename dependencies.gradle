@@ -43,9 +43,6 @@ dependencies {
     // Vavr
 	implementation group: 'io.vavr', name: 'vavr', version: vavr_version
     
-    // Java Tuples
-    implementation group: 'org.javatuples', name: 'javatuples', version: javatuples_version
-    
     // Distributed in-memory data structure storage
     compile group: 'com.hazelcast', name: 'hazelcast', version: '4.0.1'
 
