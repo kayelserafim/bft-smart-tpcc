@@ -25,10 +25,10 @@ set key left top font "Helvetica, 14"
 
 set xlabel 'Throughput (op/s)'
 set ylabel 'Latency (ms)'
-set xrange [305:4200]
-set yrange [2:10]
+set xrange [304:570]
+set yrange [3:33]
 
-set output 'lat_thr_sem_conf.pdf'
+set output 'lat_thr_com_conf.pdf'
 
 plot 'sequential_plot.dat' u 1:2 t 'Sequential' w lp ls 1, \
      'parallel_w02.dat'   u 1:2 t 'Parallel, 02 workers'   w lp ls 2, \

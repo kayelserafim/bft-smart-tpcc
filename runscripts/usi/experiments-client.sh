@@ -8,7 +8,7 @@ set -x
 
 # experiments
 target_nodes=(node31)
-threads=300
+threads=4
 parallel=true
 
 tpcc_path="./build/install/bft-smart-tpcc"
