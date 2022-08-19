@@ -70,7 +70,7 @@ public class DeliveryTransaction implements Transaction {
                 List<OrderLine> orderLineList = orderLineRepository.find(orderId, districtId, warehouseId)
                         .stream()
                         .map(OrderLine::from)
-                        .map(builder -> builder.deliveryDateTime(Dates.now()))
+                        .map(builder -> builder.deliveryDateTime(System.currentTimeMillis()))
                         .map(OrderLine.Builder::build)
                         .collect(Collectors.toList());
 

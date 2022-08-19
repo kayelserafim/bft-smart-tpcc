@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-for i in {90..92}
+
+target_nodes=(node31 node90 node91 node92)
+
+for node in "${target_nodes[@]}"
 do
- echo "Killing all user process on node$i..."
- ssh node$i killall -u kayel
- echo "All user processes were killed on node$i..."
+ echo "Killing all user process on $node..."
+ ssh $node killall -u kayel
+ echo "All user processes were killed on $node..."
 done

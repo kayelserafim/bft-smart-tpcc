@@ -7,13 +7,13 @@ import bftsmart.util.MultiOperationRequest;
 
 public interface CommandRequest extends KryoSerializable {
 
-    public String getCommandId();
+    String getCommandId();
 
-    public void setCommandId(String commandId);
+    void setCommandId(String commandId);
 
-    public int getTransactionType();
+    int getTransactionType();
 
-    public void setTransactionType(int transactionType);
+    void setTransactionType(int transactionType);
 
     default byte[] serialize() {
         return KryoHelper.getInstance().toBytes(this);

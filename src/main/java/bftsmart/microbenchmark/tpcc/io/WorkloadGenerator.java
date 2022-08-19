@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
 import bftsmart.microbenchmark.tpcc.config.TPCCConfig;
+import bftsmart.microbenchmark.tpcc.config.TPCCConstants;
 import bftsmart.microbenchmark.tpcc.table.Customer;
 import bftsmart.microbenchmark.tpcc.table.District;
 import bftsmart.microbenchmark.tpcc.table.History;
@@ -22,7 +22,6 @@ import bftsmart.microbenchmark.tpcc.table.OrderLine;
 import bftsmart.microbenchmark.tpcc.table.Stock;
 import bftsmart.microbenchmark.tpcc.table.Warehouse;
 import bftsmart.microbenchmark.tpcc.util.TPCCRandom;
-import bftsmart.microbenchmark.tpcc.util.Dates;
 
 @Singleton
 public class WorkloadGenerator {
@@ -123,7 +122,7 @@ public class WorkloadGenerator {
                             .state(random.getAString(2))
                             .zip(random.getAZip())
                             .phone(random.getNString(16))
-                            .since(Dates.now())
+                            .since(System.currentTimeMillis())
                             .credit(random.nextInt(1, 10) == 1 ? "BC" : "GC")
                             .creditLimit(BigDecimal.valueOf(50000))
                             .discount(BigDecimal.valueOf(random.getAPercent(0, 0.5)))
@@ -192,7 +191,7 @@ public class WorkloadGenerator {
                             .warehouseId(w)
                             .customerDistrictId(customer.getDistrictId())
                             .customerWarehouseId(customer.getWarehouseId())
-                            .date(Dates.now())
+                            .date(System.currentTimeMillis())
                             .amount(BigDecimal.TEN)
                             .data(random.getAString(12, 24))
                             .build();
@@ -219,7 +218,7 @@ public class WorkloadGenerator {
                             .districtId(d)
                             .warehouseId(w)
                             .customerId(c)
-                            .entryDate(Dates.now())
+                            .entryDate(System.currentTimeMillis())
                             .carrierId(o < TPCCConstants.LIMIT_ORDER ? random.nextInt(1, 10) : null)
                             .orderLineCounter(random.nextInt(5, 15))
                             .allLocal(1)

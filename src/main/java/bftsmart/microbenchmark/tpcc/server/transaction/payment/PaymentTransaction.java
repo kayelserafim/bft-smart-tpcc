@@ -111,7 +111,7 @@ public class PaymentTransaction implements Transaction {
                 .customerId(input.getCustomerId())
                 .districtId(input.getDistrictId())
                 .warehouseId(input.getWarehouseId())
-                .date(Dates.now())
+                .date(System.currentTimeMillis())
                 .amount(BigDecimal.valueOf(input.getPaymentAmount()))
                 .data(historyData)
                 .build();
@@ -121,8 +121,7 @@ public class PaymentTransaction implements Transaction {
         customerRepository.save(Customer.from(customer)
                 .data(data)
                 .paymentCntIncrement()
-                .subtractBalance(BigDecimal.valueOf(input.getPaymentAmount()))
-                .yearToDateBalancePayment(BigDecimal.valueOf(input.getPaymentAmount()))
+                .addBalance(BigDecimal.valueOf(input.getPaymentAmount()))
                 .build());
         historyRepository.save(history);
 

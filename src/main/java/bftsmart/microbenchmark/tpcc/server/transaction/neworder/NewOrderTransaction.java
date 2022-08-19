@@ -118,7 +118,7 @@ public class NewOrderTransaction implements Transaction {
                 .districtId(input.getDistrictId())
                 .warehouseId(input.getWarehouseId())
                 .customerId(input.getCustomerId())
-                .entryDate(Dates.now())
+                .entryDate(System.currentTimeMillis())
                 .orderLineCounter(input.getOrderLineCnt())
                 .allLocal(input.getOrderAllLocal())
                 .build();

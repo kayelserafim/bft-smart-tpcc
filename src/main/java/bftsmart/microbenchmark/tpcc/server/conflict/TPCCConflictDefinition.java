@@ -29,7 +29,7 @@ public class TPCCConflictDefinition extends ConflictDefinition {
             conflictMap.put(req2.getCommandId(), Boolean.FALSE);
             return false;
         }
-        if (TransactionConflicts.isPessimistic(req1.getTransactionType(), req2.getTransactionType())) {
+        if (TransactionConflicts.hasConflict(req1.getTransactionType(), req2.getTransactionType())) {
             conflictMap.put(req1.getCommandId(), Boolean.TRUE);
             conflictMap.put(req2.getCommandId(), Boolean.TRUE);
             return true;
